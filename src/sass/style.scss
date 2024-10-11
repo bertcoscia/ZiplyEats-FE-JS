@@ -1,0 +1,19 @@
+@import url("/node_modules/bootstrap/scss/_functions.scss");
+
+$text: #333a3f;
+$background: #f2f2f2;
+$primary: #f86825;
+$secondary: #f9c90b;
+$accent: #07a2c5;
+
+$custom-colors: (
+  "text": $text,
+  "background": $background,
+  "primary": $primary,
+  "secondary": $secondary,
+  "accent": $accent
+);
+
+@import url("/node_modules/bootstrap/scss/_variables.scss");
+
+$theme-colors: map-merge($theme-colors, $custom-colors);

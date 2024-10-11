@@ -1,0 +1,11 @@
+.user-type-btn {
+  background-size: cover;
+  height: 400px;
+  width: 400px;
+}
+
+.illustration {
+  width: 280px;
+  height: 280px;
+  object-fit: contain;
+}
