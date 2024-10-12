@@ -1,10 +1,21 @@
-.user-type-btn {
-  background-size: cover;
+:root {
+  --tint: 214;
+  --alpha: 0.04;
+  --base-color: hsla(var(--tint), 80%, 27%, var(--alpha));
+  --shade-color: hsla(calc(var(--tint) + 8), 80%, 22%, var(--alpha));
+}
+
+.perfect-shadow {
+  --perfect-shadow: 0 0 0 1px var(--base-color), 0 1px 1px -0.5px var(--shade-color), 0 3px 3px -1.5px var(--shade-color), 0 6px 6px -3px var(--shade-color), 0 12px 12px -6px var(--base-color), 0 24px 24px -12px var(--base-color);
+  box-shadow: var(--perfect-shadow);
+}
+
+.signup__element {
   height: 400px;
   width: 400px;
 }
 
-.illustration {
+.signup__element__illustration {
   width: 280px;
   height: 280px;
   object-fit: contain;

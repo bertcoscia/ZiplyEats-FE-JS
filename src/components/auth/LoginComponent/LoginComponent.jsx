@@ -1,7 +1,6 @@
 import { useState } from "react";
-import { Button, Container } from "react-bootstrap";
-import { Form } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
+import { Button, Container, Form } from "react-bootstrap";
+import { Link, useNavigate } from "react-router-dom";
 
 const LoginComponent = () => {
   const navigate = useNavigate();
@@ -28,7 +27,6 @@ const LoginComponent = () => {
         }
       })
       .then(LoginRespDTO => {
-        console.log(LoginRespDTO); // Verifica cosa restituisce il server
         localStorage.setItem("accessToken", LoginRespDTO.accessToken);
         setLoginDTO({
           email: "",
@@ -53,17 +51,20 @@ const LoginComponent = () => {
   };
 
   return (
-    <Container className="my-5 px-5">
-      <Form onSubmit={handleSubmit}>
-        <Form.Group className="mb-3" controlId="formBasicEmail">
-          <Form.Label>Email address</Form.Label>
-          <Form.Control type="email" placeholder="Enter email" name="email" value={loginDTO.email} onChange={handleTextChange} />{" "}
+    <Container className="login my-5 px-5">
+      <Form onSubmit={handleSubmit} className="login__form perfect-shadow animate__animated animate__zoomIn border rounded-4 align-self-center py-4 px-5 text-decoration-none position-relative mx-3 my-3 signup-element-btn">
+        <Link to={"/"} className="signup__link pb-5 text-decoration-none">
+          Go back
+        </Link>
+        <Form.Group className="login__form__group my-3" controlId="formBasicEmail">
+          <Form.Label className="login__form__label">Email address</Form.Label>
+          <Form.Control type="email" placeholder="Enter email" name="email" value={loginDTO.email} onChange={handleTextChange} className="login__form__input" />
         </Form.Group>
-        <Form.Group className="mb-3" controlId="formBasicPassword">
-          <Form.Label>Password</Form.Label>
-          <Form.Control type="password" placeholder="Password" name="password" value={loginDTO.password} onChange={handleTextChange} />
+        <Form.Group className="login__form__group mb-3" controlId="formBasicPassword">
+          <Form.Label className="login__form__label">Password</Form.Label>
+          <Form.Control type="password" placeholder="Password" name="password" value={loginDTO.password} onChange={handleTextChange} className="login__form__input" />
         </Form.Group>
-        <Button variant="primary" type="submit">
+        <Button variant="primary" type="submit" className="login__form__submit">
           Submit
         </Button>
       </Form>
