@@ -1,39 +1,14 @@
-import { Button, Container, Dropdown } from "react-bootstrap";
-import { useSelector } from "react-redux";
+import { Button, Container } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import "animate.css";
+import NavComponent from "../../navbar/NavComponent";
 
 const RestaurantDashboardComponent = () => {
-  const profile = useSelector(state => state.profile.content);
-
   return (
     <>
-      <Container className="profile position-relative my-5 pb-5 text-center d-flex flex-column align-items-center">
-        <img src={profile.avatarUrl} alt="" className="profile__pic rounded-circle mb-2 align-self-center" style={{ width: "82px" }} />
+      <NavComponent />
 
-        <Dropdown className="mb-3">
-          <Dropdown.Toggle className="profile__button text-decoration-none border rounded-pill align-self-center px-4 py-1" id="dropdown-basic">
-            {profile.name}
-          </Dropdown.Toggle>
-
-          <Dropdown.Menu className="rounded-4 profile__dropdown">
-            <Dropdown.Item as={Link} to={"/me"}>
-              <span className="me-2">
-                <img src="https://glovo.dhmedia.io/image/customer-assets-glovo/customer_profile/uds/person.svg?t=W3sic3ZnIjp7InEiOiJsb3cifX1d" alt="" style={{ width: "15px" }} />
-              </span>
-              Profile
-            </Dropdown.Item>
-            <Dropdown.Item href="#/action-2">
-              <span className="me-2">
-                <img src="https://glovo.dhmedia.io/image/customer-assets-glovo/customer_profile/uds/exit.svg?t=W3sic3ZnIjp7InEiOiJsb3cifX1d" alt="" style={{ width: "15px" }} />
-              </span>
-              Log out
-            </Dropdown.Item>
-          </Dropdown.Menu>
-        </Dropdown>
-      </Container>
-
-      <Container className="mt-5 dashboard d-flex flex-column flex-lg-row justify-content-between">
+      <Container className="mt-5 dashboard d-flex flex-column flex-lg-row justify-content-between" style={{ marginTop: "80px", paddingTop: "180px" }}>
         <Link as={Button} className="dashboard__element text-decoration-none border rounded-4 pt-4 pb-1 px-5 text-decoration-none position-relative align-self-center" style={{ overflow: "visible" }}>
           <img
             className="dashboard__element__illustration position-absolute top-0 start-50 translate-middle"
