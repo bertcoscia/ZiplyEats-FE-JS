@@ -247,6 +247,7 @@ const ProfileComponent = () => {
               <Modal.Footer className="border-top-0 d-flex justify-content-center">
                 <Button
                   onClick={() => {
+                    editName(name);
                     handleClose("name");
                   }}
                   className="rounded-pill px-5 border-0"
