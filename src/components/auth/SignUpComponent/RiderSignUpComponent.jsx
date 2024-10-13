@@ -101,8 +101,8 @@ const RiderSignUpComponent = () => {
 
   return (
     <Container className="signup my-5 px-5">
-      <Form onSubmit={handleSubmit} className="signup__form perfect-shadow animate__animated animate__zoomIn border rounded-4 align-self-center py-4 px-5 text-decoration-none position-relative mx-3 my-3 signup-element-btn">
-        <Link to={"/signup"} className="signup__link pb-5 text-decoration-none">
+      <Form onSubmit={handleSubmit} className="signup__form perfect-shadow border rounded-4 align-self-center py-4 px-5 text-decoration-none position-relative mx-3 my-3 signup-element-btn">
+        <Link to={"/signup"} className="go-back__link pb-5 text-decoration-none">
           Go back
         </Link>
         <Form.Group className="signup__form__group my-3">

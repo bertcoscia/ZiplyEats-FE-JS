@@ -7,6 +7,8 @@ import SignUpComponent from "./components/auth/SignUpComponent/SignUpComponent";
 import UserSignUpComponent from "./components/auth/SignUpComponent/UserSignUpComponent";
 import RiderSignUpComponent from "./components/auth/SignUpComponent/RiderSignUpComponent";
 import RestaurantSignUpComponent from "./components/auth/SignUpComponent/RestaurantSignUpComponent";
+import HomeComponent from "./components/Home/HomeComponent";
+import ProfileComponent from "./components/Profile/ProfileComponent";
 
 function App() {
   return (
@@ -19,6 +21,8 @@ function App() {
           <Route path="/signup/user" element={<UserSignUpComponent />} />
           <Route path="/signup/rider" element={<RiderSignUpComponent />} />
           <Route path="/signup/restaurant" element={<RestaurantSignUpComponent />} />
+          <Route path="/home" element={<HomeComponent />} />
+          <Route path="/me" element={<ProfileComponent />} />
         </Routes>
       </BrowserRouter>
     </>

@@ -11,6 +11,8 @@ const LoginComponent = () => {
     password: ""
   });
 
+  const [loginError, setLoginError] = useState(false);
+
   const login = loginDTO => {
     fetch(`${AUTH_URL}/users-login`, {
       method: "POST",
@@ -23,6 +25,7 @@ const LoginComponent = () => {
         if (response.ok) {
           return response.json();
         } else {
+          setLoginError(true);
           throw new Error("Error during login");
         }
       })
@@ -52,18 +55,19 @@ const LoginComponent = () => {
 
   return (
     <Container className="login my-5 px-5">
-      <Form onSubmit={handleSubmit} className="login__form perfect-shadow animate__animated animate__zoomIn border rounded-4 align-self-center py-4 px-5 text-decoration-none position-relative mx-3 my-3 signup-element-btn">
-        <Link to={"/"} className="signup__link pb-5 text-decoration-none">
+      <Form onSubmit={handleSubmit} className="login__form perfect-shadow border rounded-4 align-self-center py-4 px-5 text-decoration-none position-relative mx-3 my-3 signup-element-btn">
+        <Link to={"/"} className="go-back__link pb-5 text-decoration-none">
           Go back
         </Link>
         <Form.Group className="login__form__group my-3" controlId="formBasicEmail">
           <Form.Label className="login__form__label">Email address</Form.Label>
-          <Form.Control type="email" placeholder="Enter email" name="email" value={loginDTO.email} onChange={handleTextChange} className="login__form__input" />
+          <Form.Control type="email" placeholder="Enter email" name="email" value={loginDTO.email} onChange={handleTextChange} className="login__form__input" required />
         </Form.Group>
         <Form.Group className="login__form__group mb-3" controlId="formBasicPassword">
           <Form.Label className="login__form__label">Password</Form.Label>
-          <Form.Control type="password" placeholder="Password" name="password" value={loginDTO.password} onChange={handleTextChange} className="login__form__input" />
+          <Form.Control type="password" placeholder="Password" name="password" value={loginDTO.password} onChange={handleTextChange} className="login__form__input" required />
         </Form.Group>
+        {loginError && <p className="text-danger">Wrong password and/or email</p>}
         <Button variant="primary" type="submit" className="login__form__submit">
           Submit
         </Button>

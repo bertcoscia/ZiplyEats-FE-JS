@@ -10,13 +10,77 @@
   box-shadow: var(--perfect-shadow);
 }
 
-.signup__element {
-  height: 400px;
-  width: 400px;
+.signup__element,
+.dashboard__element {
+  width: 300px;
+  height: 180px;
+  background-color: #f86825; /* TODO: REMOVE ONCE CHANGED SASS */
 }
 
-.signup__element__illustration {
+.signup__element:hover,
+.dashboard__element:hover {
+  background-color: #d55c20;
+}
+
+.signup__element__title,
+.signup__element__subtitle,
+.dashboard__element__title,
+.dashboard__element__subtitle {
+  color: #f2f2f2; /* TODO: REMOVE ONCE CHANGED SASS */
+}
+
+.signup__element:hover h2,
+.signup__element:hover small,
+.dashboard__element:hover h2,
+.dashboard__element:hover small {
+  color: #f9c90b;
+  transition: color 0.3s ease;
+}
+
+.signup__element__illustration,
+.dashboard__element__illustration {
   width: 280px;
   height: 280px;
   object-fit: contain;
+}
+
+.go-back__link,
+.edit__button__link {
+  color: #333a3f;
+  opacity: 85%;
+}
+
+.go-back__link:hover,
+.profile:hover h3,
+.edit__button__link:hover {
+  color: #000000;
+  transition: color 0.3s ease;
+}
+
+.profile__button {
+  background-color: #f86825; /* TODO: REMOVE ONCE CHANGED SASS */
+  color: #333a3f;
+}
+
+.profile__dropdown {
+  background-color: #f86825; /* TODO: REMOVE ONCE CHANGED SASS */
+}
+
+.dropdown-menu show:hover {
+  color: black;
+}
+
+.profile__button:hover,
+.profile__button:focus,
+.profile__button:active {
+  background-color: #d55c20 !important;
+}
+
+.profile__button .btn.show {
+  background-color: #d55c20 !important;
+}
+
+.profile__button:hover .profile__name {
+  color: #f2f2f2;
+  transition: color 0.3s ease;
 }
