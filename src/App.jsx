@@ -1,6 +1,4 @@
 import "./sass/style.scss";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "./App.css";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import AuthComponent from "./components/auth/AuthComponent/AuthComponent";
 import LoginComponent from "./components/auth/LoginComponent/LoginComponent";
@@ -10,6 +8,7 @@ import RiderSignUpComponent from "./components/auth/SignUpComponent/RiderSignUpC
 import RestaurantSignUpComponent from "./components/auth/SignUpComponent/RestaurantSignUpComponent";
 import HomeComponent from "./components/home/HomeComponent";
 import ProfileComponent from "./components/Profile/ProfileComponent";
+import PastOrdersComponent from "./components/home/RestaurantDashboard/RestaurantPastOrdersComponent/RestaurantPastOrdersComponent";
 
 function App() {
   return (
@@ -22,8 +21,9 @@ function App() {
           <Route path="/signup/user" element={<UserSignUpComponent />} />
           <Route path="/signup/rider" element={<RiderSignUpComponent />} />
           <Route path="/signup/restaurant" element={<RestaurantSignUpComponent />} />
-          <Route path="/home" element={<HomeComponent />} />
           <Route path="/me" element={<ProfileComponent />} />
+          <Route path="/home" element={<HomeComponent />} />
+          <Route path="/past-orders" element={<PastOrdersComponent />} />
         </Routes>
       </BrowserRouter>
     </>

@@ -1,17 +1,12 @@
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { getProfileAction } from "../../redux/actions/index";
+import { useSelector } from "react-redux";
 import RestaurantDashboardComponent from "./RestaurantDashboard/RestaurantDashboardComponent";
+import NavComponent from "../navbar/NavComponent";
 
 const HomeComponent = () => {
-  const dispatch = useDispatch();
   const profile = useSelector(state => state.profile.content);
-
-  useEffect(() => {
-    dispatch(getProfileAction());
-  }, []);
   return (
     <>
+      <NavComponent />
       {profile && profile.userRole.userRole == "RIDER" && <h1>Ciao rider {profile.name}</h1>}
       {profile && profile.userRole.userRole == "ADMIN" && <h1>Ciao admin {profile.name}</h1>}
       {profile && profile.userRole.userRole == "RESTAURANT" && <RestaurantDashboardComponent />}

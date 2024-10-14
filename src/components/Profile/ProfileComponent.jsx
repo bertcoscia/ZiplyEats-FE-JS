@@ -3,16 +3,19 @@ import { useDispatch, useSelector } from "react-redux";
 import { getProfileAction } from "../../redux/actions";
 import { Button, Col, Container, Form, FormControl, InputGroup, Modal, Row } from "react-bootstrap";
 import NavComponent from "../navbar/NavComponent";
+import "bootstrap/dist/css/bootstrap.min.css";
 import { useNavigate } from "react-router-dom";
 
 const ProfileComponent = () => {
   const RESTAURANTS_URL = import.meta.env.VITE_RESTAURANTS_URL;
   const USERS_URL = import.meta.env.VITE_USERS_URL;
+  const RIDERS_URL = import.meta.env.VITE_RIDERS_URL;
   const profile = useSelector(state => state.profile.content);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const [showName, setShowName] = useState(false);
+  const [showFullName, setShowFullName] = useState(false);
   const [showEmail, setShowEmail] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showPhoneNumber, setShowPhoneNumber] = useState(false);
@@ -49,6 +52,9 @@ const ProfileComponent = () => {
       case "name":
         setShowName(false);
         break;
+      case "fullName":
+        setShowFullName(false);
+        break;
       case "email":
         setShowEmail(false);
         break;
@@ -71,6 +77,9 @@ const ProfileComponent = () => {
       case "name":
         setShowName(true);
         break;
+      case "fullName":
+        setShowFullName(true);
+        break;
       case "email":
         setShowEmail(true);
         break;
@@ -89,17 +98,25 @@ const ProfileComponent = () => {
   };
 
   const [name, setName] = useState({ name: "" });
+  const [fullName, setFullName] = useState({ name: "", surname: "" });
   const [email, setEmail] = useState({ email: "" });
   const [password, setPassword] = useState({ currentPassword: "", newPassword: "" });
   const [phoneNumber, setPhoneNumber] = useState({ phoneNumber: "" });
+  const [editFullNameUrl, setEditFullNameUrl] = useState("");
 
   useEffect(() => {
     dispatch(getProfileAction());
+    if (profile) {
+      const url = profile.userRole.userRole === "RIDER" ? `${RIDERS_URL}/me/edit-name+surname` : `${USERS_URL}/me/edit-name+surname`;
+      setEditFullNameUrl(url);
+      console.log(editFullNameUrl);
+    }
   }, [dispatch]);
 
   useEffect(() => {
     if (profile) {
       setName({ name: profile.name });
+      setFullName({ name: profile.name, surname: profile.surname });
       setEmail({ email: profile.email });
       setPhoneNumber({ phoneNumber: profile.phoneNumber });
     }
@@ -110,6 +127,12 @@ const ProfileComponent = () => {
     switch (field) {
       case "name":
         setName(prevState => ({
+          ...prevState,
+          [name]: value
+        }));
+        break;
+      case "fullName":
+        setFullName(prevState => ({
           ...prevState,
           [name]: value
         }));
@@ -158,6 +181,33 @@ const ProfileComponent = () => {
           name: ""
         });
         dispatch(getProfileAction());
+        navigate(0);
+      })
+      .catch(error => console.log(error));
+  };
+
+  const editFullName = fullName => {
+    fetch(editFullNameUrl, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        "Content-type": "application/json"
+      },
+      body: JSON.stringify({ name: fullName.name, surname: fullName.surname })
+    })
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error("Unable to update user's full name. Please try again later.");
+        }
+      })
+      .then(() => {
+        dispatch(getProfileAction());
+        setFullName({
+          name: "",
+          surname: ""
+        });
         navigate(0);
       })
       .catch(error => console.log(error));
@@ -286,50 +336,102 @@ const ProfileComponent = () => {
               </Modal.Footer>
             </Modal>
           </div>
-          <Row className="my-4">
-            <Col md={11} className="d-flex align-items-center">
-              <span className="me-3">
-                <img src="https://glovo.dhmedia.io/image/customer-assets-glovo/customer_profile/uds/person.svg?t=W3sic3ZnIjp7InEiOiJsb3cifX1d" alt="" style={{ width: "20px" }} />
-              </span>
-              <small>
-                {profile.name} {profile.surname}
-              </small>
-            </Col>
-            <Col md={1}>
-              <Button variant="link" className="text-decoration-none edit__button__link" onClick={() => handleShow("name")}>
-                Edit
-              </Button>
-            </Col>
-            <Modal show={showName} onHide={() => handleClose("name")} className="perfect-shadow">
-              <Modal.Header closeButton className="border-bottom-0"></Modal.Header>
-              <Modal.Body>
-                <h2 className="fs-5 text-center">Your information</h2>
-                <Form
-                  onSubmit={event => {
-                    event.preventDefault();
-                    editName(name);
-                  }}
-                >
-                  <Form.Group className="mb-3">
-                    <Form.Label>Name</Form.Label>
-                    <Form.Control type="text" placeholder="Enter your name" value={name.name} name="name" onChange={event => handleChange("name", event)} />
-                  </Form.Group>
-                </Form>
-              </Modal.Body>
-              <Modal.Footer className="border-top-0 d-flex justify-content-center">
-                <Button
-                  onClick={() => {
-                    editName(name);
-                    handleClose("name");
-                  }}
-                  className="rounded-pill px-5 border-0"
-                  style={{ backgroundColor: "#F86834" }}
-                >
-                  Save Changes
+          {profile.userRole.userRole == "RESTAURANT" && (
+            <Row className="my-4">
+              <Col md={11} className="d-flex align-items-center">
+                <span className="me-3">
+                  <img src="https://glovo.dhmedia.io/image/customer-assets-glovo/customer_profile/uds/person.svg?t=W3sic3ZnIjp7InEiOiJsb3cifX1d" alt="" style={{ width: "20px" }} />
+                </span>
+                <small>
+                  {profile.name} {profile.surname}
+                </small>
+              </Col>
+              <Col md={1}>
+                <Button variant="link" className="text-decoration-none edit__button__link" onClick={() => handleShow("name")}>
+                  Edit
                 </Button>
-              </Modal.Footer>
-            </Modal>
-          </Row>
+              </Col>
+              <Modal show={showName} onHide={() => handleClose("name")} className="perfect-shadow">
+                <Modal.Header closeButton className="border-bottom-0"></Modal.Header>
+                <Modal.Body>
+                  <h2 className="fs-5 text-center">Your information</h2>
+                  <Form
+                    onSubmit={event => {
+                      event.preventDefault();
+                      editName(name);
+                    }}
+                  >
+                    <Form.Group className="mb-3">
+                      <Form.Label>Name</Form.Label>
+                      <Form.Control type="text" placeholder="Enter your name" value={name.name} name="name" onChange={event => handleChange("name", event)} />
+                    </Form.Group>
+                  </Form>
+                </Modal.Body>
+                <Modal.Footer className="border-top-0 d-flex justify-content-center">
+                  <Button
+                    onClick={() => {
+                      editName(name);
+                      handleClose("name");
+                    }}
+                    className="rounded-pill px-5 border-0"
+                    style={{ backgroundColor: "#F86834" }}
+                  >
+                    Save Changes
+                  </Button>
+                </Modal.Footer>
+              </Modal>
+            </Row>
+          )}
+          {profile.userRole.userRole != "RESTAURANT" && (
+            <Row className="my-4">
+              <Col md={11} className="d-flex align-items-center">
+                <span className="me-3">
+                  <img src="https://glovo.dhmedia.io/image/customer-assets-glovo/customer_profile/uds/person.svg?t=W3sic3ZnIjp7InEiOiJsb3cifX1d" alt="" style={{ width: "20px" }} />
+                </span>
+                <small>
+                  {profile.name} {profile.surname}
+                </small>
+              </Col>
+              <Col md={1}>
+                <Button variant="link" className="text-decoration-none edit__button__link" onClick={() => handleShow("fullName")}>
+                  Edit
+                </Button>
+              </Col>
+              <Modal show={showFullName} onHide={() => handleClose("fullName")} className="perfect-shadow">
+                <Modal.Header closeButton className="border-bottom-0"></Modal.Header>
+                <Modal.Body>
+                  <h2 className="fs-5 text-center">Your information</h2>
+                  <Form
+                    onSubmit={event => {
+                      event.preventDefault();
+                      editFullName(fullName);
+                    }}
+                  >
+                    <Form.Group className="mb-3">
+                      <Form.Label>Name</Form.Label>
+                      <Form.Control type="text" placeholder="Enter your name" value={fullName.name} name="name" onChange={event => handleChange("fullName", event)} />
+                    </Form.Group>
+                    <Form.Group className="mb-3">
+                      <Form.Label>Surname</Form.Label>
+                      <Form.Control type="text" placeholder="Enter your surnname" value={fullName.surname} name="surname" onChange={event => handleChange("fullName", event)} />
+                    </Form.Group>
+                  </Form>
+                </Modal.Body>
+                <Modal.Footer className="border-top-0 d-flex justify-content-center">
+                  <Button
+                    onClick={() => {
+                      editFullName(fullName);
+                      handleClose("fullName");
+                    }}
+                    className="rounded-pill px-5 border-0"
+                    style={{ backgroundColor: "#F86834" }}
+                  >
+                    Save Changes
+                  </Button>
+                </Modal.Footer>
+              </Modal>
+            </Row>
+          )}
           <Row className="my-4">
             <Col md={11} className="d-flex align-items-center">
               <span className="me-3">

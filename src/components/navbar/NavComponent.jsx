@@ -1,11 +1,18 @@
 import { Container, Navbar, Dropdown } from "react-bootstrap";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import "./NavComponent.css";
+import { useEffect } from "react";
+import { getProfileAction } from "../../redux/actions";
 
 const NavComponent = () => {
   const profile = useSelector(state => state.profile.content);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(getProfileAction());
+  }, []);
 
   const logout = () => {
     localStorage.removeItem("accessToken");

@@ -8,8 +8,8 @@ const RestaurantDashboardComponent = () => {
     <>
       <NavComponent />
 
-      <Container className="mt-5 dashboard d-flex flex-column flex-lg-row justify-content-between" style={{ marginTop: "80px", paddingTop: "180px" }}>
-        <Link as={Button} className="dashboard__element text-decoration-none border rounded-4 pt-4 pb-1 px-5 text-decoration-none position-relative align-self-center" style={{ overflow: "visible" }}>
+      <Container className="mt-5 dashboard d-flex flex-column flex-lg-row justify-content-between" style={{ paddingTop: "140px" }}>
+        <Link as={Button} to={"/past-orders"} className="dashboard__element text-decoration-none border rounded-4 pt-4 pb-1 px-5 text-decoration-none position-relative align-self-center" style={{ overflow: "visible" }}>
           <img
             className="dashboard__element__illustration position-absolute top-0 start-50 translate-middle"
             src="https://res.cloudinary.com/bertcoscia/image/upload/fl_preserve_transparency/v1728818213/Screenshot_2024-10-13_at_13.15.41-removebg-preview_npumvf.jpg?_s=public-apps"
