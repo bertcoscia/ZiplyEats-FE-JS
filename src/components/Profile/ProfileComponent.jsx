@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getProfileAction } from "../../redux/actions";
-import { Button, Col, Container, Form, Modal, Row } from "react-bootstrap";
+import { Button, Col, Container, Form, FormControl, InputGroup, Modal, Row } from "react-bootstrap";
 import NavComponent from "../navbar/NavComponent";
 import { useNavigate } from "react-router-dom";
 
 const ProfileComponent = () => {
   const RESTAURANTS_URL = import.meta.env.VITE_RESTAURANTS_URL;
+  const USERS_URL = import.meta.env.VITE_USERS_URL;
   const profile = useSelector(state => state.profile.content);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -15,6 +16,33 @@ const ProfileComponent = () => {
   const [showEmail, setShowEmail] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showPhoneNumber, setShowPhoneNumber] = useState(false);
+  const [showProfilePic, setShowProfilePic] = useState(false);
+  const [img, setImg] = useState(null);
+
+  const handleChangePic = event => {
+    setImg(event.target.files[0]);
+  };
+
+  const uploadProfilePic = avatarFile => {
+    const formData = new FormData();
+    formData.append("avatar", avatarFile);
+    fetch(`${USERS_URL}/me/avatar`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("accessToken")}`
+      },
+      body: formData
+    })
+      .then(response => {
+        if (response.ok) {
+          response.json();
+          dispatch(getProfileAction());
+        } else {
+          throw new Error("Coulnd't send data - @uploadProfilePic");
+        }
+      })
+      .catch(error => console.log(error));
+  };
 
   const handleClose = field => {
     switch (field) {
@@ -29,6 +57,9 @@ const ProfileComponent = () => {
         break;
       case "phoneNumber":
         setShowPhoneNumber(false);
+        break;
+      case "profilePic":
+        setShowProfilePic(false);
         break;
       default:
         break;
@@ -48,6 +79,9 @@ const ProfileComponent = () => {
         break;
       case "phoneNumber":
         setShowPhoneNumber(true);
+        break;
+      case "profilePic":
+        setShowProfilePic(true);
         break;
       default:
         break;
@@ -212,8 +246,46 @@ const ProfileComponent = () => {
     <>
       <NavComponent />
       {profile && (
-        <Container className="my-5">
+        <Container className="my-5" style={{ paddingTop: "60px" }}>
           <h2>Account</h2>
+          <div className="d-flex flex-column align-items-center">
+            <img src={profile.avatarUrl} alt="" style={{ width: "85px" }} className="rounded-circle mb-2" />
+            <Button variant="link" className="text-decoration-none edit__button__link" onClick={() => handleShow("profilePic")}>
+              Change profile picture
+            </Button>
+            <Modal show={showProfilePic} onHide={() => handleClose("profilePic")} className="perfect-shadow">
+              <Modal.Header closeButton className="border-bottom-0"></Modal.Header>
+              <Modal.Body>
+                <h2 className="fs-5 text-center">Update your profile picture</h2>
+                <Form
+                  className="mt-3"
+                  onSubmit={event => {
+                    event.preventDefault();
+                    uploadProfilePic(img);
+                  }}
+                >
+                  <InputGroup className="mb-3">
+                    <FormControl type="file" accept="img/*" onChange={handleChangePic} className="my-3" />
+                  </InputGroup>
+                  <Button type="submit" variant="primary" className="rounded-pill px-3" onClick={() => handleClose("profilePic")}>
+                    Save Changes
+                  </Button>
+                </Form>
+              </Modal.Body>
+              <Modal.Footer className="border-top-0 d-flex justify-content-center">
+                <Button
+                  onClick={() => {
+                    editName(name);
+                    handleClose("name");
+                  }}
+                  className="rounded-pill px-5 border-0"
+                  style={{ backgroundColor: "#F86834" }}
+                >
+                  Save Changes
+                </Button>
+              </Modal.Footer>
+            </Modal>
+          </div>
           <Row className="my-4">
             <Col md={11} className="d-flex align-items-center">
               <span className="me-3">

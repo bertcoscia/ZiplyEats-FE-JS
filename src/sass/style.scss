@@ -1,4 +1,4 @@
-@import "~bootstrap/scss/variables";
+@import "../../node_modules/bootstrap/scss/functions";
 
 $text: #333a3f;
 $background: #f2f2f2;
@@ -14,6 +14,6 @@ $custom-colors: (
   "accent": $accent
 );
 
-@import "~bootstrap/scss/variables";
+@import "../../node_modules/bootstrap/scss/variables";
 
 $theme-colors: map-merge($theme-colors, $custom-colors);
