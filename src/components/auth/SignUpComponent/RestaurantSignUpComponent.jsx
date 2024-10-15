@@ -5,11 +5,17 @@ import { Button, Container, Form } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 
 const RestaurantSignUpComponent = () => {
-  const navigate = useNavigate();
-  const GEOAPIFY_KEY = import.meta.env.VITE_GEOAPIFY_KEY;
-  const AUTH_URL = import.meta.env.VITE_AUTH_URL;
-  const RESTAURANT_CATEGORIES_URL = import.meta.env.VITE_RESTAURANT_CATEGORIES_URL;
+  // ENV VARIABLES
+  const ENV_VARIABLE = {
+    GEOAPIFY_KEY: import.meta.env.VITE_GEOAPIFY_KEY,
+    URL_AUTH: import.meta.env.VITE_AUTH_URL,
+    URL_RESTAURANT_CATEGORIES: import.meta.env.VITE_RESTAURANT_CATEGORIES_URL
+  };
 
+  // HOOKS
+  const navigate = useNavigate();
+
+  // USE STATE
   const [signupDTO, setSignupDTO] = useState({
     name: "",
     surname: "",
@@ -25,8 +31,45 @@ const RestaurantSignUpComponent = () => {
 
   const [restaurantCategories, setRestaurantCategories] = useState([]);
 
+  const [passwordError, setPasswordError] = useState("");
+
+  // HANDLERS
+  const handleTextChange = event => {
+    const { name, value } = event.target;
+    setSignupDTO(prevState => ({
+      ...prevState,
+      [name]: value
+    }));
+  };
+
+  const handlePasswordChange = event => {
+    const { value } = event.target;
+    setSignupDTO(prevState => ({
+      ...prevState,
+      password: value
+    }));
+    validatePassword(value);
+  };
+
+  const handlePlaceSelect = geoapifyResponse => {
+    setSignupDTO(prevState => ({
+      ...prevState,
+      address: geoapifyResponse.properties.formatted,
+      city: geoapifyResponse.properties.city,
+      longitude: geoapifyResponse.geometry.coordinates[0],
+      latitude: geoapifyResponse.geometry.coordinates[1]
+    }));
+  };
+
+  const handleSubmit = event => {
+    event.preventDefault();
+    console.log(signupDTO);
+    restaurantSignup(signupDTO);
+  };
+
+  // FETCH
   const fetchCategories = () => {
-    fetch(`${RESTAURANT_CATEGORIES_URL}/list`)
+    fetch(`${ENV_VARIABLE.URL_RESTAURANT_CATEGORIES}/list`)
       .then(response => {
         if (response.ok) {
           return response.json();
@@ -41,7 +84,7 @@ const RestaurantSignUpComponent = () => {
   };
 
   const restaurantSignup = signupDTO => {
-    fetch(`${AUTH_URL}/restaurants-signup`, {
+    fetch(`${ENV_VARIABLE.URL_AUTH}/restaurants-signup`, {
       method: "POST",
       headers: {
         "Content-type": "application/json"
@@ -73,16 +116,7 @@ const RestaurantSignUpComponent = () => {
       .catch(error => console.log(error));
   };
 
-  const [passwordError, setPasswordError] = useState("");
-
-  const handleTextChange = event => {
-    const { name, value } = event.target;
-    setSignupDTO(prevState => ({
-      ...prevState,
-      [name]: value
-    }));
-  };
-
+  // UTILS
   const validatePassword = password => {
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$%^&+=!]).{8,}$/;
 
@@ -93,31 +127,7 @@ const RestaurantSignUpComponent = () => {
     }
   };
 
-  const handlePasswordChange = event => {
-    const { value } = event.target;
-    setSignupDTO(prevState => ({
-      ...prevState,
-      password: value
-    }));
-    validatePassword(value);
-  };
-
-  const handlePlaceSelect = geoapifyResponse => {
-    setSignupDTO(prevState => ({
-      ...prevState,
-      address: geoapifyResponse.properties.formatted,
-      city: geoapifyResponse.properties.city,
-      longitude: geoapifyResponse.geometry.coordinates[0],
-      latitude: geoapifyResponse.geometry.coordinates[1]
-    }));
-  };
-
-  const handleSubmit = event => {
-    event.preventDefault();
-    console.log(signupDTO);
-    restaurantSignup(signupDTO);
-  };
-
+  // USE EFFECT
   useEffect(() => {
     fetchCategories();
   }, []);
@@ -147,7 +157,7 @@ const RestaurantSignUpComponent = () => {
         </Form.Group>
         <Form.Group className="signup__form__group mb-3 geoapify-input">
           <Form.Label className="signup__form__group__label">Address</Form.Label>
-          <GeoapifyContext className="custom-input" apiKey={GEOAPIFY_KEY}>
+          <GeoapifyContext className="custom-input" apiKey={ENV_VARIABLE.GEOAPIFY_KEY}>
             <GeoapifyGeocoderAutocomplete placeSelect={handlePlaceSelect} debounceDelay={700} style={{ width: "100%" }} required />
           </GeoapifyContext>
         </Form.Group>

@@ -5,46 +5,55 @@ import { Button, Col, Container, Form, FormControl, InputGroup, Modal, Row } fro
 import NavComponent from "../navbar/NavComponent";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useNavigate } from "react-router-dom";
+import { GeoapifyContext, GeoapifyGeocoderAutocomplete } from "@geoapify/react-geocoder-autocomplete";
+import { Geo } from "react-bootstrap-icons";
 
 const ProfileComponent = () => {
-  const RESTAURANTS_URL = import.meta.env.VITE_RESTAURANTS_URL;
-  const USERS_URL = import.meta.env.VITE_USERS_URL;
-  const RIDERS_URL = import.meta.env.VITE_RIDERS_URL;
+  // ENV VARIABLES
+  const ENV_VARIABLE = {
+    URL_RESTAURANTS: import.meta.env.VITE_RESTAURANTS_URL,
+    URL_USERS: import.meta.env.VITE_USERS_URL,
+    URL_RIDERS: import.meta.env.VITE_RIDERS_URL,
+    GEOAPIFY_KEY: import.meta.env.VITE_GEOAPIFY_KEY
+  };
+
+  // HOOKS
   const profile = useSelector(state => state.profile.content);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  // USE STATE - MODALS
   const [showName, setShowName] = useState(false);
   const [showFullName, setShowFullName] = useState(false);
   const [showEmail, setShowEmail] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showPhoneNumber, setShowPhoneNumber] = useState(false);
   const [showProfilePic, setShowProfilePic] = useState(false);
-  const [img, setImg] = useState(null);
+  const [showAddress, setShowAddress] = useState(false);
 
+  // USE STATE - PAYLOADS
+  const [name, setName] = useState({ name: "" });
+  const [fullName, setFullName] = useState({ name: "", surname: "" });
+  const [email, setEmail] = useState({ email: "" });
+  const [password, setPassword] = useState({ currentPassword: "", newPassword: "" });
+  const [phoneNumber, setPhoneNumber] = useState({ phoneNumber: "" });
+  const [editFullNameUrl, setEditFullNameUrl] = useState("");
+  const [address, setAddress] = useState({
+    address: "",
+    city: "",
+    latitude: null,
+    longitude: null
+  });
+
+  // USE STATE - OTHERS
+  const [img, setImg] = useState(null);
+  const [errorGeoapify, setErrorGeoapify] = useState("");
+  const [geoapifyResponse, setGeoapifyResponse] = useState(null);
+  const [geoapifyInputValue, setGeoapifyInputValue] = useState("");
+
+  // HANDLERS
   const handleChangePic = event => {
     setImg(event.target.files[0]);
-  };
-
-  const uploadProfilePic = avatarFile => {
-    const formData = new FormData();
-    formData.append("avatar", avatarFile);
-    fetch(`${USERS_URL}/me/avatar`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("accessToken")}`
-      },
-      body: formData
-    })
-      .then(response => {
-        if (response.ok) {
-          response.json();
-          dispatch(getProfileAction());
-        } else {
-          throw new Error("Coulnd't send data - @uploadProfilePic");
-        }
-      })
-      .catch(error => console.log(error));
   };
 
   const handleClose = field => {
@@ -66,6 +75,9 @@ const ProfileComponent = () => {
         break;
       case "profilePic":
         setShowProfilePic(false);
+        break;
+      case "address":
+        setShowAddress(false);
         break;
       default:
         break;
@@ -92,35 +104,25 @@ const ProfileComponent = () => {
       case "profilePic":
         setShowProfilePic(true);
         break;
+      case "address":
+        setShowAddress(true);
+        break;
       default:
         break;
     }
   };
 
-  const [name, setName] = useState({ name: "" });
-  const [fullName, setFullName] = useState({ name: "", surname: "" });
-  const [email, setEmail] = useState({ email: "" });
-  const [password, setPassword] = useState({ currentPassword: "", newPassword: "" });
-  const [phoneNumber, setPhoneNumber] = useState({ phoneNumber: "" });
-  const [editFullNameUrl, setEditFullNameUrl] = useState("");
-
-  useEffect(() => {
-    dispatch(getProfileAction());
-    if (profile) {
-      const url = profile.userRole.userRole === "RIDER" ? `${RIDERS_URL}/me/edit-name+surname` : `${USERS_URL}/me/edit-name+surname`;
-      setEditFullNameUrl(url);
-      console.log(editFullNameUrl);
-    }
-  }, [dispatch]);
-
-  useEffect(() => {
-    if (profile) {
-      setName({ name: profile.name });
-      setFullName({ name: profile.name, surname: profile.surname });
-      setEmail({ email: profile.email });
-      setPhoneNumber({ phoneNumber: profile.phoneNumber });
-    }
-  }, [profile]);
+  const handlePlaceSelect = geoapifyResponse => {
+    setGeoapifyResponse(geoapifyResponse);
+    setAddress(prevState => ({
+      ...prevState,
+      address: geoapifyResponse.properties.formatted,
+      city: geoapifyResponse.properties.city,
+      longitude: geoapifyResponse.geometry.coordinates[0],
+      latitude: geoapifyResponse.geometry.coordinates[1]
+    }));
+    setErrorGeoapify("");
+  };
 
   const handleChange = (field, event) => {
     const { name, value } = event.target;
@@ -160,8 +162,44 @@ const ProfileComponent = () => {
     }
   };
 
+  const handleGeoapifyError = error => {
+    console.error("Geoapify Error:", error);
+    setErrorGeoapify("There are no results. Please try again");
+  };
+
+  const handleGeoapifyChange = value => {
+    setGeoapifyInputValue(value);
+    if (value && !geoapifyInputValue) {
+      setErrorGeoapify("Nessun risultato trovato.");
+    } else {
+      setErrorGeoapify("");
+    }
+  };
+
+  // FETCH
+  const uploadProfilePic = avatarFile => {
+    const formData = new FormData();
+    formData.append("avatar", avatarFile);
+    fetch(`${ENV_VARIABLE.URL_USERS}/me/avatar`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("accessToken")}`
+      },
+      body: formData
+    })
+      .then(response => {
+        if (response.ok) {
+          response.json();
+          dispatch(getProfileAction());
+        } else {
+          throw new Error("Coulnd't send data - @uploadProfilePic");
+        }
+      })
+      .catch(error => console.log(error));
+  };
+
   const editName = name => {
-    fetch(`${RESTAURANTS_URL}/my-restaurant/edit-name`, {
+    fetch(`${ENV_VARIABLE.URL_RESTAURANTS}/my-restaurant/edit-name`, {
       method: "PATCH",
       headers: {
         Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
@@ -214,7 +252,7 @@ const ProfileComponent = () => {
   };
 
   const editEmail = email => {
-    fetch(`${RESTAURANTS_URL}/my-restaurant/edit-email`, {
+    fetch(`${ENV_VARIABLE.URL_RESTAURANTS}/my-restaurant/edit-email`, {
       method: "PATCH",
       headers: {
         Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
@@ -240,7 +278,7 @@ const ProfileComponent = () => {
   };
 
   const editPassword = password => {
-    fetch(`${RESTAURANTS_URL}/my-restaurant/edit-password`, {
+    fetch(`${ENV_VARIABLE.URL_RESTAURANTS}/my-restaurant/edit-password`, {
       method: "PATCH",
       headers: {
         Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
@@ -267,7 +305,7 @@ const ProfileComponent = () => {
   };
 
   const editPhoneNumber = phoneNumber => {
-    fetch(`${RESTAURANTS_URL}/my-restaurant/edit-phoneNumber`, {
+    fetch(`${ENV_VARIABLE.URL_RESTAURANTS}/my-restaurant/edit-phoneNumber`, {
       method: "PATCH",
       headers: {
         Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
@@ -292,12 +330,61 @@ const ProfileComponent = () => {
       .catch(error => console.log(error));
   };
 
+  const editAddress = address => {
+    fetch(`${ENV_VARIABLE.URL_RESTAURANTS}/my-restaurant/edit-address`, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        "Content-type": "application/json"
+      },
+      body: JSON.stringify(address)
+    })
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error("Unable to update the restaurant address. Please try again later.");
+        }
+      })
+      .then(() => {
+        setAddress({
+          address: "",
+          city: "",
+          latitude: null,
+          longitude: null
+        });
+        dispatch(getProfileAction());
+        navigate(0);
+      })
+      .catch(error => console.log(error));
+  };
+
+  // USE EFFECT
+  useEffect(() => {
+    dispatch(getProfileAction());
+    if (profile) {
+      const url = profile.userRole.userRole === "RIDER" ? `${ENV_VARIABLE.URL_RIDERS}/me/edit-name+surname` : `${ENV_VARIABLE.URL_USERS}/me/edit-name+surname`;
+      setEditFullNameUrl(url);
+    }
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (profile) {
+      setName({ name: profile.name });
+      setFullName({ name: profile.name, surname: profile.surname });
+      setEmail({ email: profile.email });
+      setPhoneNumber({ phoneNumber: profile.phoneNumber });
+    }
+  }, [profile]);
+
   return (
     <>
       <NavComponent />
       {profile && (
         <Container className="my-5" style={{ paddingTop: "60px" }}>
           <h2>Account</h2>
+
+          {/* CHANGE PROFILE PIC */}
           <div className="d-flex flex-column align-items-center">
             <img src={profile.avatarUrl} alt="" style={{ width: "85px" }} className="rounded-circle mb-2" />
             <Button variant="link" className="text-decoration-none edit__button__link" onClick={() => handleShow("profilePic")}>
@@ -317,16 +404,13 @@ const ProfileComponent = () => {
                   <InputGroup className="mb-3">
                     <FormControl type="file" accept="img/*" onChange={handleChangePic} className="my-3" />
                   </InputGroup>
-                  <Button type="submit" variant="primary" className="rounded-pill px-3" onClick={() => handleClose("profilePic")}>
-                    Save Changes
-                  </Button>
                 </Form>
               </Modal.Body>
               <Modal.Footer className="border-top-0 d-flex justify-content-center">
                 <Button
                   onClick={() => {
-                    editName(name);
-                    handleClose("name");
+                    uploadProfilePic(img);
+                    handleClose("profilePic");
                   }}
                   className="rounded-pill px-5 border-0"
                   style={{ backgroundColor: "#F86834" }}
@@ -336,7 +420,9 @@ const ProfileComponent = () => {
               </Modal.Footer>
             </Modal>
           </div>
+
           {profile.userRole.userRole == "RESTAURANT" && (
+            // CHANGE NAME
             <Row className="my-4">
               <Col md={11} className="d-flex align-items-center">
                 <span className="me-3">
@@ -382,7 +468,9 @@ const ProfileComponent = () => {
               </Modal>
             </Row>
           )}
+
           {profile.userRole.userRole != "RESTAURANT" && (
+            // CHANGE NAME + SURNAME
             <Row className="my-4">
               <Col md={11} className="d-flex align-items-center">
                 <span className="me-3">
@@ -432,6 +520,8 @@ const ProfileComponent = () => {
               </Modal>
             </Row>
           )}
+
+          {/* CHANGE EMAIL */}
           <Row className="my-4">
             <Col md={11} className="d-flex align-items-center">
               <span className="me-3">
@@ -441,19 +531,6 @@ const ProfileComponent = () => {
             </Col>
             <Col md={1}>
               <Button variant="link" className="text-decoration-none edit__button__link" onClick={() => handleShow("email")}>
-                Edit
-              </Button>
-            </Col>
-          </Row>
-          <Row className="my-4">
-            <Col md={11} className="d-flex align-items-center">
-              <span className="me-3">
-                <img src="https://glovo.dhmedia.io/image/customer-assets-glovo/customer_profile/lock.svg?t=W3sic3ZnIjp7InEiOiJsb3cifX1d" alt="" style={{ width: "20px" }} />
-              </span>
-              <small>Change password</small>
-            </Col>
-            <Col md={1}>
-              <Button variant="link" className="text-decoration-none edit__button__link" onClick={() => handleShow("password")}>
                 Edit
               </Button>
             </Col>
@@ -480,28 +557,74 @@ const ProfileComponent = () => {
               </Modal.Footer>
             </Modal>
           </Row>
+
+          {/* CHANGE ADDRESS */}
           <Row className="my-4">
             <Col md={11} className="d-flex align-items-center">
               <span className="me-3">
-                <img src="https://glovo.dhmedia.io/image/customer-assets-glovo/customer_profile/screen.svg?t=W3sic3ZnIjp7InEiOiJsb3cifX1d" alt="" style={{ width: "20px" }} />
+                <Geo />
               </span>
-              <small>Change phone number</small>
+              <small>{profile.address.split(", ").slice(0, 3).join(", ")}</small>
             </Col>
             <Col md={1}>
-              <Button variant="link" className="text-decoration-none edit__button__link" onClick={() => handleShow("phoneNumber")}>
+              <Button variant="link" className="text-decoration-none edit__button__link" onClick={() => handleShow("address")}>
                 Edit
               </Button>
             </Col>
+            <Modal show={showAddress} onHide={() => handleClose("address")} className="perfect-shadow">
+              <Modal.Header closeButton className="border-bottom-0"></Modal.Header>
+              <Modal.Body>
+                <h2 className="fs-5 text-center">Type your new address</h2>
+                <Form
+                  onSubmit={event => {
+                    event.preventDefault();
+                    editAddress(address);
+                  }}
+                >
+                  <Form.Group className="signup__form__group mb-3 geoapify-input">
+                    <Form.Label className="signup__form__group__label">Address</Form.Label>
+                    <GeoapifyContext className="custom-input" apiKey={ENV_VARIABLE.GEOAPIFY_KEY}>
+                      <GeoapifyGeocoderAutocomplete
+                        placeSelect={handlePlaceSelect}
+                        onError={handleGeoapifyError}
+                        onChange={handleGeoapifyChange}
+                        debounceDelay={800}
+                        style={{ width: "100%" }}
+                        required
+                        options={{
+                          filterByCountryCode: ["IT"]
+                        }}
+                      />
+                    </GeoapifyContext>
+                    {errorGeoapify != "" && <small className="text-danger">{errorGeoapify}</small>}
+                  </Form.Group>
+                </Form>
+              </Modal.Body>
+              <Modal.Footer className="border-top-0 d-flex justify-content-center">
+                <Button
+                  onClick={() => {
+                    editAddress(address);
+                    handleClose("address");
+                  }}
+                  className="rounded-pill px-5 border-0"
+                  style={{ backgroundColor: "#F86834" }}
+                >
+                  Save Changes
+                </Button>
+              </Modal.Footer>
+            </Modal>
           </Row>
+
+          {/* CHANGE PASSWORD */}
           <Row className="my-4">
             <Col md={11} className="d-flex align-items-center">
               <span className="me-3">
-                <img src="https://glovo.dhmedia.io/image/customer-assets-glovo/customer_profile/payment.svg?t=W3sic3ZnIjp7InEiOiJsb3cifX1d" alt="" style={{ width: "20px" }} />
+                <img src="https://glovo.dhmedia.io/image/customer-assets-glovo/customer_profile/lock.svg?t=W3sic3ZnIjp7InEiOiJsb3cifX1d" alt="" style={{ width: "20px" }} />
               </span>
-              <small>Payment methods</small>
+              <small>Change password</small>
             </Col>
             <Col md={1}>
-              <Button variant="link" className="text-decoration-none edit__button__link">
+              <Button variant="link" className="text-decoration-none edit__button__link" onClick={() => handleShow("password")}>
                 Edit
               </Button>
             </Col>
@@ -539,15 +662,17 @@ const ProfileComponent = () => {
               </Modal.Footer>
             </Modal>
           </Row>
+
+          {/* CHANGE PHONE NUMBER */}
           <Row className="my-4">
             <Col md={11} className="d-flex align-items-center">
               <span className="me-3">
-                <img src="https://glovo.dhmedia.io/image/customer-assets-glovo/customer_profile/invoice.svg?t=W3sic3ZnIjp7InEiOiJsb3cifX1d" alt="" style={{ width: "20px" }} />
+                <img src="https://glovo.dhmedia.io/image/customer-assets-glovo/customer_profile/screen.svg?t=W3sic3ZnIjp7InEiOiJsb3cifX1d" alt="" style={{ width: "20px" }} />
               </span>
-              <small>Invoice information</small>
+              <small>Change phone number</small>
             </Col>
             <Col md={1}>
-              <Button variant="link" className="text-decoration-none edit__button__link">
+              <Button variant="link" className="text-decoration-none edit__button__link" onClick={() => handleShow("phoneNumber")}>
                 Edit
               </Button>
             </Col>

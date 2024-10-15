@@ -4,6 +4,22 @@ import { Link } from "react-router-dom";
 import "animate.css";
 
 const SignUpComponent = () => {
+  // ENV VARIABLES
+  const ENV_VARIABLE = {};
+
+  // HOOKS
+
+  // USE STATE
+
+  // HANDLERS
+
+  // FETCH
+
+  // UTILS
+
+  // USE EFFECT
+
+  //TODO:REFACTOR
   return (
     <Container className="signup my-5 pt-5 align-items-center">
       <div className="signup__options d-flex flex-column flex-lg-row justify-content-between align-items-center">

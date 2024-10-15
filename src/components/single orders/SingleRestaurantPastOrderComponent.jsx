@@ -26,7 +26,7 @@ const SingleRestaurantPastOrderComponent = ({ order }) => {
                   orderProduct.toppings.map((topping, index) => (
                     <Container key={index} className="d-flex justify-content-between ms-3 text-muted">
                       <small className="d">{topping.name}</small>
-                      <small>+{topping.price}€</small>
+                      {/* <small>+{topping.price}€</small> */}
                     </Container>
                   ))}
               </div>

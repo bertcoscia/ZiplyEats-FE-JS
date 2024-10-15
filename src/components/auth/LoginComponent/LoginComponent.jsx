@@ -3,9 +3,15 @@ import { Button, Container, Form } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 
 const LoginComponent = () => {
-  const navigate = useNavigate();
-  const AUTH_URL = import.meta.env.VITE_AUTH_URL;
+  // ENV VARIABLES
+  const ENV_VARIABLE = {
+    URL_AUTH: import.meta.env.VITE_AUTH_URL
+  };
 
+  // HOOKS
+  const navigate = useNavigate();
+
+  // USE STATE
   const [loginDTO, setLoginDTO] = useState({
     email: "",
     password: ""
@@ -13,8 +19,23 @@ const LoginComponent = () => {
 
   const [loginError, setLoginError] = useState(false);
 
+  // HANDLERS
+  const handleSubmit = event => {
+    event.preventDefault();
+    login(loginDTO);
+  };
+
+  const handleTextChange = event => {
+    const { name, value } = event.target;
+    setLoginDTO(prevState => ({
+      ...prevState,
+      [name]: value
+    }));
+  };
+
+  // FETCH
   const login = loginDTO => {
-    fetch(`${AUTH_URL}/users-login`, {
+    fetch(`${ENV_VARIABLE.URL_AUTH}/users-login`, {
       method: "POST",
       headers: {
         "Content-type": "application/json"
@@ -38,19 +59,6 @@ const LoginComponent = () => {
         navigate("/home");
       })
       .catch(error => console.log(error));
-  };
-
-  const handleSubmit = event => {
-    event.preventDefault();
-    login(loginDTO);
-  };
-
-  const handleTextChange = event => {
-    const { name, value } = event.target;
-    setLoginDTO(prevState => ({
-      ...prevState,
-      [name]: value
-    }));
   };
 
   return (
