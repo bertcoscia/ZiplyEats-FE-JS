@@ -7,8 +7,9 @@ import UserSignUpComponent from "./components/auth/SignUpComponent/UserSignUpCom
 import RiderSignUpComponent from "./components/auth/SignUpComponent/RiderSignUpComponent";
 import RestaurantSignUpComponent from "./components/auth/SignUpComponent/RestaurantSignUpComponent";
 import HomeComponent from "./components/home/HomeComponent";
-import ProfileComponent from "./components/Profile/ProfileComponent";
-import PastOrdersComponent from "./components/home/RestaurantDashboard/RestaurantPastOrdersComponent/RestaurantPastOrdersComponent";
+import PastOrdersComponent from "./components/home/RestaurantDashboardComponent/RestaurantPastOrdersComponent/RestaurantPastOrdersComponent";
+import ProfileComponent from "./components/profile/ProfileComponent";
+import EditMenuComponent from "./components/home/RestaurantDashboardComponent/EditMenuComponent/EditMenuComponent";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
           <Route path="/me" element={<ProfileComponent />} />
           <Route path="/home" element={<HomeComponent />} />
           <Route path="/past-orders" element={<PastOrdersComponent />} />
+          <Route path="/edit-menu" element={<EditMenuComponent />} />
         </Routes>
       </BrowserRouter>
     </>

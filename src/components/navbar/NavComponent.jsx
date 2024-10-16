@@ -6,18 +6,21 @@ import { useEffect } from "react";
 import { getProfileAction } from "../../redux/actions";
 
 const NavComponent = () => {
+  // HOOKS
   const profile = useSelector(state => state.profile.content);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    dispatch(getProfileAction());
-  }, []);
-
+  // UTILS
   const logout = () => {
     localStorage.removeItem("accessToken");
     navigate("/");
   };
+
+  // USE EFFECT
+  useEffect(() => {
+    dispatch(getProfileAction());
+  }, []);
 
   return (
     <>

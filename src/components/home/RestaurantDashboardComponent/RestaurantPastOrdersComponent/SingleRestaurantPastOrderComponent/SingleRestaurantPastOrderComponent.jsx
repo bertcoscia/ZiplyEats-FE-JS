@@ -1,6 +1,7 @@
 import { Container } from "react-bootstrap";
 
 const SingleRestaurantPastOrderComponent = ({ order }) => {
+  // UTILS
   const formatDateTime = dateTimeString => {
     const date = new Date(dateTimeString);
     const day = String(date.getDate()).padStart(2, "0");

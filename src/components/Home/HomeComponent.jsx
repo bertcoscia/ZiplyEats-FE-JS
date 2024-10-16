@@ -1,5 +1,5 @@
 import { useSelector } from "react-redux";
-import RestaurantDashboardComponent from "./RestaurantDashboard/RestaurantDashboardComponent";
+import RestaurantDashboardComponent from "./RestaurantDashboardComponent/RestaurantDashboardComponent";
 import NavComponent from "../navbar/NavComponent";
 
 const HomeComponent = () => {

@@ -5,10 +5,16 @@ import { Button, Container, Form } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 
 const UserSignUpComponent = () => {
-  const navigate = useNavigate();
-  const GEOAPIFY_KEY = import.meta.env.VITE_GEOAPIFY_KEY;
-  const AUTH_URL = import.meta.env.VITE_AUTH_URL;
+  // ENV VARIABLES
+  const ENV_VARIABLE = {
+    GEOAPIFY_KEY: import.meta.env.VITE_GEOAPIFY_KEY,
+    URL_AUTH: import.meta.env.VITE_AUTH_URL
+  };
 
+  // HOOKS
+  const navigate = useNavigate();
+
+  // USE STATE
   const [signupDTO, setSignupDTO] = useState({
     name: "",
     surname: "",
@@ -21,8 +27,45 @@ const UserSignUpComponent = () => {
     latitude: null
   });
 
+  const [passwordError, setPasswordError] = useState("");
+
+  // HANDLERS
+  const handlePasswordChange = event => {
+    const { value } = event.target;
+    setSignupDTO(prevState => ({
+      ...prevState,
+      password: value
+    }));
+    validatePassword(value);
+  };
+
+  const handlePlaceSelect = geoapifyResponse => {
+    setSignupDTO(prevState => ({
+      ...prevState,
+      address: geoapifyResponse.properties.formatted,
+      city: geoapifyResponse.properties.city,
+      longitude: geoapifyResponse.geometry.coordinates[0],
+      latitude: geoapifyResponse.geometry.coordinates[1]
+    }));
+  };
+
+  const handleSubmit = event => {
+    event.preventDefault();
+    console.log(signupDTO);
+    userSignup(signupDTO);
+  };
+
+  const handleTextChange = event => {
+    const { name, value } = event.target;
+    setSignupDTO(prevState => ({
+      ...prevState,
+      [name]: value
+    }));
+  };
+
+  // FETCH
   const userSignup = signupDTO => {
-    fetch(`${AUTH_URL}/users-signup`, {
+    fetch(`${ENV_VARIABLE.URL_AUTH}/users-signup`, {
       method: "POST",
       headers: {
         "Content-type": "application/json"
@@ -54,16 +97,7 @@ const UserSignUpComponent = () => {
       .catch(error => console.log(error));
   };
 
-  const [passwordError, setPasswordError] = useState("");
-
-  const handleTextChange = event => {
-    const { name, value } = event.target;
-    setSignupDTO(prevState => ({
-      ...prevState,
-      [name]: value
-    }));
-  };
-
+  // UTILS
   const validatePassword = password => {
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$%^&+=!]).{8,}$/;
 
@@ -72,31 +106,6 @@ const UserSignUpComponent = () => {
     } else {
       setPasswordError("");
     }
-  };
-
-  const handlePasswordChange = event => {
-    const { value } = event.target;
-    setSignupDTO(prevState => ({
-      ...prevState,
-      password: value
-    }));
-    validatePassword(value);
-  };
-
-  const handlePlaceSelect = geoapifyResponse => {
-    setSignupDTO(prevState => ({
-      ...prevState,
-      address: geoapifyResponse.properties.formatted,
-      city: geoapifyResponse.properties.city,
-      longitude: geoapifyResponse.geometry.coordinates[0],
-      latitude: geoapifyResponse.geometry.coordinates[1]
-    }));
-  };
-
-  const handleSubmit = event => {
-    event.preventDefault();
-    console.log(signupDTO);
-    userSignup(signupDTO);
   };
 
   return (

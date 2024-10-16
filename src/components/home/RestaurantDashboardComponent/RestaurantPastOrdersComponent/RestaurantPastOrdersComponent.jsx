@@ -1,15 +1,20 @@
 import { useEffect, useState } from "react";
 import NavComponent from "../../../navbar/NavComponent";
 import { Container } from "react-bootstrap";
-import SingleOrderComponent from "../../../single orders/SingleRestaurantPastOrderComponent";
+import SingleOrderComponent from "./SingleRestaurantPastOrderComponent/SingleRestaurantPastOrderComponent";
 
 const RestaurantPastOrdersComponent = () => {
-  const ORDERS_URL = import.meta.env.VITE_ORDERS_URL;
+  // ENV VARIABLES
+  const ENV_VARIABLE = {
+    URL_ORDERS: import.meta.env.VITE_ORDERS_URL
+  };
 
+  // USE STATE
   const [restaurantPastOrders, setRestaurantPastOrders] = useState([]);
 
+  // FETCH
   const getRestaurantPastOrders = () => {
-    fetch(`${ORDERS_URL}/my-orders/restaurant`, {
+    fetch(`${ENV_VARIABLE.URL_ORDERS}/my-orders/restaurant`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("accessToken")}`
       }
@@ -27,6 +32,7 @@ const RestaurantPastOrdersComponent = () => {
       .catch(error => console.log(error));
   };
 
+  // USE EFFECT
   useEffect(() => {
     getRestaurantPastOrders();
   }, []);

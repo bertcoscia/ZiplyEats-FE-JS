@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { getProfileAction } from "../../redux/actions";
 import { Button, Col, Container, Form, FormControl, InputGroup, Modal, Row } from "react-bootstrap";
 import NavComponent from "../navbar/NavComponent";
-import "bootstrap/dist/css/bootstrap.min.css";
 import { useNavigate } from "react-router-dom";
 import { GeoapifyContext, GeoapifyGeocoderAutocomplete } from "@geoapify/react-geocoder-autocomplete";
 import { Geo } from "react-bootstrap-icons";
