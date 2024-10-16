@@ -3,6 +3,8 @@ import "./SingleProductComponent.css";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+// TODO: IMPLEMENT CLOUDINARY
+
 const SingleProductComponent = ({ product, userRole }) => {
   // ENV VARIABLES
   const ENV_VARIABLE = {
@@ -42,7 +44,6 @@ const SingleProductComponent = ({ product, userRole }) => {
     event.preventDefault();
     editProduct(editProductDTO);
     handleClose();
-    navigate(0);
   };
 
   // FETCH
@@ -83,11 +84,13 @@ const SingleProductComponent = ({ product, userRole }) => {
         <Col xs={4} sm={5} md={3} xl={4}>
           <img src={product.imageUrl} alt={product.name} className="img-fluid rounded" style={{ width: "70px" }} />
         </Col>
-        <Col xs={12} className="position-absolute bottom-0">
-          <Button variant="link" className="p-0 text-decoration-none" onClick={handleShow}>
-            <small>Edit</small>
-          </Button>
-        </Col>
+        {userRole === "RESTAURANT" && (
+          <Col xs={12} className="position-absolute bottom-0">
+            <Button variant="link" className="p-0 text-decoration-none" onClick={handleShow}>
+              <small>Edit</small>
+            </Button>
+          </Col>
+        )}
         <Modal show={show} onHide={handleClose} className="perfect-shadow">
           <Modal.Header closeButton className="border-bottom-0"></Modal.Header>
           <Modal.Body>
