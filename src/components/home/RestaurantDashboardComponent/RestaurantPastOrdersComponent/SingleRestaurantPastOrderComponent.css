@@ -1,0 +1,29 @@
+@media (max-width: 576px) {
+  .single-restaurant-past-order {
+    width: 100%;
+  }
+}
+
+@media (min-width: 768px) {
+  .single-restaurant-past-order {
+    width: 45%;
+  }
+}
+
+@media (min-width: 992px) {
+  .single-restaurant-past-order {
+    width: 30%;
+  }
+}
+
+@media (min-width: 1200px) {
+  .single-restaurant-past-order {
+    width: 30%;
+  }
+}
+
+@media (min-width: 1400px) {
+  .single-restaurant-past-order {
+    width: 25%;
+  }
+}

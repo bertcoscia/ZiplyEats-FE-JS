@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import NavComponent from "../../../navbar/NavComponent";
-import { Container } from "react-bootstrap";
+import { Button, Container } from "react-bootstrap";
 import SingleOrderComponent from "./SingleRestaurantPastOrderComponent";
+import { Link, useNavigate } from "react-router-dom";
 
 const RestaurantPastOrdersComponent = () => {
   // ENV VARIABLES
@@ -45,6 +46,9 @@ const RestaurantPastOrdersComponent = () => {
         <>
           <Container style={{ marginTop: "110px" }}>
             <h1 className="text-center mb-3">Past Orders</h1>
+            <Button as={Link} to={"/home"} variant="link" className="text-decoration-none mb-3">
+              Go back
+            </Button>
             <div className="d-flex flex-wrap">
               {restaurantPastOrders
                 .sort((a, b) => new Date(b.creationDateTime) - new Date(a.creationDateTime))

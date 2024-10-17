@@ -41,8 +41,8 @@ const RestaurantActiveOrdersComponent = () => {
   }, []);
 
   return (
-    <Container className="my-3">
-      <h2 className="text-center">Active orders</h2>
+    <Container className="my-4">
+      <h2 className="text-center mb-3">Active orders</h2>
       <div className="d-flex flex-wrap">{activeOrders.length > 0 ? activeOrders.map(order => <SingleActiveOrderComponent key={order.idOrder} order={order} />) : <p className="text-center">There are no active orders</p>}</div>
     </Container>
   );

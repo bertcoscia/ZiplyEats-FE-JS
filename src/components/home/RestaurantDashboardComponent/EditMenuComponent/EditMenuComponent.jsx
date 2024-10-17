@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import NavComponent from "../../../navbar/NavComponent";
 import SingleProductComponent from "../../../SingleProductComponent/SingleProductComponent";
 import { Button, Col, Container, Form, Modal, Row, Spinner } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Plus, PlusCircle, PlusCircleFill } from "react-bootstrap-icons";
 
 // TODO: IMPLEMENT CLOUDINARY
@@ -175,10 +175,10 @@ const EditMenuComponent = () => {
             <Container style={{ marginTop: "100px" }}>
               <h1 className="text-center">Edit your menu</h1>
               <Container className="mb-3 justify-content-between align-items-center">
-                <Button variant="link" className="p-0 text-decoration-none mb-3 d-block" onClick={() => navigate("/home")}>
+                <Button as={Link} to={"/home"} variant="link" className="p-0 text-decoration-none mb-3">
                   Go back
                 </Button>
-                <Button variant="link" className="p-0 text-decoration-none mb-3" onClick={handleShow}>
+                <Button variant="link" className="p-0 text-decoration-none mb-3 d-block" onClick={handleShow}>
                   Add new product
                 </Button>
                 <Modal show={show} onHide={handleClose} className="perfect-shadow">
