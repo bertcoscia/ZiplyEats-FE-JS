@@ -173,7 +173,11 @@ const EditMenuComponent = () => {
 
           {!loading && (
             <Container style={{ marginTop: "100px" }}>
+              <h1 className="text-center">Edit your menu</h1>
               <Container className="mb-3 justify-content-between align-items-center">
+                <Button variant="link" className="p-0 text-decoration-none mb-3 d-block" onClick={() => navigate("/home")}>
+                  Go back
+                </Button>
                 <Button variant="link" className="p-0 text-decoration-none mb-3" onClick={handleShow}>
                   Add new product
                 </Button>

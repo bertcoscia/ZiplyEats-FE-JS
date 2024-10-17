@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import NavComponent from "../../../navbar/NavComponent";
 import { Container } from "react-bootstrap";
-import SingleOrderComponent from "./SingleRestaurantPastOrderComponent/SingleRestaurantPastOrderComponent";
+import SingleOrderComponent from "./SingleRestaurantPastOrderComponent";
 
 const RestaurantPastOrdersComponent = () => {
   // ENV VARIABLES
@@ -14,7 +14,7 @@ const RestaurantPastOrdersComponent = () => {
 
   // FETCH
   const getRestaurantPastOrders = () => {
-    fetch(`${ENV_VARIABLE.URL_ORDERS}/my-orders/restaurant`, {
+    fetch(`${ENV_VARIABLE.URL_ORDERS}/my-orders/restaurant/past-orders`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("accessToken")}`
       }
@@ -42,14 +42,18 @@ const RestaurantPastOrdersComponent = () => {
       <NavComponent />
 
       {restaurantPastOrders.length > 0 && (
-        <Container style={{ marginTop: "110px" }}>
-          <h1>Past Orders</h1>
-          {restaurantPastOrders
-            .sort((a, b) => new Date(b.creationDateTime) - new Date(a.creationDateTime))
-            .map(order => (
-              <SingleOrderComponent key={order.idOrder} order={order} />
-            ))}
-        </Container>
+        <>
+          <Container style={{ marginTop: "110px" }}>
+            <h1 className="text-center mb-3">Past Orders</h1>
+            <div className="d-flex flex-wrap">
+              {restaurantPastOrders
+                .sort((a, b) => new Date(b.creationDateTime) - new Date(a.creationDateTime))
+                .map(order => (
+                  <SingleOrderComponent key={order.idOrder} order={order} />
+                ))}
+            </div>
+          </Container>
+        </>
       )}
     </>
   );
