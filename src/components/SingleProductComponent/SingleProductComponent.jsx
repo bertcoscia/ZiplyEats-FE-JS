@@ -1,8 +1,9 @@
-import { Button, Col, Form, Modal, Row } from "react-bootstrap";
+import { Alert, Button, Col, Container, Form, Modal, Row } from "react-bootstrap";
 import "./SingleProductComponent.css";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import { Trash3 } from "react-bootstrap-icons";
 
 const SingleProductComponent = ({ product, userRole, getMyMenu }) => {
   // ENV VARIABLES
@@ -15,6 +16,7 @@ const SingleProductComponent = ({ product, userRole, getMyMenu }) => {
 
   // USE STATE
   const [show, setShow] = useState(false);
+  const [showDelete, setShowDelete] = useState(false);
   const [editProductDTO, setEditProductDTO] = useState({
     name: product.name,
     price: product.price,
@@ -29,6 +31,14 @@ const SingleProductComponent = ({ product, userRole, getMyMenu }) => {
 
   const handleClose = () => {
     setShow(false);
+  };
+
+  const handleShowDelete = () => {
+    setShowDelete(true);
+  };
+
+  const handleShowDeleteClose = () => {
+    setShowDelete(false);
   };
 
   const handleChange = event => {
@@ -105,9 +115,52 @@ const SingleProductComponent = ({ product, userRole, getMyMenu }) => {
       .catch(error => console.log(error));
   };
 
+  const deleteProduct = async () => {
+    try {
+      const response = await fetch(`${ENV_VARIABLE.URL_PRODUCTS}/my-products/${product.idProduct}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`
+        }
+      });
+      if (response.ok) {
+        navigate(0);
+        return await response.json();
+      } else {
+        throw new Error("Could not delete the selected product. Please try again");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
-    <Col xs={10} sm={5} xl={3} className="perfect-shadow card justify-content-center mx-4 py-2 me-3 me-xl-5 mb-3 position-relative" style={{ height: "135px" }}>
+    <Col xs={10} sm={5} xl={3} className="perfect-shadow card justify-content-center mx-4 py-2 me-3 me-xl-5 mb-3 position-relative" style={{ height: "150px" }}>
       <Row>
+        {userRole === "RESTAURANT" && (
+          <Col xs={12} className="mt-1 mb-3 d-flex justify-content-between">
+            <Button variant="link" className="p-0 text-decoration-none" onClick={handleShow}>
+              <small>Edit</small>
+            </Button>
+            <Button variant="link" className="p-0 text-decoration-none" onClick={handleShowDelete}>
+              <Trash3 variant="danger" />
+            </Button>
+            <Modal show={showDelete} onHide={handleShowDeleteClose} className="perfect-shadow">
+              <Modal.Header closeButton className="border-bottom-0"></Modal.Header>
+              <Modal.Body>
+                <h4>Are you sure you want to delete this product?</h4>
+              </Modal.Body>
+              <Modal.Footer className="border-top-0 d-flex justify-content-center">
+                <Button variant="secondary" onClick={handleShowDeleteClose} className="rounded-pill px-4 border-0">
+                  Dismiss
+                </Button>
+                <Button variant="danger" onClick={deleteProduct} className="rounded-pill px-4 border-0">
+                  Delete
+                </Button>
+              </Modal.Footer>
+            </Modal>
+          </Col>
+        )}
         <Col xs={7} sm={6} md={8} xl={7}>
           <h5 className="card-title font-weight-bold mb-1 line-clamp-2">{product.name}</h5>
           <small className="card-text text-muted">{product.price.toFixed(2)} €</small>
@@ -115,13 +168,6 @@ const SingleProductComponent = ({ product, userRole, getMyMenu }) => {
         <Col xs={4} sm={5} md={3} xl={4}>
           <img src={product.imageUrl} alt={product.name} className="img-fluid rounded" style={{ width: "70px" }} />
         </Col>
-        {userRole === "RESTAURANT" && (
-          <Col xs={12} className="position-absolute bottom-0">
-            <Button variant="link" className="p-0 text-decoration-none" onClick={handleShow}>
-              <small>Edit</small>
-            </Button>
-          </Col>
-        )}
         <Modal show={show} onHide={handleClose} className="perfect-shadow">
           <Modal.Header closeButton className="border-bottom-0"></Modal.Header>
           <Modal.Body>
