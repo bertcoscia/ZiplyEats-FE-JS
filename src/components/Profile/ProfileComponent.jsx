@@ -191,7 +191,7 @@ const ProfileComponent = () => {
           response.json();
           dispatch(getProfileAction());
         } else {
-          throw new Error("Coulnd't send data - @uploadProfilePic");
+          throw new Error("Could not send data - @uploadProfilePic");
         }
       })
       .catch(error => console.log(error));

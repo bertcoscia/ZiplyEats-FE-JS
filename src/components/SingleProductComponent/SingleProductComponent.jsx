@@ -2,10 +2,11 @@ import { Button, Col, Form, Modal, Row } from "react-bootstrap";
 import "./SingleProductComponent.css";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 
 // TODO: IMPLEMENT CLOUDINARY
 
-const SingleProductComponent = ({ product, userRole }) => {
+const SingleProductComponent = ({ product, userRole, getMyMenu }) => {
   // ENV VARIABLES
   const ENV_VARIABLE = {
     URL_PRODUCTS: import.meta.env.VITE_PRODUCTS_URL
@@ -13,6 +14,7 @@ const SingleProductComponent = ({ product, userRole }) => {
 
   // HOOKS
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   // USE STATE
   const [show, setShow] = useState(false);
@@ -21,6 +23,7 @@ const SingleProductComponent = ({ product, userRole }) => {
     price: product.price,
     description: product.description
   });
+  const [img, setImg] = useState(null);
 
   // HANDLERS
   const handleShow = () => {
@@ -38,6 +41,10 @@ const SingleProductComponent = ({ product, userRole }) => {
       ...prevState,
       [name]: normalizedValue
     }));
+  };
+
+  const handlePicChange = event => {
+    setImg(event.target.files[0]);
   };
 
   const handleSubmit = event => {
@@ -69,6 +76,33 @@ const SingleProductComponent = ({ product, userRole }) => {
           price: "",
           description: ""
         });
+        if (img !== null) {
+          editProductImg(img);
+        }
+        getMyMenu();
+        navigate(0);
+      })
+      .catch(error => console.log(error));
+  };
+
+  const editProductImg = avatarFile => {
+    const formData = new FormData();
+    formData.append("avatar", avatarFile);
+    fetch(`${ENV_VARIABLE.URL_PRODUCTS}/my-products/${product.idProduct}`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("accessToken")}`
+      },
+      body: formData
+    })
+      .then(response => {
+        if (response.ok) {
+          response.json();
+        } else {
+          throw new Error("Could not send data - @editProductImg");
+        }
+      })
+      .then(() => {
         navigate(0);
       })
       .catch(error => console.log(error));
@@ -107,6 +141,10 @@ const SingleProductComponent = ({ product, userRole }) => {
               <Form.Group className="signup__form__group mb-3">
                 <Form.Label className="signup__form__group__label">Description</Form.Label>
                 <Form.Control type="text" placeholder="Enter product description" value={editProductDTO.description} name="description" onChange={handleChange} required />
+              </Form.Group>
+              <Form.Group className="signup__form__group mb-3">
+                <Form.Label className="signup__form__group__label">Product image</Form.Label>
+                <Form.Control type="file" accept="img/*" onChange={handlePicChange} />
               </Form.Group>
               <Button type="submit" className="d-none">
                 Submit

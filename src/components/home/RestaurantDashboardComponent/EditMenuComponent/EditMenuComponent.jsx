@@ -133,7 +133,7 @@ const EditMenuComponent = () => {
 
           {!loading && (
             <Container style={{ marginTop: "100px" }}>
-              <Button variant="link" className="p-0 text-decoration-none ms-3" onClick={handleShow}>
+              <Button variant="link" className="p-0 text-decoration-none ms-3 mb-3" onClick={handleShow}>
                 <small>Add a new product</small>
               </Button>
               <Modal show={show} onHide={handleClose} className="perfect-shadow">
@@ -164,7 +164,9 @@ const EditMenuComponent = () => {
                   </Button>
                 </Modal.Footer>
               </Modal>
-              <Row className="d-flex justify-content-start">{menu.length > 0 ? menu.map((product, index) => <SingleProductComponent key={index} product={product} userRole={profile.userRole.userRole} />) : <p>No products available</p>}</Row>
+              <Row className="d-flex justify-content-start">
+                {menu.length > 0 ? menu.map((product, index) => <SingleProductComponent key={index} product={product} userRole={profile.userRole.userRole} fetch={getMyMenu} />) : <p>No products available</p>}
+              </Row>
             </Container>
           )}
         </>
