@@ -60,7 +60,7 @@ const SingleRestaurantPastOrderComponent = ({ order }) => {
           <img src="https://res.cloudinary.com/bertcoscia/image/upload/fl_preserve_transparency/v1728921447/file_eqnhsn.jpg?_s=public-apps" alt="" width={"15px"} className="align-self-center me-3" />
           <div className="d-flex flex-column me-auto">
             <p className="mb-0 small">{order.deliveryAddress}</p>
-            <small className="text-muted">{formatDateTime(order.creationDateTime)}</small>
+            <small className="text-muted line-clamp">{order.actualDeliveryDateTime ? formatDateTime(order.actualDeliveryDateTime) : ""}</small>
           </div>
           <small>{order.orderStatus.orderStatus}</small>
         </div>

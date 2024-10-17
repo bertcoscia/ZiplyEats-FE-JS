@@ -1,14 +1,11 @@
 import { Button, Container } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import "animate.css";
-import NavComponent from "../../navbar/NavComponent";
 import RestaurantActiveOrdersComponent from "./RestaurantActiveOrdersComponent/RestaurantActiveOrdersComponent";
 
 const RestaurantDashboardComponent = () => {
   return (
     <>
-      <NavComponent />
-
       <Container className="mt-5 dashboard d-flex flex-column flex-lg-row justify-content-around" style={{ paddingTop: "140px" }}>
         <Link as={Button} to={"/past-orders"} className="dashboard__element text-decoration-none border rounded-4 pt-4 pb-1 px-5 text-decoration-none position-relative align-self-center mb-5 mb-lg-0" style={{ overflow: "visible" }}>
           <img
