@@ -27,6 +27,7 @@ const EditMenuComponent = () => {
     price: "",
     description: ""
   });
+  const [img, setImg] = useState(null);
 
   // HANDLERS
   const handleShow = () => {
@@ -44,6 +45,10 @@ const EditMenuComponent = () => {
       ...prevState,
       [name]: normalizedValue
     }));
+  };
+
+  const handlePicChange = event => {
+    setImg(event.target.files[0]);
   };
 
   const handleSubmit = event => {
@@ -80,31 +85,55 @@ const EditMenuComponent = () => {
       });
   };
 
-  const createNewProduct = newProduct => {
-    fetch(`${ENV_VARIABLE.URL_PRODUCTS}`, {
-      method: "post",
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-        "Content-type": "application/json"
-      },
-      body: JSON.stringify(newProduct)
-    })
-      .then(response => {
-        if (response.ok) {
-          return response.json();
-        } else {
-          throw new Error("Unable to create the new product. Please try again later.");
-        }
-      })
-      .then(() => {
+  const createNewProduct = async newProduct => {
+    try {
+      const response = await fetch(`${ENV_VARIABLE.URL_PRODUCTS}`, {
+        method: "post",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          "Content-type": "application/json"
+        },
+        body: JSON.stringify(newProduct)
+      });
+      if (response.ok) {
+        const responseData = await response.json();
+        const postPicResp = await addNewProductImg(responseData.id, img);
         setNewProductDTO({
           name: "",
           price: "",
           description: ""
         });
         navigate(0);
-      })
-      .catch(error => console.log(error));
+        return responseData.id;
+      } else {
+        throw new Error("Unable to create the new product. Please try again later.");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const addNewProductImg = async (productId, file) => {
+    const formData = new FormData();
+    formData.append("avatar", file);
+
+    try {
+      const response = await fetch(`${ENV_VARIABLE.URL_PRODUCTS}/my-products/${productId}`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`
+        },
+        body: formData
+      });
+
+      if (response.ok) {
+        return await response.json();
+      } else {
+        throw new Error("Could not upload product image - @addNewProductImg");
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   // USE EFFECT
@@ -152,6 +181,10 @@ const EditMenuComponent = () => {
                     <Form.Group className="signup__form__group mb-3">
                       <Form.Label className="signup__form__group__label">Description</Form.Label>
                       <Form.Control type="text" placeholder="Enter product description" value={newProductDTO.description} name="description" onChange={handleChange} required />
+                    </Form.Group>
+                    <Form.Group className="signup__form__group mb-3">
+                      <Form.Label className="signup__form__group__label">Product image</Form.Label>
+                      <Form.Control type="file" accept="img/*" onChange={handlePicChange} />
                     </Form.Group>
                     <Button type="submit" className="d-none">
                       Submit

@@ -4,8 +4,6 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 
-// TODO: IMPLEMENT CLOUDINARY
-
 const SingleProductComponent = ({ product, userRole, getMyMenu }) => {
   // ENV VARIABLES
   const ENV_VARIABLE = {
@@ -14,7 +12,6 @@ const SingleProductComponent = ({ product, userRole, getMyMenu }) => {
 
   // HOOKS
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
   // USE STATE
   const [show, setShow] = useState(false);
