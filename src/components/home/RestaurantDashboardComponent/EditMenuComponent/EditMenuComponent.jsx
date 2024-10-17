@@ -4,6 +4,7 @@ import NavComponent from "../../../navbar/NavComponent";
 import SingleProductComponent from "../../../SingleProductComponent/SingleProductComponent";
 import { Button, Col, Container, Form, Modal, Row, Spinner } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import { Plus, PlusCircle, PlusCircleFill } from "react-bootstrap-icons";
 
 // TODO: IMPLEMENT CLOUDINARY
 
@@ -28,6 +29,7 @@ const EditMenuComponent = () => {
     description: ""
   });
   const [img, setImg] = useState(null);
+  const [search, setSearch] = useState("");
 
   // HANDLERS
   const handleShow = () => {
@@ -45,6 +47,10 @@ const EditMenuComponent = () => {
       ...prevState,
       [name]: normalizedValue
     }));
+  };
+
+  const handleSearchChange = event => {
+    setSearch(event.target.value);
   };
 
   const handlePicChange = event => {
@@ -136,6 +142,11 @@ const EditMenuComponent = () => {
     }
   };
 
+  // UTILS
+  const resetSearch = () => {
+    setSearch("");
+  };
+
   // USE EFFECT
   useEffect(() => {
     if (profile?.idUser) {
@@ -162,43 +173,63 @@ const EditMenuComponent = () => {
 
           {!loading && (
             <Container style={{ marginTop: "100px" }}>
-              <Button variant="link" className="p-0 text-decoration-none ms-3 mb-3" onClick={handleShow}>
-                <small>Add a new product</small>
-              </Button>
-              <Modal show={show} onHide={handleClose} className="perfect-shadow">
-                <Modal.Header closeButton className="border-bottom-0"></Modal.Header>
-                <Modal.Body>
-                  <h2 className="fs-5 text-center">Edit your product</h2>
-                  <Form onSubmit={handleSubmit}>
-                    <Form.Group className="signup__form__group mb-3">
-                      <Form.Label className="signup__form__group__label">Name</Form.Label>
-                      <Form.Control type="text" placeholder="Enter product name" value={newProductDTO.name} name="name" onChange={handleChange} required />
-                    </Form.Group>
-                    <Form.Group className="signup__form__group mb-3">
-                      <Form.Label className="signup__form__group__label">Price</Form.Label>
-                      <Form.Control type="text" placeholder="Enter product price" value={newProductDTO.price} name="price" onChange={handleChange} />
-                    </Form.Group>
-                    <Form.Group className="signup__form__group mb-3">
-                      <Form.Label className="signup__form__group__label">Description</Form.Label>
-                      <Form.Control type="text" placeholder="Enter product description" value={newProductDTO.description} name="description" onChange={handleChange} required />
-                    </Form.Group>
-                    <Form.Group className="signup__form__group mb-3">
-                      <Form.Label className="signup__form__group__label">Product image</Form.Label>
-                      <Form.Control type="file" accept="img/*" onChange={handlePicChange} />
-                    </Form.Group>
-                    <Button type="submit" className="d-none">
-                      Submit
+              <Container className="mb-3 justify-content-between align-items-center">
+                <Button variant="link" className="p-0 text-decoration-none mb-3" onClick={handleShow}>
+                  Add new product
+                </Button>
+                <Modal show={show} onHide={handleClose} className="perfect-shadow">
+                  <Modal.Header closeButton className="border-bottom-0"></Modal.Header>
+                  <Modal.Body>
+                    <h2 className="fs-5 text-center">Edit your product</h2>
+                    <Form onSubmit={handleSubmit}>
+                      <Form.Group className="signup__form__group mb-3">
+                        <Form.Label className="signup__form__group__label">Name</Form.Label>
+                        <Form.Control type="text" placeholder="Enter product name" value={newProductDTO.name} name="name" onChange={handleChange} required />
+                      </Form.Group>
+                      <Form.Group className="signup__form__group mb-3">
+                        <Form.Label className="signup__form__group__label">Price</Form.Label>
+                        <Form.Control type="text" placeholder="Enter product price" value={newProductDTO.price} name="price" onChange={handleChange} />
+                      </Form.Group>
+                      <Form.Group className="signup__form__group mb-3">
+                        <Form.Label className="signup__form__group__label">Description</Form.Label>
+                        <Form.Control type="text" placeholder="Enter product description" value={newProductDTO.description} name="description" onChange={handleChange} required />
+                      </Form.Group>
+                      <Form.Group className="signup__form__group mb-3">
+                        <Form.Label className="signup__form__group__label">Product image</Form.Label>
+                        <Form.Control type="file" accept="img/*" onChange={handlePicChange} />
+                      </Form.Group>
+                      <Button type="submit" className="d-none">
+                        Submit
+                      </Button>
+                    </Form>
+                  </Modal.Body>
+                  <Modal.Footer className="border-top-0 d-flex justify-content-center">
+                    <Button type="button" onClick={handleSubmit} className="rounded-pill px-5 border-0">
+                      Save Changes
                     </Button>
+                  </Modal.Footer>
+                </Modal>
+                <div className="d-flex">
+                  <Form onSubmit={event => event.preventDefault()}>
+                    <Form.Group>
+                      <Form.Control type="text" value={search} placeholder="Search for a product" onChange={handleSearchChange}></Form.Control>
+                    </Form.Group>
                   </Form>
-                </Modal.Body>
-                <Modal.Footer className="border-top-0 d-flex justify-content-center">
-                  <Button type="button" onClick={handleSubmit} className="rounded-pill px-5 border-0">
-                    Save Changes
+                  <Button variant="primary" className="ms-3" onClick={resetSearch}>
+                    Reset
                   </Button>
-                </Modal.Footer>
-              </Modal>
+                </div>
+              </Container>
               <Row className="d-flex justify-content-start">
-                {menu.length > 0 ? menu.map((product, index) => <SingleProductComponent key={index} product={product} userRole={profile.userRole.userRole} fetch={getMyMenu} />) : <p>No products available</p>}
+                {search === "" ? (
+                  menu.length > 0 ? (
+                    menu.map((product, index) => <SingleProductComponent key={index} product={product} userRole={profile.userRole.userRole} fetch={getMyMenu} />)
+                  ) : (
+                    <p>No products available</p>
+                  )
+                ) : (
+                  menu.filter(product => product.name.toLowerCase().includes(search.toLowerCase())).map((product, index) => <SingleProductComponent key={index} product={product} userRole={profile.userRole.userRole} fetch={getMyMenu} />)
+                )}
               </Row>
             </Container>
           )}
