@@ -64,9 +64,9 @@ const LoginComponent = () => {
   return (
     <Container className="login my-5 px-5">
       <Form onSubmit={handleSubmit} className="login__form perfect-shadow border rounded-4 align-self-center py-4 px-5 text-decoration-none position-relative mx-3 my-3 signup-element-btn">
-        <Link to={"/"} className="go-back__link pb-5 text-decoration-none">
+        <Button as={Link} to={"/"} variant="link" className="text-decoration-none">
           Go back
-        </Link>
+        </Button>
         <Form.Group className="login__form__group my-3" controlId="formBasicEmail">
           <Form.Label className="login__form__label">Email address</Form.Label>
           <Form.Control type="email" placeholder="Enter email" name="email" value={loginDTO.email} onChange={handleTextChange} className="login__form__input" required />

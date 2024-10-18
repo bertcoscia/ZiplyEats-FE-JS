@@ -111,9 +111,9 @@ const UserSignUpComponent = () => {
   return (
     <Container className="signup my-5 px-5">
       <Form onSubmit={handleSubmit} className="signup__form perfect-shadow border rounded-4 align-self-center py-4 px-5 text-decoration-none position-relative mx-3 my-3 signup-element-btn">
-        <Link to={"/signup"} className="go-back__link pb-5 text-decoration-none">
+        <Button as={Link} to={"/signup"} variant="link" className="text-decoration-none">
           Go back
-        </Link>
+        </Button>
         <Form.Group className="signup__form__group my-3">
           <Form.Label className="signup__form__group__label">Name</Form.Label>
           <Form.Control type="text" placeholder="Enter your name" name="name" value={signupDTO.name} onChange={handleTextChange} required />
@@ -137,7 +137,7 @@ const UserSignUpComponent = () => {
         </Form.Group>
         <Form.Group className="signup__form__group mb-3 geoapify-input">
           <Form.Label className="signup__form__group__label">Address</Form.Label>
-          <GeoapifyContext className="custom-input" apiKey={GEOAPIFY_KEY}>
+          <GeoapifyContext className="custom-input" apiKey={ENV_VARIABLE.GEOAPIFY_KEY}>
             <GeoapifyGeocoderAutocomplete placeSelect={handlePlaceSelect} debounceDelay={700} style={{ width: "100%" }} required />
           </GeoapifyContext>
         </Form.Group>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import NavComponent from "../../../navbar/NavComponent";
+import NavComponent from "../../../NavComponent/NavComponent";
 import { Button, Container } from "react-bootstrap";
 import SingleOrderComponent from "./SingleRestaurantPastOrderComponent";
 import { Link, useNavigate } from "react-router-dom";

@@ -14,19 +14,11 @@
 .dashboard__element {
   width: 300px;
   height: 180px;
-  background-color: #f86825; /* TODO: REMOVE ONCE CHANGED SASS */
 }
 
 .signup__element:hover,
 .dashboard__element:hover {
   background-color: #d55c20;
-}
-
-.signup__element__title,
-.signup__element__subtitle,
-.dashboard__element__title,
-.dashboard__element__subtitle {
-  color: #f2f2f2; /* TODO: REMOVE ONCE CHANGED SASS */
 }
 
 .signup__element:hover h2,
@@ -58,12 +50,7 @@
 }
 
 .profile__button {
-  background-color: #f86825; /* TODO: REMOVE ONCE CHANGED SASS */
   color: #333a3f;
-}
-
-.profile__dropdown {
-  background-color: #f86825; /* TODO: REMOVE ONCE CHANGED SASS */
 }
 
 .dropdown-menu show:hover {

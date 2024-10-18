@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import NavComponent from "../../../navbar/NavComponent";
+import NavComponent from "../../../NavComponent/NavComponent";
 import SingleProductComponent from "../../../SingleProductComponent/SingleProductComponent";
 import { Button, Col, Container, Form, Modal, Row, Spinner } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";

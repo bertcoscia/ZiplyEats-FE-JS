@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux";
 import RestaurantDashboardComponent from "./RestaurantDashboardComponent/RestaurantDashboardComponent";
-import NavComponent from "../navbar/NavComponent";
+import NavComponent from "../NavComponent/NavComponent";
 import RiderDashboardComponent from "./RiderDashboardComponent/RiderDashboardComponent";
 
 const HomeComponent = () => {

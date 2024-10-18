@@ -118,7 +118,7 @@ const AvailableOrdersComponent = () => {
           ))}
         </>
       ) : (
-        <h4 className="text-center mt-5">There no available orders</h4>
+        <h4 className="text-center mt-5">There are no available orders</h4>
       )}
     </>
   );
