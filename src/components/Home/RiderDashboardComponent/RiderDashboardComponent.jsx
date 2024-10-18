@@ -1,22 +1,10 @@
 import { useEffect, useState } from "react";
 import { Button, Container } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import RiderActiveOrderComponent from "./RiderActiveOrderComponent";
-import AvailableOrdersComponent from "./AvailableOrdersComponent";
+import RiderActiveOrderComponent from "./RiderActiveOrderComponent/RiderActiveOrderComponent";
+import RiderAvailableOrdersComponent from "./RiderAvailableOrdersComponent/RiderAvailableOrdersComponent";
 
 const RiderDashboardComponent = ({ profile }) => {
-  // ENV VARIABLES
-
-  // HOOKS
-
-  // USE STATE
-
-  // HANDLERS
-
-  // FETCH
-
-  // UTILS
-
   return (
     <>
       <Container className="mt-5 dashboard d-flex flex-column flex-lg-row justify-content-around" style={{ paddingTop: "140px" }}>
@@ -31,7 +19,7 @@ const RiderDashboardComponent = ({ profile }) => {
           <small className="dashboard__element__subtitle d-block text-center">See all your past orders</small>
         </Link>
       </Container>
-      <Container className="my-3">{profile.busyWithOrder ? <RiderActiveOrderComponent /> : <AvailableOrdersComponent />}</Container>
+      <Container className="my-3">{profile.busyWithOrder ? <RiderActiveOrderComponent /> : <RiderAvailableOrdersComponent />}</Container>
     </>
   );
 };

@@ -7,7 +7,7 @@ import UserSignUpComponent from "./components/auth/SignUpComponent/UserSignUpCom
 import RiderSignUpComponent from "./components/auth/SignUpComponent/RiderSignUpComponent";
 import RestaurantSignUpComponent from "./components/auth/SignUpComponent/RestaurantSignUpComponent";
 import HomeComponent from "./components/home/HomeComponent";
-import PastOrdersComponent from "./components/home/RestaurantDashboardComponent/RestaurantPastOrdersComponent/RestaurantPastOrdersComponent";
+import PastOrdersComponent from "./components/PastOrdersComponent/PastOrdersComponent";
 import ProfileComponent from "./components/profile/ProfileComponent";
 import EditMenuComponent from "./components/home/RestaurantDashboardComponent/EditMenuComponent/EditMenuComponent";
 

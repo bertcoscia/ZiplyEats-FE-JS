@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Button, Col, Container, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 
-const AvailableOrdersComponent = () => {
+const RiderAvailableOrdersComponent = () => {
   // ENV VARIABLES
   const ENV_VARIABLE = {
     URL_ORDERS: import.meta.env.VITE_ORDERS_URL
@@ -124,4 +124,4 @@ const AvailableOrdersComponent = () => {
   );
 };
 
-export default AvailableOrdersComponent;
+export default RiderAvailableOrdersComponent;

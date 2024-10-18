@@ -1,7 +1,18 @@
+import { useEffect } from "react";
 import { Button, Container } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const AuthComponent = () => {
+  // HOOKS
+  const navigate = useNavigate();
+
+  // USE EFFECT
+  useEffect(() => {
+    if (localStorage.getItem("accessToken")) {
+      navigate("/home");
+    }
+  }, []);
+
   return (
     <Container className="text-center my-5">
       <h1>Welcome to Ziply Eats</h1>
