@@ -42,11 +42,20 @@ const EditMenuComponent = () => {
 
   const handleChange = event => {
     const { name, value } = event.target;
-    const normalizedValue = value.replace(",", ".");
-    setNewProductDTO(prevState => ({
-      ...prevState,
-      [name]: normalizedValue
-    }));
+    if (name === "price") {
+      const normalizedValue = value.replace(",", ".");
+      if (!isNaN(normalizedValue) && /^(\d+(\.\d{0,2})?)?$/.test(normalizedValue)) {
+        setNewProductDTO(prevState => ({
+          ...prevState,
+          [name]: normalizedValue
+        }));
+      }
+    } else {
+      setNewProductDTO(prevState => ({
+        ...prevState,
+        [name]: value
+      }));
+    }
   };
 
   const handleSearchChange = event => {
@@ -172,35 +181,36 @@ const EditMenuComponent = () => {
           {loading && <p>Loading menu...</p>}
 
           {!loading && (
-            <Container style={{ marginTop: "100px" }}>
-              <h1 className="text-center">Edit your menu</h1>
-              <Container className="mb-3 justify-content-between align-items-center">
-                <Button as={Link} to={"/home"} variant="link" className="p-0 text-decoration-none mb-3">
+            <Container className="edit-menu" style={{ marginTop: "100px" }}>
+              <h1 className="edit-menu__title text-center">Edit your menu</h1>
+              <Container className="edit-menu__controls mb-3 justify-content-between align-items-center">
+                <Button as={Link} to={"/home"} variant="link" className="edit-menu__back-button p-0 text-decoration-none mb-3">
                   Go back
                 </Button>
-                <Button variant="link" className="p-0 text-decoration-none mb-3 d-block" onClick={handleShow}>
+                <Button variant="link" className="edit-menu__add-product-button p-0 text-decoration-none mb-3 d-block" onClick={handleShow}>
                   Add new product
                 </Button>
-                <Modal show={show} onHide={handleClose} className="perfect-shadow">
+
+                <Modal show={show} onHide={handleClose} className="edit-menu__modal perfect-shadow">
                   <Modal.Header closeButton className="border-bottom-0"></Modal.Header>
                   <Modal.Body>
-                    <h2 className="fs-5 text-center">Edit your product</h2>
-                    <Form onSubmit={handleSubmit}>
-                      <Form.Group className="signup__form__group mb-3">
-                        <Form.Label className="signup__form__group__label">Name</Form.Label>
-                        <Form.Control type="text" placeholder="Enter product name" value={newProductDTO.name} name="name" onChange={handleChange} required />
+                    <h2 className="edit-menu__modal-title fs-5 text-center">Edit your product</h2>
+                    <Form onSubmit={handleSubmit} className="edit-menu__form">
+                      <Form.Group className="edit-menu__form-group mb-3">
+                        <Form.Label className="edit-menu__form-label">Name</Form.Label>
+                        <Form.Control type="text" placeholder="Enter product name" value={newProductDTO.name} name="name" onChange={handleChange} required className="edit-menu__form-input" />
                       </Form.Group>
-                      <Form.Group className="signup__form__group mb-3">
-                        <Form.Label className="signup__form__group__label">Price</Form.Label>
-                        <Form.Control type="text" placeholder="Enter product price" value={newProductDTO.price} name="price" onChange={handleChange} />
+                      <Form.Group className="edit-menu__form-group mb-3">
+                        <Form.Label className="edit-menu__form-label">Price</Form.Label>
+                        <Form.Control type="text" placeholder="Enter product price" value={newProductDTO.price} name="price" onChange={handleChange} className="edit-menu__form-input" />
                       </Form.Group>
-                      <Form.Group className="signup__form__group mb-3">
-                        <Form.Label className="signup__form__group__label">Description</Form.Label>
-                        <Form.Control type="text" placeholder="Enter product description" value={newProductDTO.description} name="description" onChange={handleChange} required />
+                      <Form.Group className="edit-menu__form-group mb-3">
+                        <Form.Label className="edit-menu__form-label">Description</Form.Label>
+                        <Form.Control type="text" placeholder="Enter product description" value={newProductDTO.description} name="description" onChange={handleChange} required className="edit-menu__form-input" />
                       </Form.Group>
-                      <Form.Group className="signup__form__group mb-3">
-                        <Form.Label className="signup__form__group__label">Product image</Form.Label>
-                        <Form.Control type="file" accept="img/*" onChange={handlePicChange} />
+                      <Form.Group className="edit-menu__form-group mb-3">
+                        <Form.Label className="edit-menu__form-label">Product image</Form.Label>
+                        <Form.Control type="file" accept="image/*" onChange={handlePicChange} />
                       </Form.Group>
                       <Button type="submit" className="d-none">
                         Submit
@@ -208,23 +218,25 @@ const EditMenuComponent = () => {
                     </Form>
                   </Modal.Body>
                   <Modal.Footer className="border-top-0 d-flex justify-content-center">
-                    <Button type="button" onClick={handleSubmit} className="rounded-pill px-5 border-0">
-                      Save Changes
+                    <Button type="button" onClick={handleSubmit} className="edit-menu__modal-save-button rounded-pill px-5 border-0">
+                      Save
                     </Button>
                   </Modal.Footer>
                 </Modal>
-                <div className="d-flex">
-                  <Form onSubmit={event => event.preventDefault()}>
+
+                <div className="edit-menu__search d-flex">
+                  <Form onSubmit={event => event.preventDefault()} className="edit-menu__search-form">
                     <Form.Group>
-                      <Form.Control type="text" value={search} placeholder="Search for a product" onChange={handleSearchChange}></Form.Control>
+                      <Form.Control type="text" value={search} placeholder="Search for a product" onChange={handleSearchChange} className="edit-menu__search-input" />
                     </Form.Group>
                   </Form>
-                  <Button variant="primary" className="ms-3" onClick={resetSearch}>
+                  <Button variant="primary" className="edit-menu__reset-button ms-3" onClick={resetSearch}>
                     Reset
                   </Button>
                 </div>
               </Container>
-              <Row className="d-flex justify-content-start">
+
+              <Row className="edit-menu__product-list d-flex justify-content-start">
                 {search === "" ? (
                   menu.length > 0 ? (
                     menu.map((product, index) => <SingleProductComponent key={index} product={product} userRole={profile.userRole.userRole} fetch={getMyMenu} />)

@@ -85,7 +85,7 @@ const SingleActiveOrderComponent = ({ order }) => {
   const groupedProducts = getGroupedOrderProducts();
 
   return (
-    <div className="single-active-order card p-3 shadow mx-auto d-flex flex-column justify-content-center mb-3 mb-md-0">
+    <div className="single-active-order card p-3 shadow mx-auto d-flex flex-column justify-content-center mb-3 mb-md-3">
       <small className="single-active-order__delivery-time mb-3 fw-bold">Requested delivery time: {formatDateTime(order.requestedDeliveryDateTime)}</small>
       <Container className="single-active-order__info mb-3">
         <h4 className="single-active-order__header mb-3 fs-4">Order details</h4>

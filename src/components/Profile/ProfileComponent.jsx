@@ -380,38 +380,38 @@ const ProfileComponent = () => {
     <>
       <NavComponent />
       {profile && (
-        <Container className="my-5" style={{ paddingTop: "60px" }}>
-          <h2>Account</h2>
+        <Container className="profile__container my-5" style={{ paddingTop: "60px" }}>
+          <h2 className="profile__title">Account</h2>
 
           {/* CHANGE PROFILE PIC */}
-          <div className="d-flex flex-column align-items-center">
-            <img src={profile.avatarUrl} alt="" style={{ width: "85px" }} className="rounded-circle mb-2" />
-            <Button variant="link" className="text-decoration-none edit__button__link" onClick={() => handleShow("profilePic")}>
+          <div className="profile__change-pic d-flex flex-column align-items-center">
+            <img src={profile.avatarUrl} alt="" className="profile__avatar rounded-circle mb-2" style={{ width: "85px" }} />
+            <Button variant="link" className="profile__edit-button text-decoration-none" onClick={() => handleShow("profilePic")}>
               Change profile picture
             </Button>
-            <Modal show={showProfilePic} onHide={() => handleClose("profilePic")} className="perfect-shadow">
-              <Modal.Header closeButton className="border-bottom-0"></Modal.Header>
-              <Modal.Body>
-                <h2 className="fs-5 text-center">Update your profile picture</h2>
+            <Modal show={showProfilePic} onHide={() => handleClose("profilePic")} className="profile__modal perfect-shadow">
+              <Modal.Header closeButton className="profile__modal-header border-bottom-0"></Modal.Header>
+              <Modal.Body className="profile__modal-body">
+                <h2 className="profile__modal-title fs-5 text-center">Update your profile picture</h2>
                 <Form
-                  className="mt-3"
+                  className="profile__form mt-3"
                   onSubmit={event => {
                     event.preventDefault();
                     uploadProfilePic(img);
                   }}
                 >
-                  <InputGroup className="mb-3">
-                    <FormControl type="file" accept="img/*" onChange={handleChangePic} className="my-3" />
+                  <InputGroup className="profile__input-group mb-3">
+                    <FormControl type="file" accept="img/*" onChange={handleChangePic} className="my-3 profile__file-input" />
                   </InputGroup>
                 </Form>
               </Modal.Body>
-              <Modal.Footer className="border-top-0 d-flex justify-content-center">
+              <Modal.Footer className="profile__modal-footer border-top-0 d-flex justify-content-center">
                 <Button
                   onClick={() => {
                     uploadProfilePic(img);
                     handleClose("profilePic");
                   }}
-                  className="rounded-pill px-5 border-0"
+                  className="profile__save-button rounded-pill px-5 border-0"
                   style={{ backgroundColor: "#F86834" }}
                 >
                   Save Changes
@@ -420,45 +420,45 @@ const ProfileComponent = () => {
             </Modal>
           </div>
 
-          {profile.userRole.userRole == "RESTAURANT" && (
+          {profile.userRole.userRole === "RESTAURANT" && (
             // CHANGE NAME
-            <Row className="my-4">
-              <Col md={11} className="d-flex align-items-center">
+            <Row className="profile__name-change my-4">
+              <Col md={11} className="profile__name-info d-flex align-items-center">
                 <span className="me-3">
-                  <img src="https://glovo.dhmedia.io/image/customer-assets-glovo/customer_profile/uds/person.svg?t=W3sic3ZnIjp7InEiOiJsb3cifX1d" alt="" style={{ width: "20px" }} />
+                  <img src="https://glovo.dhmedia.io/image/customer-assets-glovo/customer_profile/uds/person.svg?t=W3sic3ZnIjp7InEiOiJsb3cifX1d" alt="" className="profile__icon" style={{ width: "20px" }} />
                 </span>
-                <small>
+                <small className="profile__name-text">
                   {profile.name} {profile.surname}
                 </small>
               </Col>
               <Col md={1}>
-                <Button variant="link" className="text-decoration-none edit__button__link" onClick={() => handleShow("name")}>
+                <Button variant="link" className="profile__edit-button text-decoration-none" onClick={() => handleShow("name")}>
                   Edit
                 </Button>
               </Col>
-              <Modal show={showName} onHide={() => handleClose("name")} className="perfect-shadow">
-                <Modal.Header closeButton className="border-bottom-0"></Modal.Header>
-                <Modal.Body>
-                  <h2 className="fs-5 text-center">Your information</h2>
+              <Modal show={showName} onHide={() => handleClose("name")} className="profile__modal perfect-shadow">
+                <Modal.Header closeButton className="profile__modal-header border-bottom-0"></Modal.Header>
+                <Modal.Body className="profile__modal-body">
+                  <h2 className="profile__modal-title fs-5 text-center">Your information</h2>
                   <Form
                     onSubmit={event => {
                       event.preventDefault();
                       editName(name);
                     }}
                   >
-                    <Form.Group className="mb-3">
-                      <Form.Label>Name</Form.Label>
-                      <Form.Control type="text" placeholder="Enter your name" value={name.name} name="name" onChange={event => handleChange("name", event)} />
+                    <Form.Group className="mb-3 profile__form-group">
+                      <Form.Label className="profile__form-label">Name</Form.Label>
+                      <Form.Control type="text" placeholder="Enter your name" value={name.name} name="name" onChange={event => handleChange("name", event)} className="profile__form-control" />
                     </Form.Group>
                   </Form>
                 </Modal.Body>
-                <Modal.Footer className="border-top-0 d-flex justify-content-center">
+                <Modal.Footer className="profile__modal-footer border-top-0 d-flex justify-content-center">
                   <Button
                     onClick={() => {
                       editName(name);
                       handleClose("name");
                     }}
-                    className="rounded-pill px-5 border-0"
+                    className="profile__save-button rounded-pill px-5 border-0"
                     style={{ backgroundColor: "#F86834" }}
                   >
                     Save Changes
@@ -468,49 +468,49 @@ const ProfileComponent = () => {
             </Row>
           )}
 
-          {profile.userRole.userRole != "RESTAURANT" && (
+          {profile.userRole.userRole !== "RESTAURANT" && (
             // CHANGE NAME + SURNAME
-            <Row className="my-4">
-              <Col md={11} className="d-flex align-items-center">
+            <Row className="profile__full-name-change my-4">
+              <Col md={11} className="profile__full-name-info d-flex align-items-center">
                 <span className="me-3">
-                  <img src="https://glovo.dhmedia.io/image/customer-assets-glovo/customer_profile/uds/person.svg?t=W3sic3ZnIjp7InEiOiJsb3cifX1d" alt="" style={{ width: "20px" }} />
+                  <img src="https://glovo.dhmedia.io/image/customer-assets-glovo/customer_profile/uds/person.svg?t=W3sic3ZnIjp7InEiOiJsb3cifX1d" alt="" className="profile__icon" style={{ width: "20px" }} />
                 </span>
-                <small>
+                <small className="profile__full-name-text">
                   {profile.name} {profile.surname}
                 </small>
               </Col>
               <Col md={1}>
-                <Button variant="link" className="text-decoration-none edit__button__link" onClick={() => handleShow("fullName")}>
+                <Button variant="link" className="profile__edit-button text-decoration-none" onClick={() => handleShow("fullName")}>
                   Edit
                 </Button>
               </Col>
-              <Modal show={showFullName} onHide={() => handleClose("fullName")} className="perfect-shadow">
-                <Modal.Header closeButton className="border-bottom-0"></Modal.Header>
-                <Modal.Body>
-                  <h2 className="fs-5 text-center">Your information</h2>
+              <Modal show={showFullName} onHide={() => handleClose("fullName")} className="profile__modal perfect-shadow">
+                <Modal.Header closeButton className="profile__modal-header border-bottom-0"></Modal.Header>
+                <Modal.Body className="profile__modal-body">
+                  <h2 className="profile__modal-title fs-5 text-center">Your information</h2>
                   <Form
                     onSubmit={event => {
                       event.preventDefault();
                       editFullName(fullName);
                     }}
                   >
-                    <Form.Group className="mb-3">
-                      <Form.Label>Name</Form.Label>
-                      <Form.Control type="text" placeholder="Enter your name" value={fullName.name} name="name" onChange={event => handleChange("fullName", event)} />
+                    <Form.Group className="mb-3 profile__form-group">
+                      <Form.Label className="profile__form-label">Name</Form.Label>
+                      <Form.Control type="text" placeholder="Enter your name" value={fullName.name} name="name" onChange={event => handleChange("fullName", event)} className="profile__form-control" />
                     </Form.Group>
-                    <Form.Group className="mb-3">
-                      <Form.Label>Surname</Form.Label>
-                      <Form.Control type="text" placeholder="Enter your surnname" value={fullName.surname} name="surname" onChange={event => handleChange("fullName", event)} />
+                    <Form.Group className="mb-3 profile__form-group">
+                      <Form.Label className="profile__form-label">Surname</Form.Label>
+                      <Form.Control type="text" placeholder="Enter your surname" value={fullName.surname} name="surname" onChange={event => handleChange("fullName", event)} className="profile__form-control" />
                     </Form.Group>
                   </Form>
                 </Modal.Body>
-                <Modal.Footer className="border-top-0 d-flex justify-content-center">
+                <Modal.Footer className="profile__modal-footer border-top-0 d-flex justify-content-center">
                   <Button
                     onClick={() => {
                       editFullName(fullName);
                       handleClose("fullName");
                     }}
-                    className="rounded-pill px-5 border-0"
+                    className="profile__save-button rounded-pill px-5 border-0"
                     style={{ backgroundColor: "#F86834" }}
                   >
                     Save Changes
@@ -521,36 +521,43 @@ const ProfileComponent = () => {
           )}
 
           {/* CHANGE EMAIL */}
-          <Row className="my-4">
-            <Col md={11} className="d-flex align-items-center">
+          <Row className="profile__email-change my-4">
+            <Col md={11} className="profile__email-info d-flex align-items-center">
               <span className="me-3">
-                <img src="https://glovo.dhmedia.io/image/customer-assets-glovo/customer_profile/mail.svg?t=W3sic3ZnIjp7InEiOiJsb3cifX1d" alt="" style={{ width: "20px" }} />
+                <img src="https://glovo.dhmedia.io/image/customer-assets-glovo/customer_profile/mail.svg?t=W3sic3ZnIjp7InEiOiJsb3cifX1d" alt="" className="profile__icon" style={{ width: "20px" }} />
               </span>
-              <small>{profile.email}</small>
+              <small className="profile__email-text">{profile.email}</small>
             </Col>
             <Col md={1}>
-              <Button variant="link" className="text-decoration-none edit__button__link" onClick={() => handleShow("email")}>
+              <Button variant="link" className="profile__edit-button text-decoration-none" onClick={() => handleShow("email")}>
                 Edit
               </Button>
             </Col>
-            <Modal show={showEmail} onHide={() => handleClose("email")} className="perfect-shadow">
-              <Modal.Header closeButton className="border-bottom-0"></Modal.Header>
-              <Modal.Body>
-                <h2 className="fs-5 text-center">Your email</h2>
+            <Modal show={showEmail} onHide={() => handleClose("email")} className="profile__modal perfect-shadow">
+              <Modal.Header closeButton className="profile__modal-header border-bottom-0"></Modal.Header>
+              <Modal.Body className="profile__modal-body">
+                <h2 className="profile__modal-title fs-5 text-center">Your email</h2>
                 <Form
                   onSubmit={event => {
                     event.preventDefault();
                     editEmail(email);
                   }}
                 >
-                  <Form.Group className="mb-3">
-                    <Form.Label>Email</Form.Label>
-                    <Form.Control type="email" placeholder="Enter your email" value={email.email} name="email" onChange={event => handleChange("email", event)} />
+                  <Form.Group className="mb-3 profile__form-group">
+                    <Form.Label className="profile__form-label">Email</Form.Label>
+                    <Form.Control type="email" placeholder="Enter your email" value={email.email} name="email" onChange={event => handleChange("email", event)} className="profile__form-control" />
                   </Form.Group>
                 </Form>
               </Modal.Body>
-              <Modal.Footer className="border-top-0 d-flex justify-content-center">
-                <Button onClick={() => handleClose("email")} className="rounded-pill px-5 border-0" style={{ backgroundColor: "#F86834" }}>
+              <Modal.Footer className="profile__modal-footer border-top-0 d-flex justify-content-center">
+                <Button
+                  onClick={() => {
+                    editEmail(email);
+                    handleClose("email");
+                  }}
+                  className="profile__save-button rounded-pill px-5 border-0"
+                  style={{ backgroundColor: "#F86834" }}
+                >
                   Save Changes
                 </Button>
               </Modal.Footer>
@@ -558,30 +565,30 @@ const ProfileComponent = () => {
           </Row>
 
           {/* CHANGE ADDRESS */}
-          <Row className="my-4">
-            <Col md={11} className="d-flex align-items-center">
-              <span className="me-3">
+          <Row className="profile__address-change my-4">
+            <Col md={11} className="profile__address-info d-flex align-items-center">
+              <span className="me-3 profile__icon">
                 <Geo />
               </span>
-              <small>{profile.address.split(", ").slice(0, 3).join(", ")}</small>
+              <small className="profile__address-text">{profile.address.split(", ").slice(0, 3).join(", ")}</small>
             </Col>
             <Col md={1}>
-              <Button variant="link" className="text-decoration-none edit__button__link" onClick={() => handleShow("address")}>
+              <Button variant="link" className="profile__edit-button text-decoration-none" onClick={() => handleShow("address")}>
                 Edit
               </Button>
             </Col>
-            <Modal show={showAddress} onHide={() => handleClose("address")} className="perfect-shadow">
-              <Modal.Header closeButton className="border-bottom-0"></Modal.Header>
-              <Modal.Body>
-                <h2 className="fs-5 text-center">Type your new address</h2>
+            <Modal show={showAddress} onHide={() => handleClose("address")} className="profile__modal perfect-shadow">
+              <Modal.Header closeButton className="profile__modal-header border-bottom-0"></Modal.Header>
+              <Modal.Body className="profile__modal-body">
+                <h2 className="profile__modal-title fs-5 text-center">Type your new address</h2>
                 <Form
                   onSubmit={event => {
                     event.preventDefault();
                     editAddress(address);
                   }}
                 >
-                  <Form.Group className="signup__form__group mb-3 geoapify-input">
-                    <Form.Label className="signup__form__group__label">Address</Form.Label>
+                  <Form.Group className="profile__form-group mb-3 geoapify-input">
+                    <Form.Label className="profile__form-label">Address</Form.Label>
                     <GeoapifyContext className="custom-input" apiKey={ENV_VARIABLE.GEOAPIFY_KEY}>
                       <GeoapifyGeocoderAutocomplete
                         placeSelect={handlePlaceSelect}
@@ -593,19 +600,20 @@ const ProfileComponent = () => {
                         options={{
                           filterByCountryCode: ["IT"]
                         }}
+                        className="profile__geoapify-input"
                       />
                     </GeoapifyContext>
-                    {errorGeoapify != "" && <small className="text-danger">{errorGeoapify}</small>}
+                    {errorGeoapify !== "" && <small className="text-danger profile__error-message">{errorGeoapify}</small>}
                   </Form.Group>
                 </Form>
               </Modal.Body>
-              <Modal.Footer className="border-top-0 d-flex justify-content-center">
+              <Modal.Footer className="profile__modal-footer border-top-0 d-flex justify-content-center">
                 <Button
                   onClick={() => {
                     editAddress(address);
                     handleClose("address");
                   }}
-                  className="rounded-pill px-5 border-0"
+                  className="profile__save-button rounded-pill px-5 border-0"
                   style={{ backgroundColor: "#F86834" }}
                 >
                   Save Changes
@@ -615,45 +623,45 @@ const ProfileComponent = () => {
           </Row>
 
           {/* CHANGE PASSWORD */}
-          <Row className="my-4">
-            <Col md={11} className="d-flex align-items-center">
-              <span className="me-3">
+          <Row className="profile__password-change my-4">
+            <Col md={11} className="profile__password-info d-flex align-items-center">
+              <span className="me-3 profile__icon">
                 <img src="https://glovo.dhmedia.io/image/customer-assets-glovo/customer_profile/lock.svg?t=W3sic3ZnIjp7InEiOiJsb3cifX1d" alt="" style={{ width: "20px" }} />
               </span>
-              <small>Change password</small>
+              <small className="profile__password-text">Change password</small>
             </Col>
             <Col md={1}>
-              <Button variant="link" className="text-decoration-none edit__button__link" onClick={() => handleShow("password")}>
+              <Button variant="link" className="profile__edit-button text-decoration-none" onClick={() => handleShow("password")}>
                 Edit
               </Button>
             </Col>
-            <Modal show={showPassword} onHide={() => handleClose("password")} className="perfect-shadow">
-              <Modal.Header closeButton className="border-bottom-0"></Modal.Header>
-              <Modal.Body>
-                <h2 className="fs-5 text-center">Change password</h2>
+            <Modal show={showPassword} onHide={() => handleClose("password")} className="profile__modal perfect-shadow">
+              <Modal.Header closeButton className="profile__modal-header border-bottom-0"></Modal.Header>
+              <Modal.Body className="profile__modal-body">
+                <h2 className="profile__modal-title fs-5 text-center">Change password</h2>
                 <Form
                   onSubmit={event => {
                     event.preventDefault();
                     editPassword(password);
                   }}
                 >
-                  <Form.Group className="mb-3">
-                    <Form.Label>Current Password</Form.Label>
-                    <Form.Control type="password" placeholder="Enter current password" value={password.currentPassword} name="currentPassword" onChange={event => handleChange("password", event)} />
+                  <Form.Group className="profile__form-group mb-3">
+                    <Form.Label className="profile__form-label">Current Password</Form.Label>
+                    <Form.Control type="password" placeholder="Enter current password" value={password.currentPassword} name="currentPassword" onChange={event => handleChange("password", event)} className="profile__input" />
                   </Form.Group>
-                  <Form.Group className="mb-3">
-                    <Form.Label>New Password</Form.Label>
-                    <Form.Control type="password" placeholder="Enter new password" value={password.newPassword} name="newPassword" onChange={event => handleChange("password", event)} />
+                  <Form.Group className="profile__form-group mb-3">
+                    <Form.Label className="profile__form-label">New Password</Form.Label>
+                    <Form.Control type="password" placeholder="Enter new password" value={password.newPassword} name="newPassword" onChange={event => handleChange("password", event)} className="profile__input" />
                   </Form.Group>
                 </Form>
               </Modal.Body>
-              <Modal.Footer className="border-top-0 d-flex justify-content-center">
+              <Modal.Footer className="profile__modal-footer border-top-0 d-flex justify-content-center">
                 <Button
                   onClick={() => {
                     editPassword(password);
                     handleClose("password");
                   }}
-                  className="rounded-pill px-5 border-0"
+                  className="profile__save-button rounded-pill px-5 border-0"
                   style={{ backgroundColor: "#F86834" }}
                 >
                   Save Changes
@@ -663,41 +671,41 @@ const ProfileComponent = () => {
           </Row>
 
           {/* CHANGE PHONE NUMBER */}
-          <Row className="my-4">
-            <Col md={11} className="d-flex align-items-center">
-              <span className="me-3">
+          <Row className="profile__phone-change my-4">
+            <Col md={11} className="profile__phone-info d-flex align-items-center">
+              <span className="me-3 profile__icon">
                 <img src="https://glovo.dhmedia.io/image/customer-assets-glovo/customer_profile/screen.svg?t=W3sic3ZnIjp7InEiOiJsb3cifX1d" alt="" style={{ width: "20px" }} />
               </span>
-              <small>Change phone number</small>
+              <small className="profile__phone-text">Change phone number</small>
             </Col>
             <Col md={1}>
-              <Button variant="link" className="text-decoration-none edit__button__link" onClick={() => handleShow("phoneNumber")}>
+              <Button variant="link" className="profile__edit-button text-decoration-none" onClick={() => handleShow("phoneNumber")}>
                 Edit
               </Button>
             </Col>
-            <Modal show={showPhoneNumber} onHide={() => handleClose("phoneNumber")} className="perfect-shadow">
-              <Modal.Header closeButton className="border-bottom-0"></Modal.Header>
-              <Modal.Body>
-                <h2 className="fs-5 text-center">Change phone number</h2>
+            <Modal show={showPhoneNumber} onHide={() => handleClose("phoneNumber")} className="profile__modal perfect-shadow">
+              <Modal.Header closeButton className="profile__modal-header border-bottom-0"></Modal.Header>
+              <Modal.Body className="profile__modal-body">
+                <h2 className="profile__modal-title fs-5 text-center">Change phone number</h2>
                 <Form
                   onSubmit={event => {
                     event.preventDefault();
                     editPhoneNumber(phoneNumber);
                   }}
                 >
-                  <Form.Group className="mb-3">
-                    <Form.Label>Phone Number</Form.Label>
-                    <Form.Control type="tel" placeholder="Enter your phone number" value={phoneNumber.phoneNumber} name="phoneNumber" onChange={event => handleChange("phoneNumber", event)} />
+                  <Form.Group className="profile__form-group mb-3">
+                    <Form.Label className="profile__form-label">Phone Number</Form.Label>
+                    <Form.Control type="tel" placeholder="Enter your phone number" value={phoneNumber.phoneNumber} name="phoneNumber" onChange={event => handleChange("phoneNumber", event)} className="profile__input" />
                   </Form.Group>
                 </Form>
               </Modal.Body>
-              <Modal.Footer className="border-top-0 d-flex justify-content-center">
+              <Modal.Footer className="profile__modal-footer border-top-0 d-flex justify-content-center">
                 <Button
                   onClick={() => {
                     editPhoneNumber(phoneNumber);
                     handleClose("phoneNumber");
                   }}
-                  className="rounded-pill px-5 border-0"
+                  className="profile__save-button rounded-pill px-5 border-0"
                   style={{ backgroundColor: "#F86834" }}
                 >
                   Save Changes

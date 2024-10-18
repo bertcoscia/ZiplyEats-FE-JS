@@ -53,57 +53,57 @@ const SinglePastOrderComponent = ({ order, userRole }) => {
   }, []);
 
   return (
-    <Container className="single-restaurant-past-order perfect-shadow mb-3 py-3 card mx-auto">
-      <Container className="single-restaurant-past-order__order-info">
-        <h2 className="mb-2 fs-5">Order details</h2>
-        <div className="d-flex flex-column">
+    <Container className="single-past-order perfect-shadow py-3 card">
+      <Container className="single-past-order__order-info">
+        <h2 className="single-past-order__title mb-2 fs-5">Order details</h2>
+        <div className="single-past-order__details d-flex flex-column">
           {(userRole === "RESTAURANT" || userRole === "RIDER") && (
-            <small className="mb-3 fw-light">
+            <small className="single-past-order__id mb-3 fw-light">
               <span className="fw-medium">Id: </span>
               {order.idOrder}
             </small>
           )}
-          <small className="mb-3 fw-light">
+          <small className="single-past-order__status mb-3 fw-light">
             <span className="fw-medium">Order status: </span>
             {order.orderStatus.orderStatus}
           </small>
-          <small className="mb-3 fw-light">
+          <small className="single-past-order__restaurant mb-3 fw-light">
             <span className="fw-medium">Restaurant: </span>
             {order.restaurant.name}
           </small>
-          <small className="mb-3 fw-light">
+          <small className="single-past-order__address mb-3 fw-light">
             <span className="fw-medium">Address: </span>
             {formatAddress(order.restaurant.address)}
           </small>
         </div>
         {!isRider &&
           groupedProducts.map(({ product, count }) => (
-            <div key={`${product.product.idProduct}_${JSON.stringify(product.toppings)}`} className="d-flex justify-content-between">
-              <div className="d-flex">
-                <p className="d-inline me-3 small">{count}X</p>
-                <div className="d-flex flex-column mb-3">
-                  <p className="d-inline mb-0 small">{product.product.name}</p>
+            <div key={`${product.product.idProduct}_${JSON.stringify(product.toppings)}`} className="single-past-order__product d-flex justify-content-between">
+              <div className="single-past-order__product-info d-flex">
+                <p className="single-past-order__product-count d-inline me-3 small">{count}X</p>
+                <div className="single-past-order__product-details d-flex flex-column mb-3">
+                  <p className="single-past-order__product-name d-inline mb-0 small">{product.product.name}</p>
                   {product.toppings.length > 0 &&
                     product.toppings.map((topping, index) => (
-                      <Container key={index} className="d-flex justify-content-between text-muted">
-                        <small>{topping.name}</small>
+                      <Container key={index} className="single-past-order__topping d-flex justify-content-between text-muted">
+                        <small className="single-past-order__topping-name">{topping.name}</small>
                       </Container>
                     ))}
                 </div>
               </div>
-              <p className="small">{(product.price * count).toFixed(2)}€</p>
+              <p className="single-past-order__product-price small">{(product.price * count).toFixed(2)}€</p>
             </div>
           ))}
       </Container>
-      <Container className="single-restaurant-past-order__user-info mt-auto mb-3">
-        <h2 className="mb-3 fs-5">Delivery details</h2>
-        <div className="d-flex flex-column">
-          <small className="mb-3 fw-light">
+      <Container className="single-past-order__user-info mt-auto mb-3">
+        <h2 className="single-past-order__delivery-title mb-3 fs-5">Delivery details</h2>
+        <div className="single-past-order__delivery-details d-flex flex-column">
+          <small className="single-past-order__delivery-address mb-3 fw-light">
             <span className="fw-medium">Delivery address: </span>
             {formatAddress(order.deliveryAddress)}
           </small>
           {order.orderStatus.orderStatus === "DELIVERED" && (
-            <small className="mb-3 fw-light">
+            <small className="single-past-order__delivery-time mb-3 fw-light">
               <span className="fw-medium">Delivery time: </span>
               {formatDateTime(order.actualDeliveryDateTime)}
             </small>
@@ -111,10 +111,10 @@ const SinglePastOrderComponent = ({ order, userRole }) => {
         </div>
       </Container>
       {!isRider && (
-        <Container className="mt-auto">
-          <div className="d-flex justify-content-between">
-            <h2 className="fs-5">Total</h2>
-            <p>{order.totalPrice.toFixed(2)}€</p>
+        <Container className="single-past-order__total mt-auto">
+          <div className="single-past-order__total-info d-flex justify-content-between">
+            <h2 className="single-past-order__total-title fs-5">Total</h2>
+            <p className="single-past-order__total-price">{order.totalPrice.toFixed(2)}€</p>
           </div>
         </Container>
       )}

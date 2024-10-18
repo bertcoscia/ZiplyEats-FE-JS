@@ -4,3 +4,12 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
+.single-product {
+  transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.single-product:hover {
+  background-color: #f8f9fa;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}

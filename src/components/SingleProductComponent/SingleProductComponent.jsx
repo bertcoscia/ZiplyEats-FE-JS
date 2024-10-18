@@ -15,7 +15,7 @@ const SingleProductComponent = ({ product, userRole, getMyMenu }) => {
   const navigate = useNavigate();
 
   // USE STATE
-  const [show, setShow] = useState(false);
+  const [showEdit, setShowEdit] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
   const [editProductDTO, setEditProductDTO] = useState({
     name: product.name,
@@ -25,12 +25,12 @@ const SingleProductComponent = ({ product, userRole, getMyMenu }) => {
   const [img, setImg] = useState(null);
 
   // HANDLERS
-  const handleShow = () => {
-    setShow(true);
+  const handleShowEdit = () => {
+    setShowEdit(true);
   };
 
-  const handleClose = () => {
-    setShow(false);
+  const handleShowEditClose = () => {
+    setShowEdit(false);
   };
 
   const handleShowDelete = () => {
@@ -43,11 +43,20 @@ const SingleProductComponent = ({ product, userRole, getMyMenu }) => {
 
   const handleChange = event => {
     const { name, value } = event.target;
-    const normalizedValue = value.replace(",", ".");
-    setEditProductDTO(prevState => ({
-      ...prevState,
-      [name]: normalizedValue
-    }));
+    if (name === "price") {
+      const normalizedValue = value.replace(",", ".");
+      if (!isNaN(normalizedValue) && /^(\d+(\.\d{0,2})?)?$/.test(normalizedValue)) {
+        setEditProductDTO(prevState => ({
+          ...prevState,
+          [name]: normalizedValue
+        }));
+      }
+    } else {
+      setEditProductDTO(prevState => ({
+        ...prevState,
+        [name]: value
+      }));
+    }
   };
 
   const handlePicChange = event => {
@@ -57,7 +66,7 @@ const SingleProductComponent = ({ product, userRole, getMyMenu }) => {
   const handleSubmit = event => {
     event.preventDefault();
     editProduct(editProductDTO);
-    handleClose();
+    handleShowEditClose();
   };
 
   // FETCH
@@ -86,7 +95,6 @@ const SingleProductComponent = ({ product, userRole, getMyMenu }) => {
         if (img !== null) {
           editProductImg(img);
         }
-        getMyMenu();
         navigate(0);
       })
       .catch(error => console.log(error));
@@ -135,58 +143,52 @@ const SingleProductComponent = ({ product, userRole, getMyMenu }) => {
   };
 
   return (
-    <Col xs={10} sm={5} xl={3} className="perfect-shadow card justify-content-center mx-4 py-2 me-3 me-xl-5 mb-3 position-relative" style={{ height: "150px" }}>
+    <Col
+      xs={10}
+      sm={5}
+      xl={3}
+      className="single-product single-product--shadow card justify-content-center mx-4 py-1 me-3 me-xl-5 mb-3 position-relative"
+      style={{ height: "135px", cursor: "pointer" }}
+      onClick={() => {
+        if (userRole === "RESTAURANT") {
+          handleShowEdit();
+        }
+      }}
+    >
       <Row>
-        {userRole === "RESTAURANT" && (
-          <Col xs={12} className="mt-1 mb-3 d-flex justify-content-between">
-            <Button variant="link" className="p-0 text-decoration-none" onClick={handleShow}>
-              <small>Edit</small>
-            </Button>
-            <Button variant="link" className="p-0 text-decoration-none" onClick={handleShowDelete}>
-              <Trash3 variant="danger" />
-            </Button>
-            <Modal show={showDelete} onHide={handleShowDeleteClose} className="perfect-shadow">
-              <Modal.Header closeButton className="border-bottom-0"></Modal.Header>
-              <Modal.Body>
-                <h4>Are you sure you want to delete this product?</h4>
-              </Modal.Body>
-              <Modal.Footer className="border-top-0 d-flex justify-content-center">
-                <Button variant="secondary" onClick={handleShowDeleteClose} className="rounded-pill px-4 border-0">
-                  Dismiss
-                </Button>
-                <Button variant="danger" onClick={deleteProduct} className="rounded-pill px-4 border-0">
-                  Delete
-                </Button>
-              </Modal.Footer>
-            </Modal>
-          </Col>
-        )}
         <Col xs={7} sm={6} md={8} xl={7}>
-          <h5 className="card-title font-weight-bold mb-1 line-clamp-2">{product.name}</h5>
-          <small className="card-text text-muted">{product.price.toFixed(2)} €</small>
+          <small className="single-product__name fw-medium mb-1 line-clamp-2">{product.name}</small>
+          <small className="single-product__price text-muted mb-1">{product.price.toFixed(2)} €</small>
+          <small className="single-product__description card-text text-muted line-clamp-2" style={{ fontSize: "12px" }}>
+            {product.description}
+          </small>
         </Col>
         <Col xs={4} sm={5} md={3} xl={4}>
-          <img src={product.imageUrl} alt={product.name} className="img-fluid rounded" style={{ width: "70px" }} />
+          <img src={product.imageUrl} alt={product.name} className="single-product__image rounded" style={{ width: "85px" }} />
         </Col>
-        <Modal show={show} onHide={handleClose} className="perfect-shadow">
-          <Modal.Header closeButton className="border-bottom-0"></Modal.Header>
+        <Col xs={7} sm={6} md={8} xl={7}></Col>
+        <Modal show={showEdit} onHide={handleShowEditClose} className="single-product__modal single-product--shadow" onClick={event => event.stopPropagation()}>
+          <Modal.Header closeButton className="border-bottom-0" onClick={event => event.stopPropagation()} />
           <Modal.Body>
             <h2 className="fs-5 text-center">Edit your product</h2>
             <Form onSubmit={handleSubmit}>
-              <Form.Group className="signup__form__group mb-3">
-                <Form.Label className="signup__form__group__label">Name</Form.Label>
+              <Form.Group className="single-product__form-group mb-3">
+                <Form.Label className="single-product__form-label">Name</Form.Label>
                 <Form.Control type="text" placeholder="Enter product name" value={editProductDTO.name} name="name" onChange={handleChange} required />
               </Form.Group>
-              <Form.Group className="signup__form__group mb-3">
-                <Form.Label className="signup__form__group__label">Price</Form.Label>
+              <Form.Group className="single-product__form-group mb-3">
+                <Form.Label className="single-product__form-label">Price</Form.Label>
                 <Form.Control type="text" placeholder="Enter product price" value={editProductDTO.price} name="price" onChange={handleChange} />
               </Form.Group>
-              <Form.Group className="signup__form__group mb-3">
-                <Form.Label className="signup__form__group__label">Description</Form.Label>
+              <Form.Group className="single-product__form-group mb-3">
+                <Form.Label className="single-product__form-label">Description</Form.Label>
                 <Form.Control type="text" placeholder="Enter product description" value={editProductDTO.description} name="description" onChange={handleChange} required />
               </Form.Group>
-              <Form.Group className="signup__form__group mb-3">
-                <Form.Label className="signup__form__group__label">Product image</Form.Label>
+              <div className="d-flex justify-content-center">
+                <img src={product.imageUrl} alt="" className="rounded" style={{ width: "85px" }} />
+              </div>
+              <Form.Group className="single-product__form-group mb-3">
+                <Form.Label className="single-product__form-label">Product image</Form.Label>
                 <Form.Control type="file" accept="img/*" onChange={handlePicChange} />
               </Form.Group>
               <Button type="submit" className="d-none">
@@ -195,8 +197,40 @@ const SingleProductComponent = ({ product, userRole, getMyMenu }) => {
             </Form>
           </Modal.Body>
           <Modal.Footer className="border-top-0 d-flex justify-content-center">
-            <Button type="button" onClick={handleSubmit} className="rounded-pill px-5 border-0">
+            <Button
+              type="button"
+              variant="danger"
+              onClick={() => {
+                handleShowEditClose();
+                handleShowDelete();
+              }}
+              className="single-product__button single-product__button--delete rounded-pill px-5 border-0"
+            >
+              Delete
+            </Button>
+            <Button type="button" onClick={handleSubmit} className="single-product__button rounded-pill px-5 border-0">
               Save Changes
+            </Button>
+          </Modal.Footer>
+        </Modal>
+        <Modal show={showDelete} onHide={handleShowDeleteClose} className="single-product__modal single-product--shadow">
+          <Modal.Header closeButton className="border-bottom-0"></Modal.Header>
+          <Modal.Body>
+            <h4>Are you sure you want to delete this product?</h4>
+          </Modal.Body>
+          <Modal.Footer className="border-top-0 d-flex justify-content-center">
+            <Button variant="secondary" onClick={handleShowDeleteClose} className="single-product__button single-product__button--dismiss rounded-pill px-4 border-0">
+              Dismiss
+            </Button>
+            <Button
+              variant="danger"
+              onClick={() => {
+                handleShowEditClose();
+                deleteProduct();
+              }}
+              className="single-product__button rounded-pill px-4 border-0"
+            >
+              Delete
             </Button>
           </Modal.Footer>
         </Modal>

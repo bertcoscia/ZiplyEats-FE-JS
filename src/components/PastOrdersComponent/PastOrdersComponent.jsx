@@ -66,12 +66,12 @@ const PastOrdersComponent = () => {
         <>
           {restaurantPastOrders.length > 0 ? (
             <>
-              <Container style={{ marginTop: "110px" }}>
+              <Container style={{ marginTop: "110px" }} className="mb-3">
                 <h1 className="text-center mb-3">Past Orders</h1>
                 <Button as={Link} to={"/home"} variant="link" className="text-decoration-none mb-3">
                   Go back
                 </Button>
-                <div className="d-flex flex-wrap">
+                <div className="d-flex flex-wrap justify-content-start column-gap-1 row-gap-3">
                   {restaurantPastOrders
                     .sort((a, b) => new Date(b.creationDateTime) - new Date(a.creationDateTime))
                     .map(order => (

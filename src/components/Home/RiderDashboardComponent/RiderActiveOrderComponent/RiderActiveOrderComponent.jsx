@@ -133,34 +133,34 @@ const RiderActiveOrderComponent = () => {
   return (
     <>
       {order && (
-        <Container className="my-3">
-          <h4 className="text-center">Your current order</h4>
-          <div className="card p-3 shadow mx-auto d-flex flex-column justify-content-center mb-3 mb-md-0 mt-3">
-            <h4 className="single-active-order__header mb-3 fs-4">Order details</h4>
-            <small className="mb-3">
+        <div className="rider-active-order my-3 mx-auto" style={{ width: "50%" }}>
+          <h4 className="rider-active-order__header text-center">Your current order</h4>
+          <div className="rider-active-order__card card p-3 shadow mx-auto d-flex flex-column justify-content-center mb-3 mb-md-0 mt-3">
+            <h4 className="rider-active-order__section-header mb-3 fs-4">Order details</h4>
+            <small className="rider-active-order__order-info mb-3">
               <span className="fw-bold">Order number: </span>
               {order.idOrder}
             </small>
-            <small className="mb-3">
+            <small className="rider-active-order__restaurant-info mb-3">
               <span className="fw-bold">Restaurant: </span>
               {order.restaurant.name}
-              <a className="single-active-order__customer-phone small ms-2" href={`tel:+39${order.restaurant.phoneNumber}`}>
+              <a className="rider-active-order__restaurant-phone small ms-2" href={`tel:+39${order.restaurant.phoneNumber}`}>
                 {order.restaurant.phoneNumber}
               </a>
             </small>
-            <small className="mb-3">
+            <small className="rider-active-order__restaurant-address mb-3">
               <span className="fw-bold">Address: </span>
               {order.restaurant.address}
             </small>
             {groupedProducts.map(({ product, count }) => (
-              <div key={`${product.product.idProduct}_${JSON.stringify(product.toppings)}`} className="single-active-order__product d-flex justify-content-between">
-                <div className="single-active-order__product-info d-flex">
-                  <p className="single-active-order__product-quantity d-inline me-3">{count}X</p>
-                  <div className="single-active-order__product-details d-flex flex-column">
-                    <p className="single-active-order__product-name d-inline mb-0">{product.product.name}</p>
+              <div key={`${product.product.idProduct}_${JSON.stringify(product.toppings)}`} className="rider-active-order__product d-flex justify-content-between">
+                <div className="rider-active-order__product-info d-flex">
+                  <p className="rider-active-order__product-quantity d-inline me-3">{count}X</p>
+                  <div className="rider-active-order__product-details d-flex flex-column">
+                    <p className="rider-active-order__product-name d-inline mb-0">{product.product.name}</p>
                     {product.toppings.length > 0 &&
                       product.toppings.map((topping, index) => (
-                        <Container key={index} className="single-active-order__topping d-flex justify-content-between ms-3 text-muted">
+                        <Container key={index} className="rider-active-order__topping d-flex justify-content-between ms-3 text-muted">
                           <small>{topping.name}</small>
                         </Container>
                       ))}
@@ -168,30 +168,30 @@ const RiderActiveOrderComponent = () => {
                 </div>
               </div>
             ))}
-            <h4 className="single-active-order__header mb-3 fs-4">Delivery details</h4>
-            <small className="mb-3">
-              <span className="fw-bold"> Customer: </span>
+            <h4 className="rider-active-order__section-header mb-3 fs-4">Delivery details</h4>
+            <small className="rider-active-order__customer-info mb-3">
+              <span className="fw-bold">Customer: </span>
               {order.user.name} {order.user.surname}
               <span>
-                <a className="single-active-order__customer-phone small ms-2" href={`tel:+39${order.user.phoneNumber}`}>
+                <a className="rider-active-order__customer-phone small ms-2" href={`tel:+39${order.user.phoneNumber}`}>
                   {order.user.phoneNumber}
                 </a>
               </span>
             </small>
-            <small className="mb-3">
-              <span className="fw-bold"> Delivery address: </span>
+            <small className="rider-active-order__delivery-address mb-3">
+              <span className="fw-bold">Delivery address: </span>
               {order.deliveryAddress}
             </small>
-            <small className="mb-3">
+            <small className="rider-active-order__requested-delivery-time mb-3">
               <span className="fw-bold">Requested delivery time: </span>
               {formatDateTime(order.requestedDeliveryDateTime)}
             </small>
-            <small>
+            <small className="rider-active-order__order-status">
               <span className="fw-bold">Order status: </span>
-              <small className="">{order.orderStatus.orderStatus === "RESTAURANT_ACCEPTED" ? "ACCEPTED" : formatString(order.orderStatus.orderStatus)}</small>
+              <small>{order.orderStatus.orderStatus === "RESTAURANT_ACCEPTED" ? "ACCEPTED" : formatString(order.orderStatus.orderStatus)}</small>
             </small>
             {order.orderStatus.orderStatus === "RESTAURANT_ACCEPTED" && (
-              <div className="single-active-order__cancel d-flex justify-content-center mt-3">
+              <div className="rider-active-order__action-buttons d-flex justify-content-center mt-3">
                 <Button variant="danger" onClick={refuseOrder} className="me-3">
                   Refuse order
                 </Button>
@@ -201,14 +201,14 @@ const RiderActiveOrderComponent = () => {
               </div>
             )}
             {order.orderStatus.orderStatus === "IN_TRANSIT" && (
-              <div className="single-active-order__cancel d-flex justify-content-center mt-3">
+              <div className="rider-active-order__action-buttons d-flex justify-content-center mt-3">
                 <Button variant="success" onClick={finaliseOrder} className="me-3">
                   Order delivered
                 </Button>
               </div>
             )}
           </div>
-        </Container>
+        </div>
       )}
     </>
   );
