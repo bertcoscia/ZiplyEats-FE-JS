@@ -19,24 +19,7 @@ const PastOrdersComponent = () => {
   const [restaurantPastOrders, setRestaurantPastOrders] = useState([]);
 
   // FETCH
-  const getPastOrders = () => {
-    let role = "";
-    if (profile) {
-      switch (profile.userRole.userRole) {
-        case "USER":
-          role = "user";
-          break;
-        case "RIDER":
-          role = "rider";
-          break;
-        case "RESTAURANT":
-          role = "restaurant";
-          break;
-        default:
-          break;
-      }
-    }
-
+  const getPastOrders = role => {
     fetch(`${ENV_VARIABLE.URL_ORDERS}/my-orders/${role}/past-orders`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("accessToken")}`
@@ -57,15 +40,31 @@ const PastOrdersComponent = () => {
 
   // USE EFFECT
   useEffect(() => {
-    getPastOrders();
-  }, []);
+    if (profile) {
+      let role = "";
+      switch (profile.userRole.userRole) {
+        case "USER":
+          role = "user";
+          break;
+        case "RIDER":
+          role = "rider";
+          break;
+        case "RESTAURANT":
+          role = "restaurant";
+          break;
+        default:
+          return;
+      }
+      getPastOrders(role);
+    }
+  }, [profile]);
 
   return (
     <>
       <NavComponent />
       {profile && (
         <>
-          {restaurantPastOrders.length > 0 && (
+          {restaurantPastOrders.length > 0 ? (
             <>
               <Container style={{ marginTop: "110px" }}>
                 <h1 className="text-center mb-3">Past Orders</h1>
@@ -81,6 +80,8 @@ const PastOrdersComponent = () => {
                 </div>
               </Container>
             </>
+          ) : (
+            <h4>There are no past orders</h4>
           )}
         </>
       )}

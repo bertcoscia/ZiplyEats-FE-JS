@@ -64,6 +64,7 @@ const LoginComponent = () => {
   return (
     <Container className="login my-5 px-5">
       <Form onSubmit={handleSubmit} className="login__form perfect-shadow border rounded-4 align-self-center py-4 px-5 text-decoration-none position-relative mx-3 my-3 signup-element-btn">
+        <h1 className="text-center">Login</h1>
         <Button as={Link} to={"/"} variant="link" className="text-decoration-none">
           Go back
         </Button>

@@ -53,7 +53,7 @@ const SinglePastOrderComponent = ({ order, userRole }) => {
   }, []);
 
   return (
-    <Container className="single-restaurant-past-order perfect-shadow mb-3 py-3 card me-3">
+    <Container className="single-restaurant-past-order perfect-shadow mb-3 py-3 card mx-auto">
       <Container className="single-restaurant-past-order__order-info">
         <h2 className="mb-2 fs-5">Order details</h2>
         <div className="d-flex flex-column">
