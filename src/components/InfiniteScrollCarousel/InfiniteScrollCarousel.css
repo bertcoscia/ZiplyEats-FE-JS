@@ -1,0 +1,19 @@
+.carousel {
+  white-space: nowrap;
+}
+
+.carousel__slide img {
+  width: 160px;
+  height: 80px;
+  object-fit: cover;
+  animation: 20s infinite-slide infinite linear;
+}
+
+@keyframes infinite-slide {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}

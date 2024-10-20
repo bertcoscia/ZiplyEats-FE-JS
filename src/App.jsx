@@ -10,13 +10,15 @@ import HomeComponent from "./components/home/HomeComponent";
 import PastOrdersComponent from "./components/PastOrdersComponent/PastOrdersComponent";
 import ProfileComponent from "./components/profile/ProfileComponent";
 import EditMenuComponent from "./components/home/RestaurantDashboardComponent/EditMenuComponent/EditMenuComponent";
+import UserDashboardComponent from "./components/Home/UserDashboardComponent/UserDashboardComponent";
+import LocalRestaurantsComponent from "./components/LocalRestaurantsComponent";
 
 function App() {
   return (
     <>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<AuthComponent />} />
+          <Route path="/" element={<UserDashboardComponent />} />
           <Route path="/login" element={<LoginComponent />} />
           <Route path="/signup" element={<SignUpComponent />} />
           <Route path="/signup/user" element={<UserSignUpComponent />} />
@@ -26,6 +28,7 @@ function App() {
           <Route path="/home" element={<HomeComponent />} />
           <Route path="/past-orders" element={<PastOrdersComponent />} />
           <Route path="/edit-menu" element={<EditMenuComponent />} />
+          <Route path="/local-restaurants/:city/:lon/:lat" element={<LocalRestaurantsComponent />} />
         </Routes>
       </BrowserRouter>
     </>

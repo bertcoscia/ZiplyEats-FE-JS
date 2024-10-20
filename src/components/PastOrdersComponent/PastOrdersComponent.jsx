@@ -62,11 +62,11 @@ const PastOrdersComponent = () => {
   return (
     <>
       <NavComponent />
-      {profile && (
-        <>
-          {restaurantPastOrders.length > 0 ? (
-            <>
-              <Container style={{ marginTop: "110px" }} className="mb-3">
+      <Container style={{ marginTop: "110px" }} className="mb-3">
+        {profile && (
+          <>
+            {restaurantPastOrders.length > 0 ? (
+              <>
                 <h1 className="text-center mb-3">Past Orders</h1>
                 <Button as={Link} to={"/home"} variant="link" className="text-decoration-none mb-3">
                   Go back
@@ -78,13 +78,13 @@ const PastOrdersComponent = () => {
                       <SinglePastOrderComponent key={order.idOrder} order={order} userRole={profile.userRole.userRole} />
                     ))}
                 </div>
-              </Container>
-            </>
-          ) : (
-            <h4>There are no past orders</h4>
-          )}
-        </>
-      )}
+              </>
+            ) : (
+              <h4 className="text-center pt-5">There are no past orders</h4>
+            )}
+          </>
+        )}
+      </Container>
     </>
   );
 };

@@ -4,3 +4,7 @@ nav {
   top: 0 !important;
   right: 0 !important;
 }
+
+.navbar__dropdown__toggle::after {
+  display: none;
+}

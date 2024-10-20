@@ -208,7 +208,7 @@ const SingleProductComponent = ({ product, userRole, getMyMenu }) => {
             >
               Delete
             </Button>
-            <Button type="button" onClick={handleSubmit} className="single-product__button rounded-pill px-5 border-0">
+            <Button type="button" variant="accent" onClick={handleSubmit} className="single-product__button rounded-pill px-5 border-0">
               Save Changes
             </Button>
           </Modal.Footer>
@@ -219,7 +219,7 @@ const SingleProductComponent = ({ product, userRole, getMyMenu }) => {
             <h4>Are you sure you want to delete this product?</h4>
           </Modal.Body>
           <Modal.Footer className="border-top-0 d-flex justify-content-center">
-            <Button variant="secondary" onClick={handleShowDeleteClose} className="single-product__button single-product__button--dismiss rounded-pill px-4 border-0">
+            <Button variant="accent" onClick={handleShowDeleteClose} className="single-product__button single-product__button--dismiss rounded-pill px-4 border-0">
               Dismiss
             </Button>
             <Button

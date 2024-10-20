@@ -1,0 +1,23 @@
+@media (min-width: 768px) {
+  .hero-img {
+    width: 300px;
+  }
+}
+
+@media (min-width: 992px) {
+  .hero-img {
+    width: 400px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .hero-img {
+    width: 450px;
+  }
+}
+
+@media (min-width: 1400px) {
+  .hero-img {
+    width: 500px;
+  }
+}

@@ -1,15 +1,79 @@
-import { Container, Navbar, Dropdown } from "react-bootstrap";
+import { Container, Navbar, Dropdown, Button, Modal, Form } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import "./NavComponent.css";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { getProfileAction } from "../../redux/actions";
 
-const NavComponent = () => {
+const NavComponent = ({ scrollToJoinUs }) => {
+  // ENV VARIABLES
+  const ENV_VARIABLE = {
+    URL_AUTH: import.meta.env.VITE_AUTH_URL
+  };
+
   // HOOKS
   const profile = useSelector(state => state.profile.content);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  // USE STATE
+  const [showLogin, setShowLogin] = useState(false);
+  const [loginDTO, setLoginDTO] = useState({
+    email: "",
+    password: ""
+  });
+
+  const [loginError, setLoginError] = useState(false);
+
+  // HANDLERS
+  const handleShowLogin = () => {
+    setShowLogin(true);
+  };
+
+  const handleShowLoginClose = () => {
+    setShowLogin(false);
+  };
+
+  const handleSubmit = event => {
+    event.preventDefault();
+    login(loginDTO);
+  };
+
+  const handleTextChange = event => {
+    const { name, value } = event.target;
+    setLoginDTO(prevState => ({
+      ...prevState,
+      [name]: value
+    }));
+  };
+
+  // FETCH
+  const login = loginDTO => {
+    fetch(`${ENV_VARIABLE.URL_AUTH}/users-login`, {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json"
+      },
+      body: JSON.stringify(loginDTO)
+    })
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          setLoginError(true);
+          throw new Error("Error during login");
+        }
+      })
+      .then(LoginRespDTO => {
+        localStorage.setItem("accessToken", LoginRespDTO.accessToken);
+        setLoginDTO({
+          email: "",
+          password: ""
+        });
+        navigate("/home");
+      })
+      .catch(error => console.log(error));
+  };
 
   // UTILS
   const logout = () => {
@@ -19,24 +83,26 @@ const NavComponent = () => {
 
   // USE EFFECT
   useEffect(() => {
-    dispatch(getProfileAction());
+    if (localStorage.getItem("accessToken") !== null) {
+      dispatch(getProfileAction());
+    }
   }, []);
 
   return (
     <>
-      {profile && (
-        <Navbar className="navbar d-flex align-items-center perfect-shadow bg-primary" style={{ height: "80px", zIndex: "99" }}>
-          <Container className="navbar__brand d-flex justify-content-between">
-            <Navbar.Brand as={Link} to={"/home"} className="navbar__brand__image">
-              <img src="https://res.cloudinary.com/bertcoscia/image/upload/fl_preserve_transparency/v1728833203/ZiplyEats_-_Logo_bnbxwx.jpg?_s=public-apps" width={"150px"} className="d-inline-block align-top" alt="React Bootstrap logo" />
-            </Navbar.Brand>
+      <Navbar className="navbar d-flex align-items-center perfect-shadow bg-background" style={{ height: "80px", zIndex: "99" }}>
+        <Container className="navbar__brand d-flex justify-content-between">
+          <Navbar.Brand as={Link} to={"/home"} className="navbar__brand__image">
+            <img src="https://res.cloudinary.com/bertcoscia/image/upload/fl_preserve_transparency/v1729435276/Screenshot_2024-10-20_at_16.37.03_qxysln.jpg?_s=public-apps" width={"150px"} className="d-inline-block align-top" alt="" />
+          </Navbar.Brand>
 
+          {profile ? (
             <Dropdown className="navbar__dropdown">
-              <Dropdown.Toggle className="navbar__dropdown__toggle text-decoration-none align-self-center bg-transparent border-0 rounded-circle">
-                <img src={profile.avatarUrl} alt="" width={"44px"} className="rounded-circle" />
+              <Dropdown.Toggle as={Button} variant="accent" className="navbar__dropdown__toggle align-self-center py-0 px-2 border-3 rounded-1">
+                <small>Account</small>
               </Dropdown.Toggle>
 
-              <Dropdown.Menu className="navbar__dropdown__menu rounded-4 bg-primary">
+              <Dropdown.Menu className="navbar__dropdown__menu rounded-4 bg-accent">
                 <Dropdown.Item as={Link} to={"/me"} className="navbar__dropdown__menu__item">
                   <span className="me-2">
                     <img src="https://glovo.dhmedia.io/image/customer-assets-glovo/customer_profile/uds/person.svg?t=W3sic3ZnIjp7InEiOiJsb3cifX1d" alt="" style={{ width: "15px" }} />
@@ -51,9 +117,40 @@ const NavComponent = () => {
                 </Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>
-          </Container>
-        </Navbar>
-      )}
+          ) : (
+            <div className="d-flex column-gap-3">
+              <Button onClick={scrollToJoinUs} variant="accent" className="align-self-center py-0 px-2 border-3 rounded-1">
+                <small>Sign up</small>
+              </Button>
+              <Button onClick={handleShowLogin} variant="accent" className="align-self-center py-0 px-2 border-3 rounded-1">
+                <small>Login</small>
+              </Button>
+              <Modal show={showLogin} onHide={handleShowLoginClose} className="profile__modal perfect-shadow">
+                <Modal.Header closeButton className="profile__modal-header border-bottom-0"></Modal.Header>
+                <Modal.Body className="profile__modal-body">
+                  <Form onSubmit={handleSubmit}>
+                    <h2 className="text-center">Login</h2>
+                    <Form.Group className="login__form__group my-3" controlId="formBasicEmail">
+                      <Form.Label className="login__form__label">Email address</Form.Label>
+                      <Form.Control type="email" placeholder="Enter email" name="email" value={loginDTO.email} onChange={handleTextChange} className="login__form__input" required />
+                    </Form.Group>
+                    <Form.Group className="login__form__group" controlId="formBasicPassword">
+                      <Form.Label className="login__form__label">Password</Form.Label>
+                      <Form.Control type="password" placeholder="Password" name="password" value={loginDTO.password} onChange={handleTextChange} className="login__form__input" required />
+                    </Form.Group>
+                    {loginError && <p className="text-danger">Wrong password and/or email</p>}
+                  </Form>
+                </Modal.Body>
+                <Modal.Footer className="profile__modal-footer border-top-0 mb-0 d-flex justify-content-center">
+                  <Button onClick={handleSubmit} className="profile__save-button rounded-pill px-3 border-0" variant="accent">
+                    Login
+                  </Button>
+                </Modal.Footer>
+              </Modal>
+            </div>
+          )}
+        </Container>
+      </Navbar>
     </>
   );
 };

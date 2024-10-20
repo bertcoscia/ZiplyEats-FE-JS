@@ -230,7 +230,7 @@ const EditMenuComponent = () => {
                       <Form.Control type="text" value={search} placeholder="Search for a product" onChange={handleSearchChange} className="edit-menu__search-input" />
                     </Form.Group>
                   </Form>
-                  <Button variant="primary" className="edit-menu__reset-button ms-3" onClick={resetSearch}>
+                  <Button variant="accent" className="edit-menu__reset-button ms-3" onClick={resetSearch}>
                     Reset
                   </Button>
                 </div>

@@ -411,8 +411,8 @@ const ProfileComponent = () => {
                     uploadProfilePic(img);
                     handleClose("profilePic");
                   }}
-                  className="profile__save-button rounded-pill px-5 border-0"
-                  style={{ backgroundColor: "#F86834" }}
+                  className="profile__save-button rounded-pill px-3 border-0"
+                  variant="accent"
                 >
                   Save Changes
                 </Button>
@@ -458,8 +458,8 @@ const ProfileComponent = () => {
                       editName(name);
                       handleClose("name");
                     }}
-                    className="profile__save-button rounded-pill px-5 border-0"
-                    style={{ backgroundColor: "#F86834" }}
+                    className="profile__save-button rounded-pill px-3 border-0"
+                    variant="accent"
                   >
                     Save Changes
                   </Button>
@@ -510,8 +510,8 @@ const ProfileComponent = () => {
                       editFullName(fullName);
                       handleClose("fullName");
                     }}
-                    className="profile__save-button rounded-pill px-5 border-0"
-                    style={{ backgroundColor: "#F86834" }}
+                    className="profile__save-button rounded-pill px-3 border-0"
+                    variant="accent"
                   >
                     Save Changes
                   </Button>
@@ -555,8 +555,8 @@ const ProfileComponent = () => {
                     editEmail(email);
                     handleClose("email");
                   }}
-                  className="profile__save-button rounded-pill px-5 border-0"
-                  style={{ backgroundColor: "#F86834" }}
+                  className="profile__save-button rounded-pill px-3 border-0"
+                  variant="accent"
                 >
                   Save Changes
                 </Button>
@@ -613,8 +613,8 @@ const ProfileComponent = () => {
                     editAddress(address);
                     handleClose("address");
                   }}
-                  className="profile__save-button rounded-pill px-5 border-0"
-                  style={{ backgroundColor: "#F86834" }}
+                  className="profile__save-button rounded-pill px-3 border-0"
+                  variant="accent"
                 >
                   Save Changes
                 </Button>
@@ -661,8 +661,8 @@ const ProfileComponent = () => {
                     editPassword(password);
                     handleClose("password");
                   }}
-                  className="profile__save-button rounded-pill px-5 border-0"
-                  style={{ backgroundColor: "#F86834" }}
+                  className="profile__save-button rounded-pill px-3 border-0"
+                  variant="accent"
                 >
                   Save Changes
                 </Button>
@@ -705,8 +705,8 @@ const ProfileComponent = () => {
                     editPhoneNumber(phoneNumber);
                     handleClose("phoneNumber");
                   }}
-                  className="profile__save-button rounded-pill px-5 border-0"
-                  style={{ backgroundColor: "#F86834" }}
+                  className="profile__save-button rounded-pill px-3 border-0"
+                  variant="accent"
                 >
                   Save Changes
                 </Button>

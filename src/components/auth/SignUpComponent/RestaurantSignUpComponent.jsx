@@ -67,6 +67,18 @@ const RestaurantSignUpComponent = () => {
     restaurantSignup(signupDTO);
   };
 
+  const handleKeyDown = event => {
+    if (event.key === " ") {
+      event.preventDefault();
+      const { name, value } = event.target;
+      const newValue = value + " ";
+      setSignupDTO(prevState => ({
+        ...prevState,
+        [name]: newValue
+      }));
+    }
+  };
+
   // FETCH
   const fetchCategories = () => {
     fetch(`${ENV_VARIABLE.URL_RESTAURANT_CATEGORIES}/list`)
@@ -133,18 +145,15 @@ const RestaurantSignUpComponent = () => {
   }, []);
 
   return (
-    <Container className="signup my-5 px-5">
-      <Form onSubmit={handleSubmit} className="signup__form perfect-shadow border rounded-4 align-self-center py-4 px-5 text-decoration-none position-relative mx-3 my-3 signup-element-btn">
-        <Button as={Link} to={"/signup"} variant="link" className="text-decoration-none">
-          Go back
-        </Button>
+    <Container className="signup">
+      <Form onSubmit={handleSubmit} className="signup__form mx-3">
         <Form.Group className="signup__form__group my-3">
           <Form.Label className="signup__form__group__label">Name</Form.Label>
-          <Form.Control type="text" placeholder="Enter your name" name="name" value={signupDTO.name} onChange={handleTextChange} required />
+          <Form.Control type="text" placeholder="Enter your name" name="name" value={signupDTO.name} onChange={handleTextChange} onKeyDown={handleKeyDown} required />
         </Form.Group>
         <Form.Group className="signup__form__group mb-3">
           <Form.Label className="signup__form__group__label">Email address</Form.Label>
-          <Form.Control type="email" placeholder="Enter email" name="email" value={signupDTO.email} onChange={handleTextChange} required />
+          <Form.Control type="email" placeholder="Enter email" name="email" value={signupDTO.email} onChange={handleTextChange} onKeyDown={handleKeyDown} required />
         </Form.Group>
         <Form.Group className="signup__form__group mb-3">
           <Form.Label className="signup__form__group__label">Password</Form.Label>
@@ -153,7 +162,7 @@ const RestaurantSignUpComponent = () => {
         </Form.Group>
         <Form.Group className="signup__form__group mb-3">
           <Form.Label className="signup__form__group__label">Landline phone number</Form.Label>
-          <Form.Control type="text" placeholder="Insert your phone number" name="phoneNumber" value={signupDTO.phoneNumber} onChange={handleTextChange} required />
+          <Form.Control type="text" placeholder="Insert your phone number" name="phoneNumber" value={signupDTO.phoneNumber} onChange={handleTextChange} onKeyDown={handleKeyDown} required />
         </Form.Group>
         <Form.Group className="signup__form__group mb-3 geoapify-input">
           <Form.Label className="signup__form__group__label">Address</Form.Label>
@@ -164,7 +173,7 @@ const RestaurantSignUpComponent = () => {
         {restaurantCategories.length > 0 && (
           <Form.Group className="mb-3" name="restaurantCategory">
             <Form.Label className="signup__form__group__label">Restaurant category</Form.Label>
-            <Form.Select name="restaurantCategory" value={signupDTO.restaurantCategory} onChange={handleTextChange}>
+            <Form.Select name="restaurantCategory" value={signupDTO.restaurantCategory} onChange={handleTextChange} onKeyDown={handleKeyDown}>
               <option value="">Category</option>
               {restaurantCategories
                 .sort((a, b) => a.restaurantCategory.localeCompare(b.restaurantCategory))
@@ -176,9 +185,11 @@ const RestaurantSignUpComponent = () => {
             </Form.Select>
           </Form.Group>
         )}
-        <Button variant="primary" type="submit">
-          Submit
-        </Button>
+        <div className="d-flex justify-content-center">
+          <Button variant="accent" type="submit">
+            Sign up
+          </Button>
+        </div>
       </Form>
     </Container>
   );
