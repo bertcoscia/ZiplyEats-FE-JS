@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import NavComponent from "../NavComponent/NavComponent";
-import { Button, Container } from "react-bootstrap";
+import { Button, Container, Form } from "react-bootstrap";
 import SingleRestaurantCard from "../SingleRestaurantComponent/SingleRestaurantCard";
 
 const RestaurantsByCategoryComponent = () => {
@@ -17,6 +17,12 @@ const RestaurantsByCategoryComponent = () => {
   // USE STATE
   const [restaurants, setRestaurants] = useState([]);
   const [nearRestaurants, setNearRestaurants] = useState([]);
+  const [search, setSearch] = useState("");
+
+  // HANDLERS
+  const handleSearchChange = event => {
+    setSearch(event.target.value);
+  };
 
   // FETCH
   const findRestaurantsByCategory = async category => {
@@ -53,6 +59,11 @@ const RestaurantsByCategoryComponent = () => {
     }
   };
 
+  // UTILS
+  const resetSearch = () => {
+    setSearch("");
+  };
+
   // USE EFFECT
   useEffect(() => {
     findRestaurantsByCategory(params.category);
@@ -69,9 +80,29 @@ const RestaurantsByCategoryComponent = () => {
       <NavComponent />
       <Container style={{ marginTop: "80px" }}>
         <h1 className="text-center pt-3">Top {params.category.toLocaleLowerCase()} restaurants in your area</h1>
-        <div className="d-flex justify-content-around flex-wrap my-3">
-          {nearRestaurants.length > 0 ? nearRestaurants.map(restaurant => <SingleRestaurantCard key={restaurant.idUser} restaurant={restaurant} />) : <p>No nearby restaurants found</p>}
+        <div className="edit-menu__search d-flex justify-content-center">
+          <Form className="edit-menu__search-form my-3">
+            <Form.Group>
+              <Form.Control type="text" value={search} placeholder="Search for a restaurant" onChange={handleSearchChange} className="edit-menu__search-input py-1" />
+            </Form.Group>
+          </Form>
+          <Button variant="accent" className="edit-menu__reset-button ms-3 align-self-center py-1" onClick={resetSearch}>
+            Reset
+          </Button>
         </div>
+        {search === "" ? (
+          <div className="d-flex justify-content-around flex-wrap my-3">
+            {nearRestaurants.length > 0 ? nearRestaurants.sort((a, b) => b.rating - a.rating).map(restaurant => <SingleRestaurantCard key={restaurant.idUser} restaurant={restaurant} />) : <p>No nearby restaurants found</p>}
+          </div>
+        ) : (
+          <div className="d-flex flex-wrap">
+            {nearRestaurants
+              .filter(product => product.name.toLowerCase().includes(search.toLowerCase()))
+              .map((restaurant, index) => (
+                <SingleRestaurantCard key={index} restaurant={restaurant} />
+              ))}
+          </div>
+        )}
       </Container>
     </>
   );

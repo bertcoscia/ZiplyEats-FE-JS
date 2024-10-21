@@ -2,16 +2,15 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import NavComponent from "../../../NavComponent/NavComponent";
 import SingleProductComponent from "../../../SingleProductComponent/SingleProductComponent";
-import { Button, Col, Container, Form, Modal, Row, Spinner } from "react-bootstrap";
+import { Button, Container, Form, Modal, Row, Spinner } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
-import { Plus, PlusCircle, PlusCircleFill } from "react-bootstrap-icons";
-
-// TODO: IMPLEMENT CLOUDINARY
+import SingleEditCategory from "./SingleEditCategory";
 
 const EditMenuComponent = () => {
   // ENV VARIABLES
   const ENV_VARIABLE = {
-    URL_PRODUCTS: import.meta.env.VITE_PRODUCTS_URL
+    URL_PRODUCTS: import.meta.env.VITE_PRODUCTS_URL,
+    URL_PRODUCT_CATEGORIES: import.meta.env.VITE_PRODUCT_CATEGORIES_URL
   };
 
   // HOOKS
@@ -28,8 +27,14 @@ const EditMenuComponent = () => {
     price: "",
     description: ""
   });
+  const [newProductCategory, setNewProductCategory] = useState({
+    productCategory: ""
+  });
   const [img, setImg] = useState(null);
   const [search, setSearch] = useState("");
+  const [showCategories, setShowCategories] = useState(false);
+  const [showNewCategory, setShowNewCategory] = useState(false);
+  const [productCategories, setProductCategories] = useState([]);
 
   // HANDLERS
   const handleShow = () => {
@@ -38,6 +43,22 @@ const EditMenuComponent = () => {
 
   const handleClose = () => {
     setShow(false);
+  };
+
+  const handleShowCategories = () => {
+    if (!showCategories) {
+      setShowCategories(true);
+    } else {
+      setShowCategories(false);
+    }
+  };
+
+  const handleShowNewCategory = () => {
+    setShowNewCategory(true);
+  };
+
+  const handleCloseNewCategory = () => {
+    setShowNewCategory(false);
   };
 
   const handleChange = event => {
@@ -58,6 +79,14 @@ const EditMenuComponent = () => {
     }
   };
 
+  const handleChangeNewCategory = event => {
+    const { name, value } = event.target;
+    setNewProductCategory(prevState => ({
+      ...prevState,
+      [name]: value
+    }));
+  };
+
   const handleSearchChange = event => {
     setSearch(event.target.value);
   };
@@ -70,6 +99,11 @@ const EditMenuComponent = () => {
     event.preventDefault();
     createNewProduct(newProductDTO);
     handleClose();
+  };
+
+  const handleSubmitNewCategory = event => {
+    event.preventDefault();
+    addNewProductCategory(newProductCategory);
   };
 
   // FETCH
@@ -103,7 +137,7 @@ const EditMenuComponent = () => {
   const createNewProduct = async newProduct => {
     try {
       const response = await fetch(`${ENV_VARIABLE.URL_PRODUCTS}`, {
-        method: "post",
+        method: "POST",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
           "Content-type": "application/json"
@@ -116,7 +150,8 @@ const EditMenuComponent = () => {
         setNewProductDTO({
           name: "",
           price: "",
-          description: ""
+          description: "",
+          productCategory: ""
         });
         navigate(0);
         return responseData.id;
@@ -151,6 +186,44 @@ const EditMenuComponent = () => {
     }
   };
 
+  const getMyProductCategories = async () => {
+    try {
+      const response = await fetch(`${ENV_VARIABLE.URL_PRODUCT_CATEGORIES}/my-product-categories`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`
+        }
+      });
+      if (response.ok) {
+        setProductCategories(await response.json());
+      } else {
+        throw new Error("Could not get product categories");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const addNewProductCategory = async newCategory => {
+    try {
+      const response = await fetch(`${ENV_VARIABLE.URL_PRODUCT_CATEGORIES}`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          "Content-type": "application/json"
+        },
+        body: JSON.stringify(newCategory)
+      });
+      if (response.ok) {
+        await response.json();
+        navigate(0);
+      } else {
+        throw new Error("Could not create new product category");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   // UTILS
   const resetSearch = () => {
     setSearch("");
@@ -167,6 +240,7 @@ const EditMenuComponent = () => {
   useEffect(() => {
     if (profileLoaded) {
       getMyMenu();
+      getMyProductCategories();
     }
   }, [profileLoaded]);
 
@@ -183,46 +257,10 @@ const EditMenuComponent = () => {
           {!loading && (
             <Container className="edit-menu" style={{ marginTop: "100px" }}>
               <h1 className="edit-menu__title text-center">Edit your menu</h1>
-              <Container className="edit-menu__controls mb-3 justify-content-between align-items-center">
+              <Container className="edit-menu__controls mb-5 justify-content-between align-items-center">
                 <Button as={Link} to={"/home"} variant="link" className="edit-menu__back-button p-0 text-decoration-none mb-3">
                   Go back
                 </Button>
-                <Button variant="link" className="edit-menu__add-product-button p-0 text-decoration-none mb-3 d-block" onClick={handleShow}>
-                  Add new product
-                </Button>
-
-                <Modal show={show} onHide={handleClose} className="edit-menu__modal perfect-shadow">
-                  <Modal.Header closeButton className="border-bottom-0"></Modal.Header>
-                  <Modal.Body>
-                    <h2 className="edit-menu__modal-title fs-5 text-center">Edit your product</h2>
-                    <Form onSubmit={handleSubmit} className="edit-menu__form">
-                      <Form.Group className="edit-menu__form-group mb-3">
-                        <Form.Label className="edit-menu__form-label">Name</Form.Label>
-                        <Form.Control type="text" placeholder="Enter product name" value={newProductDTO.name} name="name" onChange={handleChange} required className="edit-menu__form-input" />
-                      </Form.Group>
-                      <Form.Group className="edit-menu__form-group mb-3">
-                        <Form.Label className="edit-menu__form-label">Price</Form.Label>
-                        <Form.Control type="text" placeholder="Enter product price" value={newProductDTO.price} name="price" onChange={handleChange} className="edit-menu__form-input" />
-                      </Form.Group>
-                      <Form.Group className="edit-menu__form-group mb-3">
-                        <Form.Label className="edit-menu__form-label">Description</Form.Label>
-                        <Form.Control type="text" placeholder="Enter product description" value={newProductDTO.description} name="description" onChange={handleChange} required className="edit-menu__form-input" />
-                      </Form.Group>
-                      <Form.Group className="edit-menu__form-group mb-3">
-                        <Form.Label className="edit-menu__form-label">Product image</Form.Label>
-                        <Form.Control type="file" accept="image/*" onChange={handlePicChange} />
-                      </Form.Group>
-                      <Button type="submit" className="d-none">
-                        Submit
-                      </Button>
-                    </Form>
-                  </Modal.Body>
-                  <Modal.Footer className="border-top-0 d-flex justify-content-center">
-                    <Button type="button" onClick={handleSubmit} className="edit-menu__modal-save-button rounded-pill px-5 border-0">
-                      Save
-                    </Button>
-                  </Modal.Footer>
-                </Modal>
 
                 <div className="edit-menu__search d-flex">
                   <Form onSubmit={event => event.preventDefault()} className="edit-menu__search-form">
@@ -230,21 +268,92 @@ const EditMenuComponent = () => {
                       <Form.Control type="text" value={search} placeholder="Search for a product" onChange={handleSearchChange} className="edit-menu__search-input" />
                     </Form.Group>
                   </Form>
-                  <Button variant="accent" className="edit-menu__reset-button ms-3" onClick={resetSearch}>
+
+                  <Button variant="accent" className="edit-menu__reset-button ms-3 align-self-start me-3" onClick={resetSearch}>
                     Reset
                   </Button>
+
+                  <Button variant="accent" className="edit-menu__add-product-button text-decoration-none me-auto" onClick={handleShow}>
+                    Add new product
+                  </Button>
+
+                  <Modal show={show} onHide={handleClose} className="edit-menu__modal perfect-shadow">
+                    <Modal.Header closeButton className="border-bottom-0"></Modal.Header>
+                    <Modal.Body>
+                      <h2 className="edit-menu__modal-title fs-5 text-center">Edit your product</h2>
+                      <Form onSubmit={handleSubmit} className="edit-menu__form">
+                        <Form.Group className="edit-menu__form-group mb-3">
+                          <Form.Label className="edit-menu__form-label">Name</Form.Label>
+                          <Form.Control type="text" placeholder="Enter product name" value={newProductDTO.name} name="name" onChange={handleChange} required className="edit-menu__form-input" />
+                        </Form.Group>
+                        <Form.Group className="edit-menu__form-group mb-3">
+                          <Form.Label className="edit-menu__form-label">Price</Form.Label>
+                          <Form.Control type="text" placeholder="Enter product price" value={newProductDTO.price} name="price" onChange={handleChange} className="edit-menu__form-input" />
+                        </Form.Group>
+                        <Form.Group className="edit-menu__form-group mb-3">
+                          <Form.Label className="edit-menu__form-label">Description</Form.Label>
+                          <Form.Control type="text" placeholder="Enter product description" value={newProductDTO.description} name="description" onChange={handleChange} required className="edit-menu__form-input" />
+                        </Form.Group>
+                        <Form.Group className="edit-menu__form-group mb-3">
+                          <Form.Label className="edit-menu__form-label">Product category</Form.Label>
+                          <Form.Control type="text" placeholder="Enter product description" value={newProductDTO.productCategory} name="productCategory" onChange={handleChange} required className="edit-menu__form-input" />
+                        </Form.Group>
+                        <Form.Group className="edit-menu__form-group mb-3">
+                          <Form.Label className="edit-menu__form-label">Product image</Form.Label>
+                          <Form.Control type="file" accept="image/*" onChange={handlePicChange} />
+                        </Form.Group>
+                        <Button type="submit" className="d-none">
+                          Submit
+                        </Button>
+                      </Form>
+                    </Modal.Body>
+                    <Modal.Footer className="border-top-0 d-flex justify-content-center">
+                      <Button type="button" onClick={handleSubmit} className="edit-menu__modal-save-button rounded-pill px-5 border-0">
+                        Save
+                      </Button>
+                    </Modal.Footer>
+                  </Modal>
                 </div>
+              </Container>
+
+              <Container className="my-5 d-flex flex-wrap">
+                <Button variant="accent" className="me-3" onClick={handleShowNewCategory}>
+                  Add new category
+                </Button>
+                <Modal show={showNewCategory} onHide={handleCloseNewCategory} className="edit-menu__modal perfect-shadow">
+                  <Modal.Header closeButton className="border-bottom-0"></Modal.Header>
+                  <Modal.Body>
+                    <h2 className="edit-menu__modal-title fs-5 text-center mb-3">Create new product category</h2>
+                    <Form onSubmit={handleSubmitNewCategory} className="edit-menu__form">
+                      <Form.Group className="edit-menu__form-group mb-3">
+                        <Form.Label className="edit-menu__form-label">Product category</Form.Label>
+                        <Form.Control type="text" placeholder="Enter product category" value={newProductCategory.productCategory} name="productCategory" onChange={handleChangeNewCategory} required className="edit-menu__form-input" />
+                      </Form.Group>
+                      <Button type="submit" className="d-none">
+                        Submit
+                      </Button>
+                    </Form>
+                  </Modal.Body>
+                  <Modal.Footer className="border-top-0 d-flex justify-content-center">
+                    <Button variant="accent" onClick={handleSubmit} className="edit-menu__modal-save-button rounded-pill px-5 border-0">
+                      Save
+                    </Button>
+                  </Modal.Footer>
+                </Modal>
+                {productCategories.length > 0 && productCategories.map((category, index) => <SingleEditCategory key={index} category={category} />)}
               </Container>
 
               <Row className="edit-menu__product-list d-flex justify-content-start">
                 {search === "" ? (
                   menu.length > 0 ? (
-                    menu.map((product, index) => <SingleProductComponent key={index} product={product} userRole={profile.userRole.userRole} fetch={getMyMenu} />)
+                    menu.map((product, index) => <SingleProductComponent key={index} product={product} userRole={profile.userRole.userRole} productCategories={productCategories.length > 0 ? productCategories : []} getMyMenu={getMyMenu} />)
                   ) : (
                     <p>No products available</p>
                   )
                 ) : (
-                  menu.filter(product => product.name.toLowerCase().includes(search.toLowerCase())).map((product, index) => <SingleProductComponent key={index} product={product} userRole={profile.userRole.userRole} fetch={getMyMenu} />)
+                  menu
+                    .filter(product => product.name.toLowerCase().includes(search.toLowerCase()))
+                    .map((product, index) => <SingleProductComponent key={index} product={product} userRole={profile.userRole.userRole} productCategories={productCategories.length > 0 ? productCategories : []} getMyMenu={getMyMenu} />)
                 )}
               </Row>
             </Container>

@@ -1,11 +1,11 @@
 import { Alert, Button, Col, Container, Form, Modal, Row } from "react-bootstrap";
 import "./SingleProductComponent.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { Trash3 } from "react-bootstrap-icons";
 
-const SingleProductComponent = ({ product, userRole, getMyMenu }) => {
+const SingleProductComponent = ({ product, userRole, productCategories, getMyMenu }) => {
   // ENV VARIABLES
   const ENV_VARIABLE = {
     URL_PRODUCTS: import.meta.env.VITE_PRODUCTS_URL
@@ -20,7 +20,8 @@ const SingleProductComponent = ({ product, userRole, getMyMenu }) => {
   const [editProductDTO, setEditProductDTO] = useState({
     name: product.name,
     price: product.price,
-    description: product.description
+    description: product.description,
+    productCategory: product.productCategory
   });
   const [img, setImg] = useState(null);
 
@@ -157,14 +158,21 @@ const SingleProductComponent = ({ product, userRole, getMyMenu }) => {
     >
       <Row>
         <Col xs={7} sm={6} md={8} xl={7}>
-          <small className="single-product__name fw-medium mb-1 line-clamp-2">{product.name}</small>
-          <small className="single-product__price text-muted mb-1">{product.price.toFixed(2)} €</small>
+          <small className="single-product__name fw-medium mb-1 line-clamp-2 d-block">{product.name}</small>
+          <small className="single-product__price text-muted mb-1 d-block" style={{ fontSize: "12px" }}>
+            {product.price.toFixed(2)} €
+          </small>
+          {product.productCategory.productCategory && (
+            <small className="single-product__price text-muted mb-1 fst-italic d-block" style={{ fontSize: "12px" }}>
+              {product.productCategory.productCategory}
+            </small>
+          )}
           <small className="single-product__description card-text text-muted line-clamp-2" style={{ fontSize: "12px" }}>
             {product.description}
           </small>
         </Col>
         <Col xs={4} sm={5} md={3} xl={4}>
-          <img src={product.imageUrl} alt={product.name} className="single-product__image rounded" style={{ width: "85px" }} />
+          <img src={product.imageUrl} alt={product.name} className="single-product__image rounded" style={{ width: "85px", height: "" }} />
         </Col>
         <Col xs={7} sm={6} md={8} xl={7}></Col>
         <Modal show={showEdit} onHide={handleShowEditClose} className="single-product__modal single-product--shadow" onClick={event => event.stopPropagation()}>
@@ -184,12 +192,22 @@ const SingleProductComponent = ({ product, userRole, getMyMenu }) => {
                 <Form.Label className="single-product__form-label">Description</Form.Label>
                 <Form.Control type="text" placeholder="Enter product description" value={editProductDTO.description} name="description" onChange={handleChange} required />
               </Form.Group>
+              <Form.Group className="edit-menu__form-group mb-3">
+                <Form.Label className="edit-menu__form-label">Product category</Form.Label>
+                <Form.Select name="productCategory" value={editProductDTO.productCategory} onChange={handleChange}>
+                  {productCategories.map((category, index) => (
+                    <option key={index} value={category.productCategory}>
+                      {category.productCategory}
+                    </option>
+                  ))}
+                </Form.Select>
+              </Form.Group>
               <div className="d-flex justify-content-center">
                 <img src={product.imageUrl} alt="" className="rounded" style={{ width: "85px" }} />
               </div>
               <Form.Group className="single-product__form-group mb-3">
                 <Form.Label className="single-product__form-label">Product image</Form.Label>
-                <Form.Control type="file" accept="img/*" onChange={handlePicChange} />
+                <Form.Control type="file" accept="image/*" onChange={handlePicChange} />
               </Form.Group>
               <Button type="submit" className="d-none">
                 Submit
@@ -198,13 +216,12 @@ const SingleProductComponent = ({ product, userRole, getMyMenu }) => {
           </Modal.Body>
           <Modal.Footer className="border-top-0 d-flex justify-content-center">
             <Button
-              type="button"
               variant="danger"
               onClick={() => {
-                handleShowEditClose();
-                handleShowDelete();
+                handleShowDeleteClose();
+                deleteProduct();
               }}
-              className="single-product__button single-product__button--delete rounded-pill px-5 border-0"
+              className="single-product__button rounded-pill px-4 border-0"
             >
               Delete
             </Button>

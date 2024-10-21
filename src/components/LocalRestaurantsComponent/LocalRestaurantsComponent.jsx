@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import NavComponent from "../NavComponent/NavComponent";
-import { Button, Container } from "react-bootstrap";
+import { Button, Container, Form } from "react-bootstrap";
 import SingleRestaurantCard from "../SingleRestaurantComponent/SingleRestaurantCard";
 import "./LocalRestaurantsComponent.css";
 
@@ -20,7 +20,13 @@ const LocalRestaurantsComponent = () => {
   // USE STATE
   const [restaurants, setRestaurants] = useState([]);
   const [nearRestaurants, setNearRestaurants] = useState([]);
-  const [nearRestaurantsCategories, setNearRestaurantsCategories] = useState(["Kebab", "Pizza", "Japanese"]);
+  const [nearRestaurantsCategories, setNearRestaurantsCategories] = useState([]);
+  const [search, setSearch] = useState("");
+
+  // HANDLERS
+  const handleSearchChange = event => {
+    setSearch(event.target.value);
+  };
 
   // FETCH
   const findRestaurantsByCity = async () => {
@@ -64,22 +70,24 @@ const LocalRestaurantsComponent = () => {
     return uniqueCategories;
   };
 
-  // USE EFFECT per filtrare i ristoranti in base alla distanza
-  /* useEffect(() => {
+  const resetSearch = () => {
+    setSearch("");
+  };
+
+  // USE EFFECT
+  useEffect(() => {
     if (restaurants.length > 0) {
       restaurants.forEach(restaurant => filterByDistance(restaurant));
     }
-  }, [restaurants]); */
+  }, [restaurants]);
 
-  // USE EFFECT per aggiornare le categorie uniche una volta che nearRestaurants viene aggiornato
-  /* useEffect(() => {
+  useEffect(() => {
     if (nearRestaurants.length > 0) {
       const uniqueCategories = getUniqueCategories(nearRestaurants);
       setNearRestaurantsCategories(uniqueCategories);
     }
-  }, [nearRestaurants]); */
+  }, [nearRestaurants]);
 
-  // USE EFFECT per trovare i ristoranti in base all'indirizzo di consegna
   useEffect(() => {
     if (deliveryAddress.lat && deliveryAddress.lon) {
       findRestaurantsByCity();
@@ -92,7 +100,17 @@ const LocalRestaurantsComponent = () => {
       <Container style={{ marginTop: "80px" }}>
         <div className="pt-5">
           <h2 className="text-center">Most popular in your area</h2>
-          <div className="my-5 d-flex flex-wrap">
+          <div className="edit-menu__search d-flex justify-content-center">
+            <Form className="edit-menu__search-form my-3">
+              <Form.Group>
+                <Form.Control type="text" value={search} placeholder="Search for a restaurant" onChange={handleSearchChange} className="edit-menu__search-input py-1" />
+              </Form.Group>
+            </Form>
+            <Button variant="accent" className="edit-menu__reset-button ms-3 align-self-center py-1" onClick={resetSearch}>
+              Reset
+            </Button>
+          </div>
+          <Container className="my-5 d-flex flex-wrap">
             {nearRestaurantsCategories.map((category, index) => (
               <Button
                 key={index}
@@ -104,8 +122,20 @@ const LocalRestaurantsComponent = () => {
                 <small>{category}</small>
               </Button>
             ))}
-          </div>
-          <div className="d-flex justify-content-around flex-wrap">{nearRestaurants.length > 0 ? nearRestaurants.map(restaurant => <SingleRestaurantCard key={restaurant.idUser} restaurant={restaurant} />) : <p>No nearby restaurants found</p>}</div>
+          </Container>
+          {search === "" ? (
+            <div className="d-flex flex-wrap">
+              {nearRestaurants.length > 0 ? nearRestaurants.sort((a, b) => b.rating - a.rating).map(restaurant => <SingleRestaurantCard key={restaurant.idUser} restaurant={restaurant} />) : <p className="mx-auto">No nearby restaurants found</p>}
+            </div>
+          ) : (
+            <div className="d-flex flex-wrap">
+              {nearRestaurants
+                .filter(product => product.name.toLowerCase().includes(search.toLowerCase()))
+                .map((restaurant, index) => (
+                  <SingleRestaurantCard key={index} restaurant={restaurant} />
+                ))}
+            </div>
+          )}
         </div>
       </Container>
     </>

@@ -4,10 +4,9 @@ import { GeoapifyContext, GeoapifyGeocoderAutocomplete } from "@geoapify/react-g
 import { useEffect, useRef, useState } from "react";
 import "@geoapify/geocoder-autocomplete/styles/minimal.css";
 import "./UserDahsboardComponent.css";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import InfiniteScrollCarousel from "../../InfiniteScrollCarousel/InfiniteScrollCarousel";
 import SignUpComponent from "../../auth/SignUpComponent/SignUpComponent";
-import LocalRestaurantsComponent from "../../LocalRestaurantsComponent/LocalRestaurantsComponent";
 import { useSelector } from "react-redux";
 
 const UserDashboardComponent = () => {
@@ -91,7 +90,7 @@ const UserDashboardComponent = () => {
                   </GeoapifyContext>
                   {localStorage.getItem("accessToken") && profile?.address && (
                     <Button variant="link" className="small px-0" onClick={useMyAddress}>
-                      Use my address
+                      <small>Use my address</small>
                     </Button>
                   )}
                 </Form.Group>

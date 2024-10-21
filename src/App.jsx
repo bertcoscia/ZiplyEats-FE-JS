@@ -13,6 +13,7 @@ import EditMenuComponent from "./components/home/RestaurantDashboardComponent/Ed
 import UserDashboardComponent from "./components/Home/UserDashboardComponent/UserDashboardComponent";
 import LocalRestaurantsComponent from "./components/LocalRestaurantsComponent/LocalRestaurantsComponent";
 import RestaurantsByCategoryComponent from "./components/RestaurantsByCategoryComponent/RestaurantsByCategoryComponent";
+import RestaurantComponent from "./components/RestaurantComponent/RestaurantComponent";
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
           <Route path="/edit-menu" element={<EditMenuComponent />} />
           <Route path="/local-restaurants/:city/:lon/:lat" element={<LocalRestaurantsComponent />} />
           <Route path="/restaurants/:category/:lon/:lat" element={<RestaurantsByCategoryComponent />} />
+          <Route path="/restaurant/:id" element={<RestaurantComponent />} />
         </Routes>
       </BrowserRouter>
     </>

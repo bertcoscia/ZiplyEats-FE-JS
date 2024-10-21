@@ -73,7 +73,7 @@ const NavComponent = ({ scrollToJoinUs }) => {
           email: "",
           password: ""
         });
-        navigate(0);
+        navigate("/home");
       })
       .catch(error => console.log(error));
   };
