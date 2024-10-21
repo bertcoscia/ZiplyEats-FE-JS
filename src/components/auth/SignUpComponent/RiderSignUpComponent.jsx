@@ -3,6 +3,7 @@ import "@geoapify/geocoder-autocomplete/styles/minimal.css";
 import { useState } from "react";
 import { Button, Container, Form } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
+import LoginComponent from "../LoginComponent/LoginComponent";
 
 const RiderSignUpComponent = () => {
   // ENV VARIABLES
@@ -11,10 +12,8 @@ const RiderSignUpComponent = () => {
     URL_AUTH: import.meta.env.VITE_AUTH_URL
   };
 
-  // HOOKS
-  const navigate = useNavigate();
-
   // USE STATE
+  const [isSignedUp, setIsSignedUp] = useState(false);
   const [signupDTO, setSignupDTO] = useState({
     name: "",
     surname: "",
@@ -63,18 +62,6 @@ const RiderSignUpComponent = () => {
     riderSignup(signupDTO);
   };
 
-  const handleKeyDown = event => {
-    if (event.key === " ") {
-      event.preventDefault();
-      const { name, value } = event.target;
-      const newValue = value + " ";
-      setSignupDTO(prevState => ({
-        ...prevState,
-        [name]: newValue
-      }));
-    }
-  };
-
   // FETCH
   const riderSignup = signupDTO => {
     fetch(`${ENV_VARIABLE.URL_AUTH}/riders-signup`, {
@@ -104,7 +91,7 @@ const RiderSignUpComponent = () => {
           longitude: null,
           latitude: null
         });
-        navigate("/login");
+        setIsSignedUp(true);
       })
       .catch(error => console.log(error));
   };
@@ -121,41 +108,47 @@ const RiderSignUpComponent = () => {
   };
 
   return (
-    <Container className="signup">
-      <Form onSubmit={handleSubmit} className="signup__form mx-3">
-        <Form.Group className="signup__form__group my-3">
-          <Form.Label className="signup__form__group__label">Name</Form.Label>
-          <Form.Control type="text" placeholder="Enter your name" name="name" value={signupDTO.name} onChange={handleTextChange} onKeyDown={handleKeyDown} required />
-        </Form.Group>
-        <Form.Group className="signup__form__group mb-3">
-          <Form.Label className="signup__form__group__label">Surname</Form.Label>
-          <Form.Control type="text" placeholder="Enter your surname" name="surname" value={signupDTO.surname} onChange={handleTextChange} onKeyDown={handleKeyDown} required />
-        </Form.Group>
-        <Form.Group className="signup__form__group mb-3">
-          <Form.Label className="signup__form__group__label">Email address</Form.Label>
-          <Form.Control type="email" placeholder="Enter email" name="email" value={signupDTO.email} onChange={handleTextChange} onKeyDown={handleKeyDown} required />
-        </Form.Group>
-        <Form.Group className="signup__form__group mb-3">
-          <Form.Label className="signup__form__group__label">Password</Form.Label>
-          <Form.Control type="password" placeholder="Password" name="password" value={signupDTO.password} onChange={handlePasswordChange} required />
-          {passwordError && <p className="text-danger">{passwordError}</p>}
-        </Form.Group>
-        <Form.Group className="signup__form__group mb-3">
-          <Form.Label className="signup__form__group__label">Phone number</Form.Label>
-          <Form.Control type="text" placeholder="Insert your phone number" name="phoneNumber" value={signupDTO.phoneNumber} onChange={handleTextChange} onKeyDown={handleKeyDown} required />
-        </Form.Group>
-        <Form.Group className="signup__form__group mb-3 geoapify-input">
-          <Form.Label className="signup__form__group__label">Address</Form.Label>
-          <GeoapifyContext className="custom-input" apiKey={ENV_VARIABLE.GEOAPIFY_KEY}>
-            <GeoapifyGeocoderAutocomplete placeSelect={handlePlaceSelect} debounceDelay={700} style={{ width: "100%" }} required />
-          </GeoapifyContext>
-        </Form.Group>
-        <div className="d-flex justify-content-center">
-          <Button variant="accent" type="submit">
-            Sign up
-          </Button>
-        </div>
-      </Form>
+    <Container className="signup mx-auto card perfect-shadow" style={{ maxWidth: "75%" }}>
+      {!isSignedUp && (
+        <>
+          <h2 className="text-center mt-3">Rider</h2>
+          <Form onSubmit={handleSubmit} className="signup__form mx-3">
+            <Form.Group className="signup__form__group my-3">
+              <Form.Label className="signup__form__group__label">Name</Form.Label>
+              <Form.Control type="text" placeholder="Enter your name" name="name" value={signupDTO.name} onChange={handleTextChange} required />
+            </Form.Group>
+            <Form.Group className="signup__form__group mb-3">
+              <Form.Label className="signup__form__group__label">Surname</Form.Label>
+              <Form.Control type="text" placeholder="Enter your surname" name="surname" value={signupDTO.surname} onChange={handleTextChange} required />
+            </Form.Group>
+            <Form.Group className="signup__form__group mb-3">
+              <Form.Label className="signup__form__group__label">Email address</Form.Label>
+              <Form.Control type="email" placeholder="Enter email" name="email" value={signupDTO.email} onChange={handleTextChange} required />
+            </Form.Group>
+            <Form.Group className="signup__form__group mb-3">
+              <Form.Label className="signup__form__group__label">Password</Form.Label>
+              <Form.Control type="password" placeholder="Password" name="password" value={signupDTO.password} onChange={handlePasswordChange} required />
+              {passwordError && <p className="text-danger">{passwordError}</p>}
+            </Form.Group>
+            <Form.Group className="signup__form__group mb-3">
+              <Form.Label className="signup__form__group__label">Phone number</Form.Label>
+              <Form.Control type="text" placeholder="Insert your phone number" name="phoneNumber" value={signupDTO.phoneNumber} onChange={handleTextChange} required />
+            </Form.Group>
+            <Form.Group className="signup__form__group mb-3 geoapify-input">
+              <Form.Label className="signup__form__group__label">Address</Form.Label>
+              <GeoapifyContext className="custom-input" apiKey={ENV_VARIABLE.GEOAPIFY_KEY}>
+                <GeoapifyGeocoderAutocomplete placeSelect={handlePlaceSelect} debounceDelay={700} style={{ width: "100%" }} required />
+              </GeoapifyContext>
+            </Form.Group>
+            <div className="d-flex justify-content-center mb-3">
+              <Button variant="accent" type="submit">
+                Sign up
+              </Button>
+            </div>
+          </Form>
+        </>
+      )}
+      {isSignedUp && <LoginComponent />}
     </Container>
   );
 };

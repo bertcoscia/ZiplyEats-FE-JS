@@ -6,8 +6,8 @@ import "@geoapify/geocoder-autocomplete/styles/minimal.css";
 import "./UserDahsboardComponent.css";
 import { Link, useNavigate } from "react-router-dom";
 import InfiniteScrollCarousel from "../../InfiniteScrollCarousel/InfiniteScrollCarousel";
-import JoinUsComponent from "../../JoinUsComponent";
-import LocalRestaurantsComponent from "../../LocalRestaurantsComponent";
+import SignUpComponent from "../../auth/SignUpComponent/SignUpComponent";
+import LocalRestaurantsComponent from "../../LocalRestaurantsComponent/LocalRestaurantsComponent";
 
 const UserDashboardComponent = () => {
   // ENV VARIABLES
@@ -16,7 +16,7 @@ const UserDashboardComponent = () => {
   };
 
   // HOOKS
-  const joinUsRef = useRef(null);
+  const signUpRef = useRef(null);
   const navigate = useNavigate();
 
   // USE STATE
@@ -46,7 +46,7 @@ const UserDashboardComponent = () => {
 
   // UTILS
   const scrollToJoinUs = () => {
-    joinUsRef.current.scrollIntoView({ behavior: "smooth" });
+    signUpRef.current.scrollIntoView({ behavior: "smooth" });
   };
 
   // USE EFFECT
@@ -85,7 +85,7 @@ const UserDashboardComponent = () => {
         <InfiniteScrollCarousel />
 
         {/* JOIN US SECTION */}
-        <JoinUsComponent ref={joinUsRef} />
+        <SignUpComponent ref={signUpRef} />
       </div>
     </>
   );

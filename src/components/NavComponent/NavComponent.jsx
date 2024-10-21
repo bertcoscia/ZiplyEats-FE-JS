@@ -24,6 +24,7 @@ const NavComponent = ({ scrollToJoinUs }) => {
   });
 
   const [loginError, setLoginError] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(null);
 
   // HANDLERS
   const handleShowLogin = () => {
@@ -83,10 +84,15 @@ const NavComponent = ({ scrollToJoinUs }) => {
 
   // USE EFFECT
   useEffect(() => {
-    if (localStorage.getItem("accessToken") !== null) {
+    if (localStorage.getItem("accessToken")) {
+      setIsLoggedIn(true);
+    } else {
+      setIsLoggedIn(false);
+    }
+    if (isLoggedIn) {
       dispatch(getProfileAction());
     }
-  }, []);
+  }, [localStorage.getItem("accessToken")]);
 
   return (
     <>
@@ -96,7 +102,7 @@ const NavComponent = ({ scrollToJoinUs }) => {
             <img src="https://res.cloudinary.com/bertcoscia/image/upload/fl_preserve_transparency/v1729435276/Screenshot_2024-10-20_at_16.37.03_qxysln.jpg?_s=public-apps" width={"150px"} className="d-inline-block align-top" alt="" />
           </Navbar.Brand>
 
-          {profile ? (
+          {isLoggedIn ? (
             <Dropdown className="navbar__dropdown">
               <Dropdown.Toggle as={Button} variant="accent" className="navbar__dropdown__toggle align-self-center py-0 px-2 border-3 rounded-1">
                 <small>Account</small>
@@ -140,12 +146,13 @@ const NavComponent = ({ scrollToJoinUs }) => {
                     </Form.Group>
                     {loginError && <p className="text-danger">Wrong password and/or email</p>}
                   </Form>
+                  <div className="d-flex justify-content-center mt-3">
+                    <Button onClick={handleSubmit} className="profile__save-button rounded-pill px-3 border-0" variant="accent">
+                      Login
+                    </Button>
+                  </div>
                 </Modal.Body>
-                <Modal.Footer className="profile__modal-footer border-top-0 mb-0 d-flex justify-content-center">
-                  <Button onClick={handleSubmit} className="profile__save-button rounded-pill px-3 border-0" variant="accent">
-                    Login
-                  </Button>
-                </Modal.Footer>
+                <Modal.Footer className="profile__modal-footer border-top-0 mb-0 d-flex justify-content-center"></Modal.Footer>
               </Modal>
             </div>
           )}

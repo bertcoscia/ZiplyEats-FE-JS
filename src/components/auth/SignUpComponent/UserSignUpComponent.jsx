@@ -3,6 +3,7 @@ import "@geoapify/geocoder-autocomplete/styles/minimal.css";
 import { useRef, useState } from "react";
 import { Button, Container, Form, Modal } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
+import LoginComponent from "../LoginComponent/LoginComponent";
 
 const UserSignUpComponent = () => {
   // ENV VARIABLES
@@ -12,9 +13,9 @@ const UserSignUpComponent = () => {
   };
 
   // HOOKS
-  const navigate = useNavigate();
 
   // USE STATE
+  const [isSignedUp, setIsSignedUp] = useState(false);
   const [signupDTO, setSignupDTO] = useState({
     name: "",
     surname: "",
@@ -62,18 +63,6 @@ const UserSignUpComponent = () => {
     }));
   };
 
-  const handleKeyDown = event => {
-    if (event.key === " ") {
-      event.preventDefault();
-      const { name, value } = event.target;
-      const newValue = value + " ";
-      setSignupDTO(prevState => ({
-        ...prevState,
-        [name]: newValue
-      }));
-    }
-  };
-
   // FETCH
   const userSignup = signupDTO => {
     fetch(`${ENV_VARIABLE.URL_AUTH}/users-signup`, {
@@ -103,7 +92,7 @@ const UserSignUpComponent = () => {
           longitude: null,
           latitude: null
         });
-        navigate("/login");
+        setIsSignedUp(true);
       })
       .catch(error => console.log(error));
   };
@@ -119,43 +108,24 @@ const UserSignUpComponent = () => {
     }
   };
 
-  const geoapifyInputRef = useRef(null);
-
-  const handleGeoapifyChange = value => {
-    console.log("Geoapify value:", value); // Debugging log
-    setSignupDTO(prevState => ({
-      ...prevState,
-      address: value
-    }));
-  };
-
-  const [show, setShow] = useState(true);
-
   return (
     <>
-      {show && (
-        <Modal
-          show={show}
-          onHide={() => {
-            setShow(false);
-          }}
-          className="profile__modal perfect-shadow"
-          /* onClick={event => event.stopPropagation()} */
-        >
-          <Modal.Header closeButton className="profile__modal-header border-bottom-0" /* onClick={event => event.stopPropagation()} */></Modal.Header>
-          <Modal.Body className="profile__modal-body">
+      <Container className="signup mx-auto card perfect-shadow" style={{ maxWidth: "75%" }}>
+        {!isSignedUp && (
+          <>
+            <h2 className="text-center mt-3">User</h2>
             <Form onSubmit={handleSubmit} className="signup__form px-3">
               <Form.Group className="signup__form__group my-3">
                 <Form.Label className="signup__form__group__label">Name</Form.Label>
-                <Form.Control type="text" placeholder="Enter your name" name="name" value={signupDTO.name} onChange={handleTextChange} onKeyDown={handleKeyDown} required />
+                <Form.Control type="text" placeholder="Enter your name" name="name" value={signupDTO.name} onChange={handleTextChange} required />
               </Form.Group>
               <Form.Group className="signup__form__group mb-3">
                 <Form.Label className="signup__form__group__label">Surname</Form.Label>
-                <Form.Control type="text" placeholder="Enter your surname" name="surname" value={signupDTO.surname} onChange={handleTextChange} onKeyDown={handleKeyDown} required />
+                <Form.Control type="text" placeholder="Enter your surname" name="surname" value={signupDTO.surname} onChange={handleTextChange} required />
               </Form.Group>
               <Form.Group className="signup__form__group mb-3">
                 <Form.Label className="signup__form__group__label">Email address</Form.Label>
-                <Form.Control type="email" placeholder="Enter email" name="email" value={signupDTO.email} onChange={handleTextChange} onKeyDown={handleKeyDown} required />
+                <Form.Control type="email" placeholder="Enter email" name="email" value={signupDTO.email} onChange={handleTextChange} required />
               </Form.Group>
               <Form.Group className="signup__form__group mb-3">
                 <Form.Label className="signup__form__group__label">Password</Form.Label>
@@ -164,23 +134,24 @@ const UserSignUpComponent = () => {
               </Form.Group>
               <Form.Group className="signup__form__group mb-3">
                 <Form.Label className="signup__form__group__label">Phone number</Form.Label>
-                <Form.Control type="text" placeholder="Insert your phone number" name="phoneNumber" value={signupDTO.phoneNumber} onChange={handleTextChange} onKeyDown={handleKeyDown} required />
+                <Form.Control type="text" placeholder="Insert your phone number" name="phoneNumber" value={signupDTO.phoneNumber} onChange={handleTextChange} required />
               </Form.Group>
               <Form.Group className="signup__form__group mb-3 geoapify-input">
                 <Form.Label className="signup__form__group__label">Address</Form.Label>
                 <GeoapifyContext apiKey={ENV_VARIABLE.GEOAPIFY_KEY}>
-                  <GeoapifyGeocoderAutocomplete placeSelect={handlePlaceSelect} inputClassName="custom-input" ref={geoapifyInputRef} debounceDelay={800} />
+                  <GeoapifyGeocoderAutocomplete placeSelect={handlePlaceSelect} inputClassName="custom-input" debounceDelay={800} />
                 </GeoapifyContext>
               </Form.Group>
-              <div className="d-flex justify-content-center">
+              <div className="d-flex justify-content-center mb-3">
                 <Button variant="accent" type="submit">
                   Sign up
                 </Button>
               </div>
             </Form>
-          </Modal.Body>
-        </Modal>
-      )}
+          </>
+        )}
+        {isSignedUp && <LoginComponent />}
+      </Container>
     </>
   );
 };

@@ -11,7 +11,8 @@ import PastOrdersComponent from "./components/PastOrdersComponent/PastOrdersComp
 import ProfileComponent from "./components/profile/ProfileComponent";
 import EditMenuComponent from "./components/home/RestaurantDashboardComponent/EditMenuComponent/EditMenuComponent";
 import UserDashboardComponent from "./components/Home/UserDashboardComponent/UserDashboardComponent";
-import LocalRestaurantsComponent from "./components/LocalRestaurantsComponent";
+import LocalRestaurantsComponent from "./components/LocalRestaurantsComponent/LocalRestaurantsComponent";
+import RestaurantsByCategoryComponent from "./components/RestaurantsByCategoryComponent/RestaurantsByCategoryComponent";
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
           <Route path="/past-orders" element={<PastOrdersComponent />} />
           <Route path="/edit-menu" element={<EditMenuComponent />} />
           <Route path="/local-restaurants/:city/:lon/:lat" element={<LocalRestaurantsComponent />} />
+          <Route path="/restaurants/:category/:lon/:lat" element={<RestaurantsByCategoryComponent />} />
         </Routes>
       </BrowserRouter>
     </>

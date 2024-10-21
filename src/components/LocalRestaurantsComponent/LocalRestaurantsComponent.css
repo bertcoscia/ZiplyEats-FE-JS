@@ -1,0 +1,8 @@
+.category-button {
+  background: transparent;
+  border-color: black;
+}
+
+.category-button:hover {
+  opacity: 100%;
+}
