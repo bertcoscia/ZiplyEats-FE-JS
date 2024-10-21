@@ -1,13 +1,14 @@
 import { Button, Container, Form } from "react-bootstrap";
 import NavComponent from "../../NavComponent/NavComponent";
 import { GeoapifyContext, GeoapifyGeocoderAutocomplete } from "@geoapify/react-geocoder-autocomplete";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "@geoapify/geocoder-autocomplete/styles/minimal.css";
 import "./UserDahsboardComponent.css";
 import { Link, useNavigate } from "react-router-dom";
 import InfiniteScrollCarousel from "../../InfiniteScrollCarousel/InfiniteScrollCarousel";
 import SignUpComponent from "../../auth/SignUpComponent/SignUpComponent";
 import LocalRestaurantsComponent from "../../LocalRestaurantsComponent/LocalRestaurantsComponent";
+import { useSelector } from "react-redux";
 
 const UserDashboardComponent = () => {
   // ENV VARIABLES
@@ -18,6 +19,7 @@ const UserDashboardComponent = () => {
   // HOOKS
   const signUpRef = useRef(null);
   const navigate = useNavigate();
+  const profile = useSelector(state => state.profile.content);
 
   // USE STATE
   const [deliveryAddress, setDeliveryAddress] = useState({
@@ -43,13 +45,31 @@ const UserDashboardComponent = () => {
   };
 
   // FETCH
+  const useMyAddress = async () => {
+    try {
+      const formattedAddress = formatAddress(profile.address);
+      const response = await fetch(`https://api.geoapify.com/v1/geocode/search?text=${formattedAddress}&lang=en&limit=1&type=street&format=json&apiKey=${ENV_VARIABLE.GEOAPIFY_KEY}`);
+      if (response.ok) {
+        const data = await response.json();
+        navigate(`/local-restaurants/${data.results[0].city}/${data.results[0].lon}/${data.results[0].lat}`);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   // UTILS
   const scrollToJoinUs = () => {
     signUpRef.current.scrollIntoView({ behavior: "smooth" });
   };
 
+  const formatAddress = address => {
+    return encodeURIComponent(address);
+  };
+
   // USE EFFECT
+  useEffect(() => {}, []);
+
   return (
     <>
       <NavComponent scrollToJoinUs={scrollToJoinUs} />
@@ -69,6 +89,11 @@ const UserDashboardComponent = () => {
                   <GeoapifyContext className="custom-input" apiKey={ENV_VARIABLE.GEOAPIFY_KEY}>
                     <GeoapifyGeocoderAutocomplete placeSelect={handlePlaceSelect} debounceDelay={700} />
                   </GeoapifyContext>
+                  {localStorage.getItem("accessToken") && profile?.address && (
+                    <Button variant="link" className="small px-0" onClick={useMyAddress}>
+                      Use my address
+                    </Button>
+                  )}
                 </Form.Group>
                 <Button variant="accent" className="align-self-center px-3 py-1 rounded-pill" onClick={handleSubmit}>
                   Search

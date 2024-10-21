@@ -25,6 +25,7 @@ const NavComponent = ({ scrollToJoinUs }) => {
 
   const [loginError, setLoginError] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(null);
+  const [accessToken, setAccessToken] = useState(localStorage.getItem("accessToken"));
 
   // HANDLERS
   const handleShowLogin = () => {
@@ -67,11 +68,12 @@ const NavComponent = ({ scrollToJoinUs }) => {
       })
       .then(LoginRespDTO => {
         localStorage.setItem("accessToken", LoginRespDTO.accessToken);
+        setAccessToken(LoginRespDTO.accessToken);
         setLoginDTO({
           email: "",
           password: ""
         });
-        navigate("/home");
+        navigate(0);
       })
       .catch(error => console.log(error));
   };
@@ -79,20 +81,19 @@ const NavComponent = ({ scrollToJoinUs }) => {
   // UTILS
   const logout = () => {
     localStorage.removeItem("accessToken");
+    setAccessToken(null);
     navigate("/");
   };
 
   // USE EFFECT
   useEffect(() => {
-    if (localStorage.getItem("accessToken")) {
+    if (accessToken) {
       setIsLoggedIn(true);
+      dispatch(getProfileAction());
     } else {
       setIsLoggedIn(false);
     }
-    if (isLoggedIn) {
-      dispatch(getProfileAction());
-    }
-  }, [localStorage.getItem("accessToken")]);
+  }, [accessToken, dispatch]);
 
   return (
     <>
