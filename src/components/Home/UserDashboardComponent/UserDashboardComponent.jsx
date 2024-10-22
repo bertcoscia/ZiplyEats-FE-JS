@@ -7,7 +7,8 @@ import "./UserDahsboardComponent.css";
 import { useNavigate } from "react-router-dom";
 import InfiniteScrollCarousel from "../../InfiniteScrollCarousel/InfiniteScrollCarousel";
 import SignUpComponent from "../../auth/SignUpComponent/SignUpComponent";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { setAddressAction } from "../../../redux/actions";
 
 const UserDashboardComponent = () => {
   // ENV VARIABLES
@@ -19,6 +20,7 @@ const UserDashboardComponent = () => {
   const signUpRef = useRef(null);
   const navigate = useNavigate();
   const profile = useSelector(state => state.profile.content);
+  const dispatch = useDispatch();
 
   // USE STATE
   const [deliveryAddress, setDeliveryAddress] = useState({
@@ -30,13 +32,15 @@ const UserDashboardComponent = () => {
 
   // HANDLERS
   const handlePlaceSelect = geoapifyResponse => {
-    setDeliveryAddress(prevState => ({
-      ...prevState,
+    const selectedAddress = {
       address: geoapifyResponse.properties.formatted,
       city: geoapifyResponse.properties.city,
       longitude: geoapifyResponse.geometry.coordinates[0],
       latitude: geoapifyResponse.geometry.coordinates[1]
-    }));
+    };
+
+    setDeliveryAddress(selectedAddress);
+    dispatch(setAddressAction(selectedAddress));
   };
 
   const handleSubmit = () => {
@@ -50,7 +54,15 @@ const UserDashboardComponent = () => {
       const response = await fetch(`https://api.geoapify.com/v1/geocode/search?text=${formattedAddress}&lang=en&limit=1&type=street&format=json&apiKey=${ENV_VARIABLE.GEOAPIFY_KEY}`);
       if (response.ok) {
         const data = await response.json();
-        navigate(`/local-restaurants/${data.results[0].city}/${data.results[0].lon}/${data.results[0].lat}`);
+        const myAddress = {
+          address: data.results[0].formatted,
+          city: data.results[0].city,
+          longitude: data.results[0].lon,
+          latitude: data.results[0].lat
+        };
+        setDeliveryAddress(myAddress);
+        dispatch(setAddressAction(myAddress));
+        navigate(`/local-restaurants/${myAddress.city}/${myAddress.longitude}/${myAddress.latitude}`);
       }
     } catch (error) {
       console.log(error);

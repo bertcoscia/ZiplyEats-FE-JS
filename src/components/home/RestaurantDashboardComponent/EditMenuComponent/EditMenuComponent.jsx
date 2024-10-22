@@ -10,7 +10,8 @@ const EditMenuComponent = () => {
   // ENV VARIABLES
   const ENV_VARIABLE = {
     URL_PRODUCTS: import.meta.env.VITE_PRODUCTS_URL,
-    URL_PRODUCT_CATEGORIES: import.meta.env.VITE_PRODUCT_CATEGORIES_URL
+    URL_PRODUCT_CATEGORIES: import.meta.env.VITE_PRODUCT_CATEGORIES_URL,
+    URL_TOPPINGS: import.meta.env.VITE_TOPPINGS_URL
   };
 
   // HOOKS
@@ -25,7 +26,9 @@ const EditMenuComponent = () => {
   const [newProductDTO, setNewProductDTO] = useState({
     name: "",
     price: "",
-    description: ""
+    description: "",
+    productCategory: "",
+    canHaveToppings: false
   });
   const [newProductCategory, setNewProductCategory] = useState({
     productCategory: ""
@@ -35,6 +38,7 @@ const EditMenuComponent = () => {
   const [showCategories, setShowCategories] = useState(false);
   const [showNewCategory, setShowNewCategory] = useState(false);
   const [productCategories, setProductCategories] = useState([]);
+  const [toppings, setToppings] = useState([]);
 
   // HANDLERS
   const handleShow = () => {
@@ -84,6 +88,13 @@ const EditMenuComponent = () => {
     setNewProductCategory(prevState => ({
       ...prevState,
       [name]: value
+    }));
+  };
+
+  const handleCheckboxChange = () => {
+    setNewProductDTO(prevState => ({
+      ...prevState,
+      canHaveToppings: !prevState.canHaveToppings
     }));
   };
 
@@ -151,7 +162,8 @@ const EditMenuComponent = () => {
           name: "",
           price: "",
           description: "",
-          productCategory: ""
+          productCategory: "",
+          canHaveToppings: false
         });
         navigate(0);
         return responseData.id;
@@ -224,6 +236,23 @@ const EditMenuComponent = () => {
     }
   };
 
+  const getToppings = async () => {
+    try {
+      const response = await fetch(`${ENV_VARIABLE.URL_TOPPINGS}/${profile.idUser}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`
+        }
+      });
+      if (response.ok) {
+        setToppings(await response.json());
+      } else {
+        throw new Error("Could not get toppings");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   // UTILS
   const resetSearch = () => {
     setSearch("");
@@ -241,6 +270,7 @@ const EditMenuComponent = () => {
     if (profileLoaded) {
       getMyMenu();
       getMyProductCategories();
+      getToppings();
     }
   }, [profileLoaded]);
 
@@ -274,7 +304,7 @@ const EditMenuComponent = () => {
                   </Button>
 
                   <Button variant="accent" className="edit-menu__add-product-button text-decoration-none me-auto" onClick={handleShow}>
-                    Add new product
+                    New product
                   </Button>
 
                   <Modal show={show} onHide={handleClose} className="edit-menu__modal perfect-shadow">
@@ -295,9 +325,21 @@ const EditMenuComponent = () => {
                           <Form.Control type="text" placeholder="Enter product description" value={newProductDTO.description} name="description" onChange={handleChange} required className="edit-menu__form-input" />
                         </Form.Group>
                         <Form.Group className="edit-menu__form-group mb-3">
-                          <Form.Label className="edit-menu__form-label">Product category</Form.Label>
-                          <Form.Control type="text" placeholder="Enter product description" value={newProductDTO.productCategory} name="productCategory" onChange={handleChange} required className="edit-menu__form-input" />
+                          <Form.Check type="checkbox" label="Can have toppings" name="canHaveToppings" checked={newProductDTO.canHaveToppings || false} onChange={handleCheckboxChange} />
                         </Form.Group>
+                        {productCategories && (
+                          <Form.Group className="edit-menu__form-group mb-3">
+                            <Form.Label className="edit-menu__form-label">Product category</Form.Label>
+                            <Form.Select name="productCategory" value={newProductDTO.productCategory} onChange={handleChange}>
+                              <option>Choose a category</option>
+                              {productCategories.map((category, index) => (
+                                <option key={index} value={category.productCategory}>
+                                  {category.productCategory}
+                                </option>
+                              ))}
+                            </Form.Select>
+                          </Form.Group>
+                        )}
                         <Form.Group className="edit-menu__form-group mb-3">
                           <Form.Label className="edit-menu__form-label">Product image</Form.Label>
                           <Form.Control type="file" accept="image/*" onChange={handlePicChange} />
@@ -316,9 +358,9 @@ const EditMenuComponent = () => {
                 </div>
               </Container>
 
-              <Container className="my-5 d-flex flex-wrap">
+              <Container className="my-5 d-flex flex-wrap row-gap-3">
                 <Button variant="accent" className="me-3" onClick={handleShowNewCategory}>
-                  Add new category
+                  New category
                 </Button>
                 <Modal show={showNewCategory} onHide={handleCloseNewCategory} className="edit-menu__modal perfect-shadow">
                   <Modal.Header closeButton className="border-bottom-0"></Modal.Header>
@@ -344,6 +386,7 @@ const EditMenuComponent = () => {
               </Container>
 
               <Row className="edit-menu__product-list d-flex justify-content-start">
+                <h3 className="pb-3">Products</h3>
                 {search === "" ? (
                   menu.length > 0 ? (
                     menu.map((product, index) => <SingleProductComponent key={index} product={product} userRole={profile.userRole.userRole} productCategories={productCategories.length > 0 ? productCategories : []} getMyMenu={getMyMenu} />)
@@ -355,6 +398,11 @@ const EditMenuComponent = () => {
                     .filter(product => product.name.toLowerCase().includes(search.toLowerCase()))
                     .map((product, index) => <SingleProductComponent key={index} product={product} userRole={profile.userRole.userRole} productCategories={productCategories.length > 0 ? productCategories : []} getMyMenu={getMyMenu} />)
                 )}
+              </Row>
+
+              <Row className="edit-menu__topping-list d-flex justify-content-start">
+                <h3 className="pb-3">Toppings</h3>
+                {toppings.length > 0 && toppings.map((topping, index) => <SingleProductComponent key={index} product={topping} userRole={profile.userRole.userRole} productCategories={productCategories.length > 0 ? productCategories : []} />)}
               </Row>
             </Container>
           )}

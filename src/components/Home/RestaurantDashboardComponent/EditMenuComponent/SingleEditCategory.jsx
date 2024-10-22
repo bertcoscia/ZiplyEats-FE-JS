@@ -64,7 +64,7 @@ const SingleEditCategory = ({ category }) => {
 
   return (
     <>
-      <Button className="category-button py-0 me-3 rounded-pill" onClick={handleShow}>
+      <Button className="category-button py-0 me-3 rounded-pill align-self-center" onClick={handleShow}>
         <small>{category.productCategory}</small>
       </Button>
       <Modal show={show} onHide={handleClose} className="edit-menu__modal perfect-shadow">

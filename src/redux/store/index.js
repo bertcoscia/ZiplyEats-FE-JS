@@ -1,8 +1,10 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import profileReducer from "../reducers/profileReducer";
+import addressReducer from "../reducers/addressReducer";
 
 const rootReducer = combineReducers({
-  profile: profileReducer
+  profile: profileReducer,
+  deliveryAddress: addressReducer
 });
 
 const store = configureStore({

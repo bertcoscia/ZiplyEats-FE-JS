@@ -1,4 +1,5 @@
 export const GET_PROFILE = "GET_PROFILE";
+export const SET_ADDRESS = "SET_ADDRESS";
 
 const USERS_URL = import.meta.env.VITE_USERS_URL;
 
@@ -25,3 +26,8 @@ export const getProfileAction = () => {
       .catch(error => console.log(error));
   };
 };
+
+export const setAddressAction = address => ({
+  type: SET_ADDRESS,
+  payload: address
+});

@@ -13,3 +13,15 @@
   background-color: #f8f9fa;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
+
+@media (min-width: 1200px) {
+  .single-product {
+    width: 285px;
+  }
+}
+
+@media (min-width: 1400px) {
+  .single-product {
+    width: 300px;
+  }
+}

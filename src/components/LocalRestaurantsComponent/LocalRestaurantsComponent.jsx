@@ -125,14 +125,18 @@ const LocalRestaurantsComponent = () => {
           </Container>
           {search === "" ? (
             <div className="d-flex flex-wrap">
-              {nearRestaurants.length > 0 ? nearRestaurants.sort((a, b) => b.rating - a.rating).map(restaurant => <SingleRestaurantCard key={restaurant.idUser} restaurant={restaurant} />) : <p className="mx-auto">No nearby restaurants found</p>}
+              {nearRestaurants.length > 0 ? (
+                nearRestaurants.sort((a, b) => b.rating - a.rating).map(restaurant => <SingleRestaurantCard key={restaurant.idUser} restaurant={restaurant} deliveryLat={deliveryAddress.lat} deliveryLon={deliveryAddress.lon} />)
+              ) : (
+                <p className="mx-auto">No nearby restaurants found</p>
+              )}
             </div>
           ) : (
             <div className="d-flex flex-wrap">
               {nearRestaurants
                 .filter(product => product.name.toLowerCase().includes(search.toLowerCase()))
                 .map((restaurant, index) => (
-                  <SingleRestaurantCard key={index} restaurant={restaurant} />
+                  <SingleRestaurantCard key={index} restaurant={restaurant} deliveryLat={deliveryAddress.lat} deliveryLon={deliveryAddress.lon} />
                 ))}
             </div>
           )}

@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { Trash3 } from "react-bootstrap-icons";
 
-const SingleProductComponent = ({ product, userRole, productCategories, getMyMenu }) => {
+const SingleProductComponent = ({ product, userRole, productCategories, getMyMenu, handleAddToBasket, basket, toppings }) => {
   // ENV VARIABLES
   const ENV_VARIABLE = {
     URL_PRODUCTS: import.meta.env.VITE_PRODUCTS_URL
@@ -17,20 +17,24 @@ const SingleProductComponent = ({ product, userRole, productCategories, getMyMen
   // USE STATE
   const [showEdit, setShowEdit] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
+  const [showAddToBasket, setShowAddToBasket] = useState(false);
   const [editProductDTO, setEditProductDTO] = useState({
     name: product.name,
     price: product.price,
     description: product.description,
-    productCategory: product.productCategory
+    productCategory: product.productCategory.productCategory,
+    canHaveToppings: product.canHaveToppings
   });
   const [img, setImg] = useState(null);
+  const [quantity, setQuantity] = useState(1);
+  const [isProductInBasket, setIsProductInBasket] = useState(false);
 
   // HANDLERS
   const handleShowEdit = () => {
     setShowEdit(true);
   };
 
-  const handleShowEditClose = () => {
+  const handleCloseEdit = () => {
     setShowEdit(false);
   };
 
@@ -38,8 +42,19 @@ const SingleProductComponent = ({ product, userRole, productCategories, getMyMen
     setShowDelete(true);
   };
 
-  const handleShowDeleteClose = () => {
+  const handleCloseDelete = () => {
     setShowDelete(false);
+  };
+
+  const handleShowAddToBasket = () => {
+    setQuantity(1);
+    const isInBasket = basket.some(item => item.idProduct === product.idProduct);
+    setIsProductInBasket(isInBasket);
+    setShowAddToBasket(true);
+  };
+
+  const handleCloseAddToBasket = () => {
+    setShowAddToBasket(false);
   };
 
   const handleChange = event => {
@@ -60,6 +75,13 @@ const SingleProductComponent = ({ product, userRole, productCategories, getMyMen
     }
   };
 
+  const handleCheckboxChange = () => {
+    setEditProductDTO(prevState => ({
+      ...prevState,
+      canHaveToppings: !prevState.canHaveToppings
+    }));
+  };
+
   const handlePicChange = event => {
     setImg(event.target.files[0]);
   };
@@ -67,7 +89,15 @@ const SingleProductComponent = ({ product, userRole, productCategories, getMyMen
   const handleSubmit = event => {
     event.preventDefault();
     editProduct(editProductDTO);
-    handleShowEditClose();
+    handleCloseEdit();
+  };
+
+  const handleIncrease = () => {
+    setQuantity(prevQuantity => prevQuantity + 1);
+  };
+
+  const handleDecrease = () => {
+    setQuantity(prevQuantity => (prevQuantity > 1 ? prevQuantity - 1 : 1)); // Non permettiamo meno di 1
   };
 
   // FETCH
@@ -91,7 +121,8 @@ const SingleProductComponent = ({ product, userRole, productCategories, getMyMen
         setEditProductDTO({
           name: "",
           price: "",
-          description: ""
+          description: "",
+          canHaveToppings: false
         });
         if (img !== null) {
           editProductImg(img);
@@ -153,29 +184,37 @@ const SingleProductComponent = ({ product, userRole, productCategories, getMyMen
       onClick={() => {
         if (userRole === "RESTAURANT") {
           handleShowEdit();
+        } else if (userRole === "USER") {
+          handleShowAddToBasket();
         }
       }}
     >
       <Row>
         <Col xs={7} sm={6} md={8} xl={7}>
-          <small className="single-product__name fw-medium mb-1 line-clamp-2 d-block">{product.name}</small>
-          <small className="single-product__price text-muted mb-1 d-block" style={{ fontSize: "12px" }}>
+          <small className="single-product__name fw-medium mb-1 line-clamp d-block" style={{ fontSize: "12px" }}>
+            {product.name}
+          </small>
+          <small className="single-product__price text-muted mb-1 d-block pb-auto" style={{ fontSize: "10px" }}>
             {product.price.toFixed(2)} €
           </small>
-          {product.productCategory.productCategory && (
-            <small className="single-product__price text-muted mb-1 fst-italic d-block" style={{ fontSize: "12px" }}>
+          {userRole === "RESTAURANT" && product.productCategory.productCategory && (
+            <small className="single-product__price text-muted mb-1 fst-italic d-block" style={{ fontSize: "10px" }}>
               {product.productCategory.productCategory}
             </small>
           )}
-          <small className="single-product__description card-text text-muted line-clamp-2" style={{ fontSize: "12px" }}>
+          <small className="single-product__description card-text text-muted line-clamp" style={{ fontSize: "10px" }}>
             {product.description}
           </small>
         </Col>
-        <Col xs={4} sm={5} md={3} xl={4}>
-          <img src={product.imageUrl} alt={product.name} className="single-product__image rounded" style={{ width: "85px", height: "" }} />
-        </Col>
+        {product.imageUrl && (
+          <Col xs={4} sm={5} md={3} xl={4}>
+            <img src={product.imageUrl} alt={product.name} className="single-product__image rounded" style={{ width: "85px", height: "" }} />
+          </Col>
+        )}
         <Col xs={7} sm={6} md={8} xl={7}></Col>
-        <Modal show={showEdit} onHide={handleShowEditClose} className="single-product__modal single-product--shadow" onClick={event => event.stopPropagation()}>
+
+        {/* MODAL EDIT */}
+        <Modal show={showEdit} onHide={handleCloseEdit} className="single-product__modal single-product--shadow" onClick={event => event.stopPropagation()}>
           <Modal.Header closeButton className="border-bottom-0" onClick={event => event.stopPropagation()} />
           <Modal.Body>
             <h2 className="fs-5 text-center">Edit your product</h2>
@@ -192,15 +231,20 @@ const SingleProductComponent = ({ product, userRole, productCategories, getMyMen
                 <Form.Label className="single-product__form-label">Description</Form.Label>
                 <Form.Control type="text" placeholder="Enter product description" value={editProductDTO.description} name="description" onChange={handleChange} required />
               </Form.Group>
-              <Form.Group className="edit-menu__form-group mb-3">
-                <Form.Label className="edit-menu__form-label">Product category</Form.Label>
-                <Form.Select name="productCategory" value={editProductDTO.productCategory} onChange={handleChange}>
-                  {productCategories.map((category, index) => (
-                    <option key={index} value={category.productCategory}>
-                      {category.productCategory}
-                    </option>
-                  ))}
-                </Form.Select>
+              {productCategories && (
+                <Form.Group className="edit-menu__form-group mb-3">
+                  <Form.Label className="edit-menu__form-label">Product category</Form.Label>
+                  <Form.Select name="productCategory" value={editProductDTO.productCategory} onChange={handleChange}>
+                    {productCategories.map((category, index) => (
+                      <option key={index} value={category.productCategory}>
+                        {category.productCategory}
+                      </option>
+                    ))}
+                  </Form.Select>
+                </Form.Group>
+              )}
+              <Form.Group className="single-product__form-group mb-3">
+                <Form.Check type="checkbox" label="Can have toppings" name="canHaveToppings" checked={editProductDTO.canHaveToppings} onChange={handleCheckboxChange} />
               </Form.Group>
               <div className="d-flex justify-content-center">
                 <img src={product.imageUrl} alt="" className="rounded" style={{ width: "85px" }} />
@@ -218,7 +262,7 @@ const SingleProductComponent = ({ product, userRole, productCategories, getMyMen
             <Button
               variant="danger"
               onClick={() => {
-                handleShowDeleteClose();
+                handleCloseDelete();
                 deleteProduct();
               }}
               className="single-product__button rounded-pill px-4 border-0"
@@ -230,24 +274,65 @@ const SingleProductComponent = ({ product, userRole, productCategories, getMyMen
             </Button>
           </Modal.Footer>
         </Modal>
-        <Modal show={showDelete} onHide={handleShowDeleteClose} className="single-product__modal single-product--shadow">
+        <Modal show={showDelete} onHide={handleCloseDelete} className="single-product__modal single-product--shadow">
           <Modal.Header closeButton className="border-bottom-0"></Modal.Header>
           <Modal.Body>
             <h4>Are you sure you want to delete this product?</h4>
           </Modal.Body>
           <Modal.Footer className="border-top-0 d-flex justify-content-center">
-            <Button variant="accent" onClick={handleShowDeleteClose} className="single-product__button single-product__button--dismiss rounded-pill px-4 border-0">
+            <Button variant="accent" onClick={handleCloseDelete} className="single-product__button single-product__button--dismiss rounded-pill px-4 border-0">
               Dismiss
             </Button>
             <Button
               variant="danger"
               onClick={() => {
-                handleShowEditClose();
+                handleCloseEdit();
                 deleteProduct();
               }}
               className="single-product__button rounded-pill px-4 border-0"
             >
               Delete
+            </Button>
+          </Modal.Footer>
+        </Modal>
+
+        {/* MODAL ADD TO BASKET */}
+        <Modal show={showAddToBasket} onHide={handleCloseAddToBasket} className="single-product__modal single-product--shadow" onClick={event => event.stopPropagation()}>
+          <Modal.Header closeButton onClick={handleCloseAddToBasket} className="border-bottom-0" onClick={event => event.stopPropagation()}></Modal.Header>
+          <Modal.Body className="d-flex flex-column">
+            <div className="d-flex align-items-center">
+              <div className="me-auto">
+                <h4>{product.name}</h4>
+                <small className="fst-italic">{product.description}</small>
+              </div>
+              <img src={product.imageUrl} alt="" className="rounded" style={{ width: "120px" }} />
+            </div>
+
+            <div className="d-flex justify-content-center align-items-center mt-3">
+              <Button variant="outline-secondary" onClick={handleDecrease} className="px-3" style={{ fontSize: "1.2rem" }}>
+                -
+              </Button>
+              <span className="mx-3" style={{ fontSize: "1.2rem" }}>
+                {quantity}
+              </span>
+              <Button variant="outline-secondary" onClick={handleIncrease} className="px-3" style={{ fontSize: "1.2rem" }}>
+                +
+              </Button>
+            </div>
+            {product.canHaveToppings && toppings && toppings.map(topping => <div key={topping.idProduct}>{topping.name}</div>)}
+            {/* TODO TOPPINGS */}
+          </Modal.Body>
+
+          <Modal.Footer className="border-top-0 d-flex justify-content-center">
+            <Button
+              variant="accent"
+              onClick={() => {
+                handleAddToBasket(product, quantity);
+                handleCloseAddToBasket();
+              }}
+              className="single-product__button rounded-pill px-4 border-0"
+            >
+              Add {quantity} for {(product.price * quantity).toFixed(2)}€
             </Button>
           </Modal.Footer>
         </Modal>
