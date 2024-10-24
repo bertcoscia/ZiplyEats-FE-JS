@@ -3,7 +3,7 @@ import SingleProductComponent from "../SingleProductComponent/SingleProductCompo
 import { useSelector } from "react-redux";
 import "./RestaurantProductsComponent.css";
 
-const RestaurantProductsComponent = ({ products, productCategories, handleAddToBasket, basket, toppings }) => {
+const RestaurantProductsComponent = ({ products, productCategories, handleAddToCart, cart, toppings }) => {
   // HOOKS
   const profile = useSelector(state => state.profile.content);
 
@@ -33,7 +33,7 @@ const RestaurantProductsComponent = ({ products, productCategories, handleAddToB
               {products
                 .filter(product => product.productCategory.productCategory === category)
                 .map(product => (
-                  <SingleProductComponent key={product.idProduct} product={product} userRole={profile.userRole.userRole} handleAddToBasket={handleAddToBasket} basket={basket} toppings={toppings} />
+                  <SingleProductComponent key={product.idProduct} product={product} userRole={profile.userRole.userRole} handleAddToCart={handleAddToCart} cart={cart} toppings={toppings} />
                 ))}
             </Row>
           </div>

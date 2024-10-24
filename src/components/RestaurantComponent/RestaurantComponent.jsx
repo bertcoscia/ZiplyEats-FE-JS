@@ -6,6 +6,7 @@ import { SkipEnd, StarFill, X, XLg } from "react-bootstrap-icons";
 import SingleProductComponent from "../SingleProductComponent/SingleProductComponent";
 import RestaurantProductsComponent from "./RestaurantProductsComponent";
 import { useSelector } from "react-redux";
+import CheckoutButton from "../stripe/CheckoutButton";
 
 const RestaurantComponent = () => {
   // ENV VARIABLES
@@ -26,7 +27,7 @@ const RestaurantComponent = () => {
   const [products, setProducts] = useState([]);
   const [toppings, setToppings] = useState([]);
   const [productCategories, setProductCategories] = useState([]);
-  const [basket, setBasket] = useState([]);
+  const [cart, setCart] = useState([]);
   const [newOrderDTO, setNewOrderDTO] = useState(null);
 
   // FETCH
@@ -106,9 +107,9 @@ const RestaurantComponent = () => {
   };
 
   // HANDLERS
-  const handleAddToBasket = (product, quantity, selectedToppings) => {
+  const handleAddToCart = (product, quantity, selectedToppings) => {
     for (let i = 0; i < quantity; i++) {
-      setBasket(prevState => [
+      setCart(prevState => [
         ...prevState,
         {
           product: product,
@@ -118,42 +119,42 @@ const RestaurantComponent = () => {
     }
   };
 
-  const handleRemoveFromBasket = productId => {
-    const updatedBasket = basket.filter(product => product.idProduct !== productId);
-    setBasket(updatedBasket);
+  const handleRemoveFromCart = productId => {
+    const updatedCart = cart.filter(product => product.idProduct !== productId);
+    setCart(updatedCart);
   };
 
   const handleIncrementQuantity = productKey => {
-    setBasket(prevBasket => {
-      const productToIncrement = prevBasket.find(product => `${product.product.idProduct}_${JSON.stringify(product.toppings)}` === productKey);
-      return [...prevBasket, productToIncrement];
+    setCart(prevCart => {
+      const productToIncrement = prevCart.find(product => `${product.product.idProduct}_${JSON.stringify(product.toppings)}` === productKey);
+      return [...prevCart, productToIncrement];
     });
   };
 
   const handleDecrementQuantity = productKey => {
-    setBasket(prevBasket => {
-      const productIndex = prevBasket.findIndex(product => `${product.product.idProduct}_${JSON.stringify(product.toppings)}` === productKey);
+    setCart(prevCart => {
+      const productIndex = prevCart.findIndex(product => `${product.product.idProduct}_${JSON.stringify(product.toppings)}` === productKey);
       if (productIndex !== -1) {
-        const updatedBasket = [...prevBasket];
-        updatedBasket.splice(productIndex, 1);
-        return updatedBasket;
+        const updatedCart = [...prevCart];
+        updatedCart.splice(productIndex, 1);
+        return updatedCart;
       }
-      return prevBasket;
+      return prevCart;
     });
   };
 
-  const handleCreateNewOrder = (basket, requestedDeliveryDateTime) => {
+  /* const handleCreateNewOrder = (cart, requestedDeliveryDateTime) => {
     const newOrder = {
       idRestaurant: `${restaurant.idUser}`,
       deliveryAddress: `${deliveryAddress.address}`,
       requestedDeliveryDateTime: `${requestedDeliveryDateTime}`,
-      orderProductList: basket.map(orderProduct => ({
+      orderProductList: cart.map(orderProduct => ({
         idProduct: `${orderProduct.product.idProduct}`,
         toppings: orderProduct.toppings.map(topping => topping.idProduct)
       }))
     };
     createNewOrder(newOrder);
-  };
+  }; */
 
   // UTILS
   const getUniqueCategories = products => {
@@ -218,14 +219,14 @@ const RestaurantComponent = () => {
             </Button>
           </Container>
           <Container className="d-flex mt-4">
-            {products.length > 0 && <RestaurantProductsComponent products={products} productCategories={productCategories} handleAddToBasket={handleAddToBasket} basket={basket} toppings={toppings} />}
+            {products.length > 0 && <RestaurantProductsComponent products={products} productCategories={productCategories} handleAddToCart={handleAddToCart} cart={cart} toppings={toppings} />}
             <div className="d-none d-lg-block card perfect-shadow p-3 align-self-start sticky-top" style={{ width: "315px", top: "90px" }}>
               <h5>Your order</h5>
               <div className="d-flex flex-column">
-                {basket.length > 0 ? (
+                {cart.length > 0 ? (
                   <>
                     {Object.entries(
-                      basket.reduce((acc, product) => {
+                      cart.reduce((acc, product) => {
                         const productKey = `${product.product.idProduct}_${JSON.stringify(product.toppings)}`;
                         if (!acc[productKey]) {
                           acc[productKey] = {
@@ -273,7 +274,7 @@ const RestaurantComponent = () => {
                       <div className="d-flex justify-content-between">
                         <strong>Total</strong>
                         <strong>
-                          {basket
+                          {cart
                             .reduce((total, product) => {
                               const toppingsPrice = product.toppings.reduce((total, topping) => total + topping.price, 0);
                               return total + (product.product.price + toppingsPrice);
@@ -283,18 +284,19 @@ const RestaurantComponent = () => {
                         </strong>
                       </div>
                     </div>
-                    <Button
+                    <CheckoutButton cart={cart} restaurant={restaurant} deliveryAddress={deliveryAddress} />
+                    {/* <Button
                       variant="accent"
                       className="mt-3 py-0"
                       onClick={() => {
-                        handleCreateNewOrder(basket, "2024-10-29T22:30:00");
+                        handleCreateNewOrder(cart);
                       }}
                     >
-                      <small>Order</small>
-                    </Button>
+                      <small>Go to checkout</small>
+                    </Button> */}
                   </>
                 ) : (
-                  <p>Your basket is empty</p>
+                  <p>Your cart is empty</p>
                 )}
               </div>
             </div>

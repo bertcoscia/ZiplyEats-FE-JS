@@ -14,10 +14,14 @@ import UserDashboardComponent from "./components/Home/UserDashboardComponent/Use
 import LocalRestaurantsComponent from "./components/LocalRestaurantsComponent/LocalRestaurantsComponent";
 import RestaurantsByCategoryComponent from "./components/RestaurantsByCategoryComponent/RestaurantsByCategoryComponent";
 import RestaurantComponent from "./components/RestaurantComponent/RestaurantComponent";
+import { loadStripe } from "@stripe/stripe-js";
+import { Elements } from "@stripe/react-stripe-js";
+import CheckoutSuccess from "./components/stripe/CheckoutSuccess";
 
 function App() {
+  const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_KEY);
   return (
-    <>
+    <Elements stripe={stripePromise}>
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<UserDashboardComponent />} />
@@ -33,9 +37,10 @@ function App() {
           <Route path="/local-restaurants" element={<LocalRestaurantsComponent />} />
           <Route path="/restaurants/:category" element={<RestaurantsByCategoryComponent />} />
           <Route path="/restaurant/:id" element={<RestaurantComponent />} />
+          <Route path="/success/:idOrder" element={<CheckoutSuccess />} />
         </Routes>
       </BrowserRouter>
-    </>
+    </Elements>
   );
 }
 

@@ -2,7 +2,7 @@ import { Button, Container } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import "./SingleActiveOrderComponent.css";
 
-const SingleActiveOrderComponent = ({ order }) => {
+const SingleActiveOrderComponent = ({ order, userRole }) => {
   // ENV VARIABLES
   const ENV_VARIABLE = {
     URL_ORDERS: import.meta.env.VITE_ORDERS_URL
@@ -141,22 +141,26 @@ const SingleActiveOrderComponent = ({ order }) => {
             <p className="fw-bold">STATUS:</p>
             <p className="fw-bold">{order.orderStatus.orderStatus === "RESTAURANT_ACCEPTED" ? "ACCEPTED" : formatString(order.orderStatus.orderStatus)}</p>
           </div>
-          {order.orderStatus.orderStatus === "CREATED" && (
-            <div className="single-active-order__actions d-flex justify-content-around">
-              <Button variant="danger" onClick={refuseOrder}>
-                Refuse
-              </Button>
-              <Button variant="success" onClick={acceptOrder}>
-                Accept
-              </Button>
-            </div>
-          )}
-          {order.orderStatus.orderStatus === "RESTAURANT_ACCEPTED" && (
-            <div className="single-active-order__cancel d-flex justify-content-center">
-              <Button variant="danger" onClick={refuseOrder}>
-                Cancel order
-              </Button>
-            </div>
+          {userRole !== "USER" && (
+            <>
+              {order.orderStatus.orderStatus === "CREATED" && (
+                <div className="single-active-order__actions d-flex justify-content-around">
+                  <Button variant="danger" onClick={refuseOrder}>
+                    Refuse
+                  </Button>
+                  <Button variant="success" onClick={acceptOrder}>
+                    Accept
+                  </Button>
+                </div>
+              )}
+              {order.orderStatus.orderStatus === "RESTAURANT_ACCEPTED" && (
+                <div className="single-active-order__cancel d-flex justify-content-center">
+                  <Button variant="danger" onClick={refuseOrder}>
+                    Cancel order
+                  </Button>
+                </div>
+              )}
+            </>
           )}
         </div>
       </Container>

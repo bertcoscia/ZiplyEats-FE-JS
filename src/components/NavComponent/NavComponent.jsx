@@ -109,13 +109,23 @@ const NavComponent = ({ scrollToJoinUs }) => {
                 <small>Account</small>
               </Dropdown.Toggle>
 
-              <Dropdown.Menu className="navbar__dropdown__menu rounded-4 bg-accent">
+              <Dropdown.Menu className="navbar__dropdown__menu bg-accent">
                 <Dropdown.Item as={Link} to={"/me"} className="navbar__dropdown__menu__item">
                   <span className="me-2">
                     <img src="https://glovo.dhmedia.io/image/customer-assets-glovo/customer_profile/uds/person.svg?t=W3sic3ZnIjp7InEiOiJsb3cifX1d" alt="" style={{ width: "15px" }} />
                   </span>
                   Profile
                 </Dropdown.Item>
+
+                {profile.userRole.userRole === "USER" && (
+                  <Dropdown.Item as={Link} to={"/me"} className="navbar__dropdown__menu__item">
+                    <span className="me-2">
+                      <img src="https://glovo.dhmedia.io/image/customer-assets-glovo/customer_profile/uds/bags.svg?t=W3sic3ZnIjp7InEiOiJsb3cifX1d" alt="" style={{ width: "15px" }} />
+                    </span>
+                    Orders
+                  </Dropdown.Item>
+                )}
+
                 <Dropdown.Item onClick={logout} className="navbar__dropdown__menu__item">
                   <span className="me-2">
                     <img src="https://glovo.dhmedia.io/image/customer-assets-glovo/customer_profile/uds/exit.svg?t=W3sic3ZnIjp7InEiOiJsb3cifX1d" alt="" style={{ width: "15px" }} />

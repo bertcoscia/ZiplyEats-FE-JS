@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { Trash3 } from "react-bootstrap-icons";
 
-const SingleProductComponent = ({ product, userRole, productCategories, getMyMenu, handleAddToBasket, basket, toppings }) => {
+const SingleProductComponent = ({ product, userRole, productCategories, getMyMenu, handleAddToCart, cart, toppings }) => {
   // ENV VARIABLES
   const ENV_VARIABLE = {
     URL_PRODUCTS: import.meta.env.VITE_PRODUCTS_URL
@@ -17,7 +17,7 @@ const SingleProductComponent = ({ product, userRole, productCategories, getMyMen
   // USE STATE
   const [showEdit, setShowEdit] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
-  const [showAddToBasket, setShowAddToBasket] = useState(false);
+  const [showAddToCart, setShowAddToCart] = useState(false);
   const [editProductDTO, setEditProductDTO] = useState({
     name: product.name,
     price: product.price,
@@ -27,7 +27,7 @@ const SingleProductComponent = ({ product, userRole, productCategories, getMyMen
   });
   const [img, setImg] = useState(null);
   const [quantity, setQuantity] = useState(1);
-  const [isProductInBasket, setIsProductInBasket] = useState(false);
+  const [isProductInCart, setIsProductInCart] = useState(false);
   const [selectedToppings, setSelectedToppings] = useState([]);
 
   // HANDLERS
@@ -47,15 +47,15 @@ const SingleProductComponent = ({ product, userRole, productCategories, getMyMen
     setShowDelete(false);
   };
 
-  const handleShowAddToBasket = () => {
+  const handleShowAddToCart = () => {
     setQuantity(1);
-    const isInBasket = basket.some(item => item.idProduct === product.idProduct);
-    setIsProductInBasket(isInBasket);
-    setShowAddToBasket(true);
+    const isInCart = cart.some(item => item.idProduct === product.idProduct);
+    setIsProductInCart(isInCart);
+    setShowAddToCart(true);
   };
 
-  const handleCloseAddToBasket = () => {
-    setShowAddToBasket(false);
+  const handleCloseAddToCart = () => {
+    setShowAddToCart(false);
   };
 
   const handleChange = event => {
@@ -196,7 +196,7 @@ const SingleProductComponent = ({ product, userRole, productCategories, getMyMen
         if (userRole === "RESTAURANT") {
           handleShowEdit();
         } else if (userRole === "USER") {
-          handleShowAddToBasket();
+          handleShowAddToCart();
         }
       }}
     >
@@ -308,8 +308,8 @@ const SingleProductComponent = ({ product, userRole, productCategories, getMyMen
         </Modal>
 
         {/* MODAL ADD TO BASKET */}
-        <Modal show={showAddToBasket} onHide={handleCloseAddToBasket} className="single-product__modal single-product--shadow" onClick={event => event.stopPropagation()}>
-          <Modal.Header closeButton onClick={handleCloseAddToBasket} className="border-bottom-0" onClick={event => event.stopPropagation()}></Modal.Header>
+        <Modal show={showAddToCart} onHide={handleCloseAddToCart} className="single-product__modal single-product--shadow" onClick={event => event.stopPropagation()}>
+          <Modal.Header closeButton onClick={handleCloseAddToCart} className="border-bottom-0" onClick={event => event.stopPropagation()}></Modal.Header>
           <Modal.Body className="d-flex flex-column">
             <div className="d-flex align-items-center">
               <div className="me-auto">
@@ -353,8 +353,8 @@ const SingleProductComponent = ({ product, userRole, productCategories, getMyMen
             <Button
               variant="accent"
               onClick={() => {
-                handleAddToBasket(product, quantity, selectedToppings);
-                handleCloseAddToBasket();
+                handleAddToCart(product, quantity, selectedToppings);
+                handleCloseAddToCart();
               }}
               className="single-product__button rounded-pill px-4 border-0"
             >
