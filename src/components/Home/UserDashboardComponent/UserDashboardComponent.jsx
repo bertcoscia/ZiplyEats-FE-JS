@@ -40,11 +40,11 @@ const UserDashboardComponent = () => {
     };
 
     setDeliveryAddress(selectedAddress);
-    dispatch(setAddressAction(selectedAddress));
+    sessionStorage.setItem("deliveryAddress", JSON.stringify(selectedAddress));
   };
 
   const handleSubmit = () => {
-    navigate(`/local-restaurants/${deliveryAddress.city}/${deliveryAddress.longitude}/${deliveryAddress.latitude}`);
+    navigate("/local-restaurants");
   };
 
   // FETCH
@@ -61,8 +61,8 @@ const UserDashboardComponent = () => {
           latitude: data.results[0].lat
         };
         setDeliveryAddress(myAddress);
-        dispatch(setAddressAction(myAddress));
-        navigate(`/local-restaurants/${myAddress.city}/${myAddress.longitude}/${myAddress.latitude}`);
+        sessionStorage.setItem("deliveryAddress", JSON.stringify(myAddress));
+        navigate("/local-restaurants");
       }
     } catch (error) {
       console.log(error);

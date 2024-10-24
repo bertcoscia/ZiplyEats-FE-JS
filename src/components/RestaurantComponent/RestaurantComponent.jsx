@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useFetcher, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import NavComponent from "../NavComponent/NavComponent";
 import { Button, Col, Container, Row } from "react-bootstrap";
-import { StarFill, X, XLg } from "react-bootstrap-icons";
+import { SkipEnd, StarFill, X, XLg } from "react-bootstrap-icons";
 import SingleProductComponent from "../SingleProductComponent/SingleProductComponent";
 import RestaurantProductsComponent from "./RestaurantProductsComponent";
 import { useSelector } from "react-redux";
@@ -19,7 +19,7 @@ const RestaurantComponent = () => {
   // HOOKS
   const idRestaurant = useParams();
   const navigate = useNavigate();
-  const deliveryAddress = useSelector(state => state.deliveryAddress.content);
+  const deliveryAddress = JSON.parse(sessionStorage.getItem("deliveryAddress"));
 
   // USE STATE
   const [restaurant, setRestaurant] = useState(null);
@@ -106,9 +106,15 @@ const RestaurantComponent = () => {
   };
 
   // HANDLERS
-  const handleAddToBasket = (product, quantity) => {
+  const handleAddToBasket = (product, quantity, selectedToppings) => {
     for (let i = 0; i < quantity; i++) {
-      setBasket(prevState => [...prevState, product]);
+      setBasket(prevState => [
+        ...prevState,
+        {
+          product: product,
+          toppings: selectedToppings
+        }
+      ]);
     }
   };
 
@@ -117,16 +123,16 @@ const RestaurantComponent = () => {
     setBasket(updatedBasket);
   };
 
-  const handleIncrementQuantity = productId => {
+  const handleIncrementQuantity = productKey => {
     setBasket(prevBasket => {
-      const updatedBasket = [...prevBasket, prevBasket.find(product => product.idProduct === productId)];
-      return updatedBasket;
+      const productToIncrement = prevBasket.find(product => `${product.product.idProduct}_${JSON.stringify(product.toppings)}` === productKey);
+      return [...prevBasket, productToIncrement];
     });
   };
 
-  const handleDecrementQuantity = productId => {
+  const handleDecrementQuantity = productKey => {
     setBasket(prevBasket => {
-      const productIndex = prevBasket.findIndex(product => product.idProduct === productId);
+      const productIndex = prevBasket.findIndex(product => `${product.product.idProduct}_${JSON.stringify(product.toppings)}` === productKey);
       if (productIndex !== -1) {
         const updatedBasket = [...prevBasket];
         updatedBasket.splice(productIndex, 1);
@@ -141,8 +147,9 @@ const RestaurantComponent = () => {
       idRestaurant: `${restaurant.idUser}`,
       deliveryAddress: `${deliveryAddress.address}`,
       requestedDeliveryDateTime: `${requestedDeliveryDateTime}`,
-      orderProductList: basket.map(product => ({
-        idProduct: `${product.idProduct}`
+      orderProductList: basket.map(orderProduct => ({
+        idProduct: `${orderProduct.product.idProduct}`,
+        toppings: orderProduct.toppings.map(topping => topping.idProduct)
       }))
     };
     createNewOrder(newOrder);
@@ -172,23 +179,8 @@ const RestaurantComponent = () => {
       <NavComponent />
       {restaurant && (
         <div style={{ marginTop: "80px" }}>
-          <div className="bg-primary pb-4">
+          <div className="bg-primary py-4">
             <Container>
-              <Button
-                variant="link"
-                className="text-decoration-none text-secondary"
-                style={{ cursor: "pointer" }}
-                onClick={() => {
-                  navigate(-1);
-                }}
-              >
-                <small>
-                  <svg height="24" width="24" viewBox="0 0 24 24" role="img" aria-label="Back" focusable="false" fill="#f9c90b">
-                    <path d="M9.6 5.5L11.1556 7.05558L7.21126 11H21V13H7.21126L11.1556 16.9443L9.6 18.5L3 12L9.6 5.5Z"></path>
-                  </svg>
-                  Go back
-                </small>
-              </Button>
               <div className="d-flex">
                 <div className="me-4">
                   <img src={restaurant.avatarUrl} alt="" style={{ width: "200px", height: "200px" }} className="rounded-2" />
@@ -208,6 +200,23 @@ const RestaurantComponent = () => {
               </div>
             </Container>
           </div>
+          <Container className="py-3">
+            <Button
+              variant="link"
+              className="text-decoration-none text-primary"
+              style={{ cursor: "pointer" }}
+              onClick={() => {
+                navigate(-1);
+              }}
+            >
+              <small>
+                <svg height="24" width="24" viewBox="0 0 24 24" role="img" aria-label="Back" focusable="false" fill="#F86826">
+                  <path d="M9.6 5.5L11.1556 7.05558L7.21126 11H21V13H7.21126L11.1556 16.9443L9.6 18.5L3 12L9.6 5.5Z"></path>
+                </svg>
+                Go back
+              </small>
+            </Button>
+          </Container>
           <Container className="d-flex mt-4">
             {products.length > 0 && <RestaurantProductsComponent products={products} productCategories={productCategories} handleAddToBasket={handleAddToBasket} basket={basket} toppings={toppings} />}
             <div className="d-none d-lg-block card perfect-shadow p-3 align-self-start sticky-top" style={{ width: "315px", top: "90px" }}>
@@ -217,34 +226,61 @@ const RestaurantComponent = () => {
                   <>
                     {Object.entries(
                       basket.reduce((acc, product) => {
-                        acc[product.idProduct] = acc[product.idProduct] || { count: 0, price: product.price, name: product.name };
-                        acc[product.idProduct].count += 1;
+                        const productKey = `${product.product.idProduct}_${JSON.stringify(product.toppings)}`;
+                        if (!acc[productKey]) {
+                          acc[productKey] = {
+                            count: 0,
+                            product: product.product,
+                            toppings: product.toppings
+                          };
+                        }
+                        acc[productKey].count += 1;
                         return acc;
                       }, {})
-                    ).map(([idProduct, { count, price, name }]) => (
-                      <div key={idProduct} className="mb-3 p-1 border-bottom border-2 pb-3">
-                        <div className="d-flex align-items-center">
-                          <small style={{ fontSize: "12px" }} className="me-auto">
-                            {count}x {name}
-                          </small>
-                          <small className="text-muted ms-3 d-block fst-italic" style={{ fontSize: "12px" }}>
-                            {(count * price).toFixed(2)} €
-                          </small>
+                    ).map(([productKey, { count, product, toppings }]) => {
+                      const toppingsPrice = toppings.reduce((total, topping) => total + topping.price, 0);
+                      const totalPrice = (product.price + toppingsPrice) * count;
+                      return (
+                        <div key={productKey} className="mb-3 p-1 border-bottom border-2 pb-3">
+                          <div className="d-flex align-items-center">
+                            <small style={{ fontSize: "12px" }} className="me-auto">
+                              {count}x {product.name}
+                            </small>
+                            <small className="text-muted ms-3 d-block fst-italic" style={{ fontSize: "12px" }}>
+                              {totalPrice.toFixed(2)} €
+                            </small>
+                          </div>
+                          <div className="d-flex flex-column ms-3">
+                            {toppings.length > 0 &&
+                              toppings.map((topping, index) => (
+                                <small key={index} className="text-muted" style={{ fontSize: "10px" }}>
+                                  + {topping.name} ({topping.price.toFixed(2)} €)
+                                </small>
+                              ))}
+                          </div>
+                          <div className="d-flex justify-content-center mt-2">
+                            <Button variant="primary" className="align-self-center px-2 py-0 me-3" onClick={() => handleDecrementQuantity(productKey)}>
+                              <small>-</small>
+                            </Button>
+                            <Button variant="primary" className="align-self-center px-2 py-0" onClick={() => handleIncrementQuantity(productKey)}>
+                              <small>+</small>
+                            </Button>
+                          </div>
                         </div>
-                        <div className="d-flex justify-content-center mt-2">
-                          <Button variant="primary" className="align-self-center px-2 py-0 me-3" onClick={() => handleDecrementQuantity(idProduct)}>
-                            <small>-</small>
-                          </Button>
-                          <Button variant="primary" className="align-self-center px-2 py-0" onClick={() => handleIncrementQuantity(idProduct)}>
-                            <small>+</small>
-                          </Button>
-                        </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                     <div className="">
                       <div className="d-flex justify-content-between">
                         <strong>Total</strong>
-                        <strong>{basket.reduce((total, product) => total + product.price, 0).toFixed(2)} €</strong>
+                        <strong>
+                          {basket
+                            .reduce((total, product) => {
+                              const toppingsPrice = product.toppings.reduce((total, topping) => total + topping.price, 0);
+                              return total + (product.product.price + toppingsPrice);
+                            }, 0)
+                            .toFixed(2)}{" "}
+                          €
+                        </strong>
                       </div>
                     </div>
                     <Button

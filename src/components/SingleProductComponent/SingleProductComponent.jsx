@@ -28,6 +28,7 @@ const SingleProductComponent = ({ product, userRole, productCategories, getMyMen
   const [img, setImg] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [isProductInBasket, setIsProductInBasket] = useState(false);
+  const [selectedToppings, setSelectedToppings] = useState([]);
 
   // HANDLERS
   const handleShowEdit = () => {
@@ -98,6 +99,16 @@ const SingleProductComponent = ({ product, userRole, productCategories, getMyMen
 
   const handleDecrease = () => {
     setQuantity(prevQuantity => (prevQuantity > 1 ? prevQuantity - 1 : 1)); // Non permettiamo meno di 1
+  };
+
+  const handleAddTopping = (event, topping) => {
+    const { checked } = event.target;
+
+    if (checked) {
+      setSelectedToppings(prevState => [...prevState, topping]);
+    } else {
+      setSelectedToppings(prevState => prevState.filter(topping => topping.idProduct !== topping.idProduct));
+    }
   };
 
   // FETCH
@@ -319,20 +330,35 @@ const SingleProductComponent = ({ product, userRole, productCategories, getMyMen
                 +
               </Button>
             </div>
-            {product.canHaveToppings && toppings && toppings.map(topping => <div key={topping.idProduct}>{topping.name}</div>)}
-            {/* TODO TOPPINGS */}
+            <div className="d-flex flex-column my-3">
+              {product.canHaveToppings && toppings && (
+                <>
+                  <h5>Toppings</h5>
+                  {toppings.map(topping => (
+                    <div key={topping.idProduct} className="d-flex justify-content-between my-1">
+                      <Form>
+                        <Form.Group className="single-product__form-group mb-3">
+                          <Form.Check type="checkbox" label={topping.name} name="canHaveToppings" onChange={event => handleAddTopping(event, topping)} className="single-topping__checkbox-label--small" />
+                        </Form.Group>
+                      </Form>
+                      <small className="text-muted fst-italic">+{topping.price}€</small>
+                    </div>
+                  ))}
+                </>
+              )}
+            </div>
           </Modal.Body>
 
           <Modal.Footer className="border-top-0 d-flex justify-content-center">
             <Button
               variant="accent"
               onClick={() => {
-                handleAddToBasket(product, quantity);
+                handleAddToBasket(product, quantity, selectedToppings);
                 handleCloseAddToBasket();
               }}
               className="single-product__button rounded-pill px-4 border-0"
             >
-              Add {quantity} for {(product.price * quantity).toFixed(2)}€
+              Add {quantity} for {((product.price + selectedToppings.reduce((acc, topping) => acc + topping.price, 0)) * quantity).toFixed(2)}€
             </Button>
           </Modal.Footer>
         </Modal>

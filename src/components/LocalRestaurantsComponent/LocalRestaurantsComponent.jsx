@@ -14,7 +14,7 @@ const LocalRestaurantsComponent = () => {
   };
 
   // HOOKS
-  const deliveryAddress = useParams();
+  const deliveryAddress = JSON.parse(sessionStorage.getItem("deliveryAddress"));
   const navigate = useNavigate();
 
   // USE STATE
@@ -31,7 +31,7 @@ const LocalRestaurantsComponent = () => {
   // FETCH
   const findRestaurantsByCity = async () => {
     try {
-      const response = await fetch(`${ENV_VARIABLES.URL_RESTAURANTS}/find-city`, {
+      const response = await fetch(`${ENV_VARIABLES.URL_RESTAURANTS}/find-city/${deliveryAddress.city}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("accessToken")}`
         }
@@ -49,7 +49,7 @@ const LocalRestaurantsComponent = () => {
 
   const filterByDistance = async restaurant => {
     try {
-      const response = await fetch(`https://api.geoapify.com/v1/routing?waypoints=${deliveryAddress.lat},${deliveryAddress.lon}|${restaurant.latitude},${restaurant.longitude}&mode=bicycle&apiKey=${ENV_VARIABLES.GEOAPIFY_KEY}`);
+      const response = await fetch(`https://api.geoapify.com/v1/routing?waypoints=${deliveryAddress.latitude},${deliveryAddress.longitude}|${restaurant.latitude},${restaurant.longitude}&mode=bicycle&apiKey=${ENV_VARIABLES.GEOAPIFY_KEY}`);
       if (response.ok) {
         const data = await response.json();
         if (data.features[0].properties.distance <= 7000) {
@@ -89,10 +89,8 @@ const LocalRestaurantsComponent = () => {
   }, [nearRestaurants]);
 
   useEffect(() => {
-    if (deliveryAddress.lat && deliveryAddress.lon) {
-      findRestaurantsByCity();
-    }
-  }, [deliveryAddress.lat, deliveryAddress.lon]);
+    findRestaurantsByCity();
+  }, []);
 
   return (
     <>
@@ -116,7 +114,7 @@ const LocalRestaurantsComponent = () => {
                 key={index}
                 className="category-button py-0 me-3 rounded-pill"
                 onClick={() => {
-                  navigate(`/restaurants/${category}/${deliveryAddress.lat}/${deliveryAddress.lon}`);
+                  navigate(`/restaurants/${category}`);
                 }}
               >
                 <small>{category}</small>

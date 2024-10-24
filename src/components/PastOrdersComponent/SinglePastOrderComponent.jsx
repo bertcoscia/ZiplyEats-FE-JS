@@ -86,7 +86,7 @@ const SinglePastOrderComponent = ({ order, userRole }) => {
                   {product.toppings.length > 0 &&
                     product.toppings.map((topping, index) => (
                       <Container key={index} className="single-past-order__topping d-flex justify-content-between text-muted">
-                        <small className="single-past-order__topping-name">{topping.name}</small>
+                        <small className="single-past-order__topping-name">+ {topping.name}</small>
                       </Container>
                     ))}
                 </div>

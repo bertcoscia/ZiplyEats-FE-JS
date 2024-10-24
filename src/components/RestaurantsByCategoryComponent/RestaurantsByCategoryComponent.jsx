@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import NavComponent from "../NavComponent/NavComponent";
 import { Button, Container, Form } from "react-bootstrap";
 import SingleRestaurantCard from "../SingleRestaurantComponent/SingleRestaurantCard";
@@ -13,6 +13,8 @@ const RestaurantsByCategoryComponent = () => {
 
   // HOOKS
   const params = useParams();
+  const deliveryAddress = JSON.parse(sessionStorage.getItem("deliveryAddress"));
+  const navigate = useNavigate();
 
   // USE STATE
   const [restaurants, setRestaurants] = useState([]);
@@ -45,7 +47,7 @@ const RestaurantsByCategoryComponent = () => {
 
   const filterByDistance = async restaurant => {
     try {
-      const response = await fetch(`https://api.geoapify.com/v1/routing?waypoints=${params.lon},${params.lat}|${restaurant.latitude},${restaurant.longitude}&mode=bicycle&apiKey=${ENV_VARIABLES.GEOAPIFY_KEY}`);
+      const response = await fetch(`https://api.geoapify.com/v1/routing?waypoints=${deliveryAddress.latitude},${deliveryAddress.longitude}|${restaurant.latitude},${restaurant.longitude}&mode=bicycle&apiKey=${ENV_VARIABLES.GEOAPIFY_KEY}`);
       if (response.ok) {
         const data = await response.json();
         if (data.features[0].properties.distance <= 7000) {
@@ -90,6 +92,21 @@ const RestaurantsByCategoryComponent = () => {
             Reset
           </Button>
         </div>
+        <Button
+          variant="link"
+          className="text-decoration-none text-primary"
+          style={{ cursor: "pointer" }}
+          onClick={() => {
+            navigate(-1);
+          }}
+        >
+          <small>
+            <svg height="24" width="24" viewBox="0 0 24 24" role="img" aria-label="Back" focusable="false" fill="#F86826">
+              <path d="M9.6 5.5L11.1556 7.05558L7.21126 11H21V13H7.21126L11.1556 16.9443L9.6 18.5L3 12L9.6 5.5Z"></path>
+            </svg>
+            Go back
+          </small>
+        </Button>
         {search === "" ? (
           <div className="d-flex justify-content-around flex-wrap my-3">
             {nearRestaurants.length > 0 ? nearRestaurants.sort((a, b) => b.rating - a.rating).map(restaurant => <SingleRestaurantCard key={restaurant.idUser} restaurant={restaurant} />) : <p>No nearby restaurants found</p>}

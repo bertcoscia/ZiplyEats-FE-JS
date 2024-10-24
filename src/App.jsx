@@ -30,8 +30,8 @@ function App() {
           <Route path="/home" element={<HomeComponent />} />
           <Route path="/past-orders" element={<PastOrdersComponent />} />
           <Route path="/edit-menu" element={<EditMenuComponent />} />
-          <Route path="/local-restaurants/:city/:lon/:lat" element={<LocalRestaurantsComponent />} />
-          <Route path="/restaurants/:category/:lon/:lat" element={<RestaurantsByCategoryComponent />} />
+          <Route path="/local-restaurants" element={<LocalRestaurantsComponent />} />
+          <Route path="/restaurants/:category" element={<RestaurantsByCategoryComponent />} />
           <Route path="/restaurant/:id" element={<RestaurantComponent />} />
         </Routes>
       </BrowserRouter>

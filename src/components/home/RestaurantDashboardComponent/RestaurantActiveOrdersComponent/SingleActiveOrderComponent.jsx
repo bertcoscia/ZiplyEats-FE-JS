@@ -85,74 +85,80 @@ const SingleActiveOrderComponent = ({ order }) => {
   const groupedProducts = getGroupedOrderProducts();
 
   return (
-    <div className="single-active-order card p-3 shadow mx-auto d-flex flex-column justify-content-center mb-3 mb-md-3">
+    <div className="single-active-order card p-3 shadow mx-auto mb-3 mb-md-3">
       <small className="single-active-order__delivery-time mb-3 fw-bold">Requested delivery time: {formatDateTime(order.requestedDeliveryDateTime)}</small>
       <Container className="single-active-order__info mb-3">
         <h4 className="single-active-order__header mb-3 fs-4">Order details</h4>
-        {groupedProducts.map(({ product, count }) => (
-          <div key={`${product.product.idProduct}_${JSON.stringify(product.toppings)}`} className="single-active-order__product d-flex justify-content-between">
-            <div className="single-active-order__product-info d-flex">
-              <p className="single-active-order__product-quantity d-inline me-3">{count}X</p>
-              <div className="single-active-order__product-details d-flex flex-column">
-                <p className="single-active-order__product-name d-inline mb-0">{product.product.name}</p>
-                {product.toppings.length > 0 &&
-                  product.toppings.map((topping, index) => (
-                    <Container key={index} className="single-active-order__topping d-flex justify-content-between ms-3 text-muted">
-                      <small>{topping.name}</small>
-                    </Container>
-                  ))}
+        <div>
+          {groupedProducts.map(({ product, count }) => (
+            <div key={`${product.product.idProduct}_${JSON.stringify(product.toppings)}`} className="single-active-order__product d-flex justify-content-between">
+              <div className="single-active-order__product-info d-flex">
+                <p className="single-active-order__product-quantity d-inline me-3">{count}X</p>
+                <div className="single-active-order__product-details d-flex flex-column">
+                  <p className="single-active-order__product-name d-inline mb-0">{product.product.name}</p>
+                  {product.toppings.length > 0 &&
+                    product.toppings.map((topping, index) => (
+                      <small key={index} className="single-active-order__topping text-muted">
+                        + {topping.name}
+                      </small>
+                    ))}
+                </div>
               </div>
+              <p className="single-active-order__product-price">{(product.price * count).toFixed(2)}€</p>
             </div>
-            <p className="single-active-order__product-price">{(product.price * count).toFixed(2)}€</p>
+          ))}
+          <div className="single-active-order__total d-flex justify-content-between mt-3">
+            <p className="fw-bold">Total:</p>
+            <p>{order.totalPrice.toFixed(2)}€</p>
           </div>
-        ))}
-        <div className="single-active-order__total d-flex justify-content-between mt-3">
-          <p className="fw-bold">Total:</p>
-          <p>{order.totalPrice.toFixed(2)}€</p>
         </div>
-        <div className="single-active-order__customer-info d-flex justify-content-between">
-          <p>
-            <span className="fw-bold">Customer:</span> {order.user.name} {order.user.surname}
-          </p>
-          <span>
-            <a className="single-active-order__customer-phone small" href={`tel:+39${order.user.phoneNumber}`}>
-              {order.user.phoneNumber}
-            </a>
-          </span>
-        </div>
-        <div className="single-active-order__rider-info d-flex justify-content-between">
-          <p>
-            <span className="fw-bold">Rider:</span> {order.rider ? `${order.rider.name} ${order.rider.surname}` : "Not assigned yet"}
-          </p>
-          {order.rider && (
+        <div>
+          <div className="single-active-order__customer-info d-flex justify-content-between">
+            <p>
+              <span className="fw-bold">Customer:</span> {order.user.name} {order.user.surname}
+            </p>
             <span>
-              <a className="single-active-order__rider-phone small" href={`tel:+39${order.rider.phoneNumber}`}>
-                {order.rider.phoneNumber}
+              <a className="single-active-order__customer-phone small" href={`tel:+39${order.user.phoneNumber}`}>
+                {order.user.phoneNumber}
               </a>
             </span>
+          </div>
+          <div className="single-active-order__rider-info d-flex justify-content-between mb-auto">
+            <p>
+              <span className="fw-bold">Rider:</span> {order.rider ? `${order.rider.name} ${order.rider.surname}` : "Not assigned yet"}
+            </p>
+            {order.rider && (
+              <span>
+                <a className="single-active-order__rider-phone small" href={`tel:+39${order.rider.phoneNumber}`}>
+                  {order.rider.phoneNumber}
+                </a>
+              </span>
+            )}
+          </div>
+        </div>
+        <div>
+          <div className="single-active-order__status d-flex justify-content-between mt-3">
+            <p className="fw-bold">STATUS:</p>
+            <p className="fw-bold">{order.orderStatus.orderStatus === "RESTAURANT_ACCEPTED" ? "ACCEPTED" : formatString(order.orderStatus.orderStatus)}</p>
+          </div>
+          {order.orderStatus.orderStatus === "CREATED" && (
+            <div className="single-active-order__actions d-flex justify-content-around">
+              <Button variant="danger" onClick={refuseOrder}>
+                Refuse
+              </Button>
+              <Button variant="success" onClick={acceptOrder}>
+                Accept
+              </Button>
+            </div>
+          )}
+          {order.orderStatus.orderStatus === "RESTAURANT_ACCEPTED" && (
+            <div className="single-active-order__cancel d-flex justify-content-center">
+              <Button variant="danger" onClick={refuseOrder}>
+                Cancel order
+              </Button>
+            </div>
           )}
         </div>
-        <div className="single-active-order__status d-flex justify-content-between mt-3">
-          <p className="fw-bold">STATUS:</p>
-          <p className="fw-bold">{order.orderStatus.orderStatus === "RESTAURANT_ACCEPTED" ? "ACCEPTED" : formatString(order.orderStatus.orderStatus)}</p>
-        </div>
-        {order.orderStatus.orderStatus === "CREATED" && (
-          <div className="single-active-order__actions d-flex justify-content-around">
-            <Button variant="danger" onClick={refuseOrder}>
-              Refuse
-            </Button>
-            <Button variant="success" onClick={acceptOrder}>
-              Accept
-            </Button>
-          </div>
-        )}
-        {order.orderStatus.orderStatus === "RESTAURANT_ACCEPTED" && (
-          <div className="single-active-order__cancel d-flex justify-content-center">
-            <Button variant="danger" onClick={refuseOrder}>
-              Cancel order
-            </Button>
-          </div>
-        )}
       </Container>
     </div>
   );

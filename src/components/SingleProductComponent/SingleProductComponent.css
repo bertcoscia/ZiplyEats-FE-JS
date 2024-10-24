@@ -25,3 +25,7 @@
     width: 300px;
   }
 }
+
+.single-topping__checkbox-label--small .form-check-label {
+  font-size: small;
+}
