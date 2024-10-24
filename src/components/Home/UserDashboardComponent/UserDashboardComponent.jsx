@@ -79,7 +79,14 @@ const UserDashboardComponent = () => {
   };
 
   // USE EFFECT
-  useEffect(() => {}, []);
+  useEffect(() => {
+    console.log("Profilo:", profile); // Aggiungi questo log per il debug
+    if (profile) {
+      if (profile.userRole.userRole === "RIDER" || profile.userRole.userRole === "RESTAURANT") {
+        navigate("/home");
+      }
+    }
+  }, [profile, navigate]);
 
   return (
     <>
