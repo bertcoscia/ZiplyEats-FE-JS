@@ -1,8 +1,7 @@
 import { GeoapifyGeocoderAutocomplete, GeoapifyContext } from "@geoapify/react-geocoder-autocomplete";
 import "@geoapify/geocoder-autocomplete/styles/minimal.css";
-import { useRef, useState } from "react";
-import { Button, Container, Form, Modal } from "react-bootstrap";
-import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { Button, Container, Form } from "react-bootstrap";
 import LoginComponent from "../LoginComponent/LoginComponent";
 
 const UserSignUpComponent = () => {
@@ -11,8 +10,6 @@ const UserSignUpComponent = () => {
     GEOAPIFY_KEY: import.meta.env.VITE_GEOAPIFY_KEY,
     URL_AUTH: import.meta.env.VITE_AUTH_URL
   };
-
-  // HOOKS
 
   // USE STATE
   const [isSignedUp, setIsSignedUp] = useState(false);

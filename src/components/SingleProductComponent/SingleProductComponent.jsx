@@ -1,9 +1,7 @@
-import { Alert, Button, Col, Container, Form, Modal, Row } from "react-bootstrap";
+import { Button, Col, Form, Modal, Row } from "react-bootstrap";
 import "./SingleProductComponent.css";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { Trash3 } from "react-bootstrap-icons";
 
 const SingleProductComponent = ({ product, userRole, productCategories, getMyMenu, handleAddToCart, cart, toppings }) => {
   // ENV VARIABLES
@@ -98,7 +96,7 @@ const SingleProductComponent = ({ product, userRole, productCategories, getMyMen
   };
 
   const handleDecrease = () => {
-    setQuantity(prevQuantity => (prevQuantity > 1 ? prevQuantity - 1 : 1)); // Non permettiamo meno di 1
+    setQuantity(prevQuantity => (prevQuantity > 1 ? prevQuantity - 1 : 1));
   };
 
   const handleAddTopping = (event, topping) => {

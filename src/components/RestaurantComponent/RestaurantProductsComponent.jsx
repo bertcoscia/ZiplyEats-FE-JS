@@ -1,7 +1,6 @@
 import { Button, Container, Row } from "react-bootstrap";
 import SingleProductComponent from "../SingleProductComponent/SingleProductComponent";
 import { useSelector } from "react-redux";
-import "./RestaurantProductsComponent.css";
 
 const RestaurantProductsComponent = ({ products, productCategories, handleAddToCart, cart, toppings }) => {
   // HOOKS

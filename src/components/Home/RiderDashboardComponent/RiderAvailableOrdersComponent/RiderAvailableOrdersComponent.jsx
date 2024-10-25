@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, Col, Container, Row } from "react-bootstrap";
-import { Key } from "react-bootstrap-icons";
-import { useNavigate } from "react-router-dom";
+import { Container } from "react-bootstrap";
 import SingleRiderAvailableOrderComponent from "./SingleRiderAvailableOrderComponent";
 
 const RiderAvailableOrdersComponent = () => {

@@ -1,5 +1,5 @@
-import { useEffect, useState, useSyncExternalStore } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import NavComponent from "../NavComponent/NavComponent";
 import { Button, Container, Form } from "react-bootstrap";
 import SingleRestaurantCard from "../SingleRestaurantComponent/SingleRestaurantCard";

@@ -1,11 +1,9 @@
 import { useEffect, useState } from "react";
-import { useFetcher, useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import NavComponent from "../NavComponent/NavComponent";
-import { Button, Col, Container, Row } from "react-bootstrap";
-import { SkipEnd, StarFill, X, XLg } from "react-bootstrap-icons";
-import SingleProductComponent from "../SingleProductComponent/SingleProductComponent";
+import { Button, Container } from "react-bootstrap";
+import { StarFill } from "react-bootstrap-icons";
 import RestaurantProductsComponent from "./RestaurantProductsComponent";
-import { useSelector } from "react-redux";
 import CheckoutButton from "../stripe/CheckoutButton";
 import OrderDateTimePicker from "../OrderDateTimePicker";
 
@@ -29,7 +27,6 @@ const RestaurantComponent = () => {
   const [toppings, setToppings] = useState([]);
   const [productCategories, setProductCategories] = useState([]);
   const [cart, setCart] = useState([]);
-  const [newOrderDTO, setNewOrderDTO] = useState(null);
   const [deliveryDateTime, setDeliveryDateTime] = useState("");
 
   // FETCH
@@ -70,27 +67,6 @@ const RestaurantComponent = () => {
     }
   };
 
-  const createNewOrder = async newOrderDTO => {
-    try {
-      const response = await fetch(`${ENV_VARIABLES.URL_ORDERS}`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-          "Content-type": "application/json"
-        },
-        body: JSON.stringify(newOrderDTO)
-      });
-      if (response.ok) {
-        await response.json();
-        navigate(0);
-      } else {
-        throw new Error("Could not create new order");
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   const getRestauranToppings = async idRestaurant => {
     try {
       const response = await fetch(`${ENV_VARIABLES.URL_TOPPINGS}/${idRestaurant}`, {
@@ -121,11 +97,6 @@ const RestaurantComponent = () => {
     }
   };
 
-  const handleRemoveFromCart = productId => {
-    const updatedCart = cart.filter(product => product.idProduct !== productId);
-    setCart(updatedCart);
-  };
-
   const handleIncrementQuantity = productKey => {
     setCart(prevCart => {
       const productToIncrement = prevCart.find(product => `${product.product.idProduct}_${JSON.stringify(product.toppings)}` === productKey);
@@ -143,10 +114,6 @@ const RestaurantComponent = () => {
       }
       return prevCart;
     });
-  };
-
-  const handleDeliveryDateTimeChange = event => {
-    setDeliveryDateTime(event.target.value);
   };
 
   // UTILS

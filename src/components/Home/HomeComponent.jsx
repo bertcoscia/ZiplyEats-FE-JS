@@ -2,7 +2,6 @@ import { useSelector } from "react-redux";
 import RestaurantDashboardComponent from "./RestaurantDashboardComponent/RestaurantDashboardComponent";
 import NavComponent from "../NavComponent/NavComponent";
 import RiderDashboardComponent from "./RiderDashboardComponent/RiderDashboardComponent";
-import UserDashboardComponent from "./UserDashboardComponent/UserDashboardComponent";
 import { useNavigate } from "react-router-dom";
 
 const HomeComponent = () => {

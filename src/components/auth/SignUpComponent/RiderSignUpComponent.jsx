@@ -2,7 +2,6 @@ import { GeoapifyGeocoderAutocomplete, GeoapifyContext } from "@geoapify/react-g
 import "@geoapify/geocoder-autocomplete/styles/minimal.css";
 import { useState } from "react";
 import { Button, Container, Form } from "react-bootstrap";
-import { Link, useNavigate } from "react-router-dom";
 import LoginComponent from "../LoginComponent/LoginComponent";
 
 const RiderSignUpComponent = () => {

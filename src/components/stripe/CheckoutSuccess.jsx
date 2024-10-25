@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import NavComponent from "../NavComponent/NavComponent";
 import { Button, Container } from "react-bootstrap";
-import PastOrdersComponent from "../PastOrdersComponent/PastOrdersComponent";
 import SingleActiveOrderComponent from "../home/RestaurantDashboardComponent/RestaurantActiveOrdersComponent/SingleActiveOrderComponent";
 
 const CheckoutSuccess = () => {

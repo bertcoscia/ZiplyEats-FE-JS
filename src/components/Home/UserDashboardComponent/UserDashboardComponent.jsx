@@ -8,7 +8,6 @@ import { useNavigate } from "react-router-dom";
 import InfiniteScrollCarousel from "../../InfiniteScrollCarousel/InfiniteScrollCarousel";
 import SignUpComponent from "../../auth/SignUpComponent/SignUpComponent";
 import { useDispatch, useSelector } from "react-redux";
-import { setAddressAction } from "../../../redux/actions";
 
 const UserDashboardComponent = () => {
   // ENV VARIABLES
