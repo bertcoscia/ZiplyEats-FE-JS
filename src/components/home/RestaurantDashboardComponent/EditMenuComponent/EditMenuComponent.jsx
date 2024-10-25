@@ -411,7 +411,7 @@ const EditMenuComponent = () => {
                       </Form>
                     </Modal.Body>
                     <Modal.Footer className="border-top-0 d-flex justify-content-center">
-                      <Button type="button" onClick={handleSubmit} className="edit-menu__modal-save-button rounded-pill px-5 border-0">
+                      <Button variant="accent" type="button" onClick={handleSubmit} className="edit-menu__modal-save-button px-5 border-0">
                         Save
                       </Button>
                     </Modal.Footer>
@@ -438,7 +438,7 @@ const EditMenuComponent = () => {
                     </Form>
                   </Modal.Body>
                   <Modal.Footer className="border-top-0 d-flex justify-content-center">
-                    <Button variant="accent" onClick={handleSubmit} className="edit-menu__modal-save-button rounded-pill px-5 border-0">
+                    <Button variant="accent" onClick={handleSubmit} className="edit-menu__modal-save-button px-5 border-0">
                       Save
                     </Button>
                   </Modal.Footer>
@@ -502,7 +502,7 @@ const EditMenuComponent = () => {
                       </Form>
                     </Modal.Body>
                     <Modal.Footer className="border-top-0 d-flex justify-content-center">
-                      <Button type="button" onClick={handleSubmitNewTopping} className="edit-menu__modal-save-button rounded-pill px-5 border-0">
+                      <Button variant="accent" type="button" onClick={handleSubmitNewTopping} className="edit-menu__modal-save-button px-5 border-0">
                         Save
                       </Button>
                     </Modal.Footer>

@@ -264,7 +264,7 @@ const SingleProductComponent = ({ product, userRole, productCategories, getMyMen
                 <Form.Label className="single-product__form-label">Product image</Form.Label>
                 <Form.Control type="file" accept="image/*" onChange={handlePicChange} />
               </Form.Group>
-              <Button type="submit" className="d-none">
+              <Button variant="accent" type="submit" className="d-none">
                 Submit
               </Button>
             </Form>
@@ -280,7 +280,7 @@ const SingleProductComponent = ({ product, userRole, productCategories, getMyMen
             >
               Delete
             </Button>
-            <Button type="button" variant="accent" onClick={handleSubmit} className="single-product__button rounded-pill px-5 border-0">
+            <Button type="button" variant="accent" onClick={handleSubmit} className="single-product__button px-5 border-0">
               Save Changes
             </Button>
           </Modal.Footer>

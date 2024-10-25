@@ -149,19 +149,6 @@ const RestaurantComponent = () => {
     setDeliveryDateTime(event.target.value);
   };
 
-  /* const handleCreateNewOrder = (cart, requestedDeliveryDateTime) => {
-    const newOrder = {
-      idRestaurant: `${restaurant.idUser}`,
-      deliveryAddress: `${deliveryAddress.address}`,
-      requestedDeliveryDateTime: `${requestedDeliveryDateTime}`,
-      orderProductList: cart.map(orderProduct => ({
-        idProduct: `${orderProduct.product.idProduct}`,
-        toppings: orderProduct.toppings.map(topping => topping.idProduct)
-      }))
-    };
-    createNewOrder(newOrder);
-  }; */
-
   // UTILS
   const getUniqueCategories = products => {
     const categories = products.map(product => product.productCategory.productCategory);
