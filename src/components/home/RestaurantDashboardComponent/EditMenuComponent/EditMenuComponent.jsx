@@ -136,7 +136,7 @@ const EditMenuComponent = () => {
         }
       })
       .then(data => {
-        setMenu(data.content);
+        setMenu(data);
         setLoading(false);
       })
       .catch(error => {
@@ -252,6 +252,25 @@ const EditMenuComponent = () => {
       console.log(error);
     }
   };
+
+  /* const createNewTopping = async newToppingDTO => {
+    try {
+      const response = await fetch(`${ENV_VARIABLES.URL_TOPPINGS}`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          "Content-type": "applciation/json"
+        },
+        body: JSON.stringify(newToppingDTO)
+      }
+      )
+      if (response.ok) {
+        
+      } else {
+        
+      }
+    }
+  } */
 
   // UTILS
   const resetSearch = () => {

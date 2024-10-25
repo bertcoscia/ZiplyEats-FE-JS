@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Container } from "react-bootstrap";
 import SingleActiveOrderComponent from "./SingleActiveOrderComponent";
+import { useNavigate } from "react-router-dom";
 
 const RestaurantActiveOrdersComponent = () => {
   // ENV VARIABLES
@@ -10,6 +11,7 @@ const RestaurantActiveOrdersComponent = () => {
 
   // HOOKS
   const [activeOrders, setActiveOrders] = useState([]);
+  const navigate = useNavigate();
 
   // USE STATE
 
@@ -24,7 +26,8 @@ const RestaurantActiveOrdersComponent = () => {
         }
       });
       if (response.ok) {
-        setActiveOrders(await response.json());
+        const orders = await response.json();
+        filterActualActiveOrders(orders);
       } else {
         throw new Error("Could not retrieve active orders. Please try again - @getActiveOrders");
       }
@@ -33,7 +36,43 @@ const RestaurantActiveOrdersComponent = () => {
     }
   };
 
+  const refuseOrder = async order => {
+    try {
+      const response = await fetch(`${ENV_VARIABLE.URL_ORDERS}/${order.idOrder}/restaurant-refuses`, {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`
+        }
+      });
+      if (response.ok) {
+        await response.json();
+      } else {
+        throw new Error("Could not refuse the order. Please try again - @refuseOrder");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   // UTILS
+  const isOrderExpired = requestedDeliveryDateTime => {
+    const inputDate = new Date(requestedDeliveryDateTime);
+    const currentDate = new Date(Date.now());
+    return inputDate <= currentDate;
+  };
+
+  const filterActualActiveOrders = async orders => {
+    const activeOrdersList = [];
+    const promises = orders.map(async order => {
+      if (isOrderExpired(order.requestedDeliveryDateTime)) {
+        await refuseOrder(order);
+      } else {
+        activeOrdersList.push(order);
+      }
+    });
+    await Promise.all(promises);
+    setActiveOrders(activeOrdersList);
+  };
 
   // USE EFFECT
   useEffect(() => {

@@ -17,6 +17,7 @@ import RestaurantComponent from "./components/RestaurantComponent/RestaurantComp
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
 import CheckoutSuccess from "./components/stripe/CheckoutSuccess";
+import CheckoutCancel from "./components/stripe/CheckoutCancel";
 
 function App() {
   const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_KEY);
@@ -38,6 +39,7 @@ function App() {
           <Route path="/restaurants/:category" element={<RestaurantsByCategoryComponent />} />
           <Route path="/restaurant/:id" element={<RestaurantComponent />} />
           <Route path="/success/:idOrder" element={<CheckoutSuccess />} />
+          <Route path="/cancel/:idOrder" element={<CheckoutCancel />} />
         </Routes>
       </BrowserRouter>
     </Elements>

@@ -80,9 +80,8 @@ const UserDashboardComponent = () => {
 
   // USE EFFECT
   useEffect(() => {
-    console.log("Profilo:", profile); // Aggiungi questo log per il debug
     if (profile) {
-      if (profile.userRole.userRole === "RIDER" || profile.userRole.userRole === "RESTAURANT") {
+      if (profile.userRole.userRole === "RIDER" || (profile.userRole.userRole === "RESTAURANT" && localStorage.getItem("accessToken") !== null)) {
         navigate("/home");
       }
     }

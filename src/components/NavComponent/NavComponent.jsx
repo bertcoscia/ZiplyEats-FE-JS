@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import "./NavComponent.css";
 import { useEffect, useState } from "react";
-import { getProfileAction } from "../../redux/actions";
+import { getProfileAction, resetProfileAction } from "../../redux/actions";
 
 const NavComponent = ({ scrollToJoinUs }) => {
   // ENV VARIABLES
@@ -82,6 +82,7 @@ const NavComponent = ({ scrollToJoinUs }) => {
   const logout = () => {
     localStorage.removeItem("accessToken");
     setAccessToken(null);
+    dispatch(resetProfileAction());
     navigate("/");
   };
 
@@ -117,8 +118,8 @@ const NavComponent = ({ scrollToJoinUs }) => {
                   Profile
                 </Dropdown.Item>
 
-                {profile.userRole.userRole === "USER" && (
-                  <Dropdown.Item as={Link} to={"/me"} className="navbar__dropdown__menu__item">
+                {profile && profile.userRole.userRole === "USER" && (
+                  <Dropdown.Item as={Link} to={"/past-orders"} className="navbar__dropdown__menu__item">
                     <span className="me-2">
                       <img src="https://glovo.dhmedia.io/image/customer-assets-glovo/customer_profile/uds/bags.svg?t=W3sic3ZnIjp7InEiOiJsb3cifX1d" alt="" style={{ width: "15px" }} />
                     </span>

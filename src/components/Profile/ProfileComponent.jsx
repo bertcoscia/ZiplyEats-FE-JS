@@ -29,6 +29,7 @@ const ProfileComponent = () => {
   const [showPhoneNumber, setShowPhoneNumber] = useState(false);
   const [showProfilePic, setShowProfilePic] = useState(false);
   const [showAddress, setShowAddress] = useState(false);
+  const [userRole, setUserRole] = useState("");
 
   // USE STATE - PAYLOADS
   const [name, setName] = useState({ name: "" });
@@ -251,111 +252,343 @@ const ProfileComponent = () => {
   };
 
   const editEmail = email => {
-    fetch(`${ENV_VARIABLE.URL_RESTAURANTS}/my-restaurant/edit-email`, {
-      method: "PATCH",
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-        "Content-type": "application/json"
-      },
-      body: JSON.stringify(email)
-    })
-      .then(response => {
-        if (response.ok) {
-          return response.json();
-        } else {
-          throw new Error("Unable to update the restaurant email. Please try again later.");
-        }
-      })
-      .then(() => {
-        setEmail({
-          email: ""
-        });
-        dispatch(getProfileAction());
-        navigate(0);
-      })
-      .catch(error => console.log(error));
+    switch (userRole) {
+      case "RESTAURANT":
+        fetch(`${ENV_VARIABLE.URL_RESTAURANTS}/my-restaurant/edit-email`, {
+          method: "PATCH",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+            "Content-type": "application/json"
+          },
+          body: JSON.stringify(email)
+        })
+          .then(response => {
+            if (response.ok) {
+              return response.json();
+            } else {
+              throw new Error("Unable to update the restaurant email. Please try again later.");
+            }
+          })
+          .then(() => {
+            setEmail({
+              email: ""
+            });
+            dispatch(getProfileAction());
+            navigate(0);
+          })
+          .catch(error => console.log(error));
+        break;
+      case "RIDER":
+        fetch(`${ENV_VARIABLE.URL_RIDERS}/me/edit-email`, {
+          method: "PATCH",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+            "Content-type": "application/json"
+          },
+          body: JSON.stringify(email)
+        })
+          .then(response => {
+            if (response.ok) {
+              return response.json();
+            } else {
+              throw new Error("Unable to update the restaurant email. Please try again later.");
+            }
+          })
+          .then(() => {
+            setEmail({
+              email: ""
+            });
+            dispatch(getProfileAction());
+            navigate(0);
+          })
+          .catch(error => console.log(error));
+        break;
+      case "USER":
+        fetch(`${ENV_VARIABLE.URL_USERS}/me/edit-email`, {
+          method: "PATCH",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+            "Content-type": "application/json"
+          },
+          body: JSON.stringify(email)
+        })
+          .then(response => {
+            if (response.ok) {
+              return response.json();
+            } else {
+              throw new Error("Unable to update the restaurant email. Please try again later.");
+            }
+          })
+          .then(() => {
+            setEmail({
+              email: ""
+            });
+            dispatch(getProfileAction());
+            navigate(0);
+          })
+          .catch(error => console.log(error));
+        break;
+      default:
+        break;
+    }
   };
 
   const editPassword = password => {
-    fetch(`${ENV_VARIABLE.URL_RESTAURANTS}/my-restaurant/edit-password`, {
-      method: "PATCH",
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-        "Content-type": "application/json"
-      },
-      body: JSON.stringify(password)
-    })
-      .then(response => {
-        if (response.ok) {
-          return response.json();
-        } else {
-          throw new Error("Unable to update the restaurant password. Please try again later.");
-        }
-      })
-      .then(() => {
-        setPassword({
-          currentPassword: "",
-          newPassword: ""
-        });
-        dispatch(getProfileAction());
-        navigate(0);
-      })
-      .catch(error => console.log(error));
+    switch (userRole) {
+      case "RESTAURANT":
+        fetch(`${ENV_VARIABLE.URL_RESTAURANTS}/my-restaurant/edit-password`, {
+          method: "PATCH",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+            "Content-type": "application/json"
+          },
+          body: JSON.stringify(password)
+        })
+          .then(response => {
+            if (response.ok) {
+              return response.json();
+            } else {
+              throw new Error("Unable to update the restaurant password. Please try again later.");
+            }
+          })
+          .then(() => {
+            setPassword({
+              currentPassword: "",
+              newPassword: ""
+            });
+            dispatch(getProfileAction());
+            navigate(0);
+          })
+          .catch(error => console.log(error));
+        break;
+      case "RIDER":
+        fetch(`${ENV_VARIABLE.URL_RIDERS}/me/edit-password`, {
+          method: "PATCH",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+            "Content-type": "application/json"
+          },
+          body: JSON.stringify(password)
+        })
+          .then(response => {
+            if (response.ok) {
+              return response.json();
+            } else {
+              throw new Error("Unable to update the restaurant password. Please try again later.");
+            }
+          })
+          .then(() => {
+            setPassword({
+              currentPassword: "",
+              newPassword: ""
+            });
+            dispatch(getProfileAction());
+            navigate(0);
+          })
+          .catch(error => console.log(error));
+        break;
+      case "USER":
+        fetch(`${ENV_VARIABLE.URL_USERS}/me/edit-password`, {
+          method: "PATCH",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+            "Content-type": "application/json"
+          },
+          body: JSON.stringify(password)
+        })
+          .then(response => {
+            if (response.ok) {
+              return response.json();
+            } else {
+              throw new Error("Unable to update the restaurant password. Please try again later.");
+            }
+          })
+          .then(() => {
+            setPassword({
+              currentPassword: "",
+              newPassword: ""
+            });
+            dispatch(getProfileAction());
+            navigate(0);
+          })
+          .catch(error => console.log(error));
+        break;
+      default:
+        break;
+    }
   };
 
   const editPhoneNumber = phoneNumber => {
-    fetch(`${ENV_VARIABLE.URL_RESTAURANTS}/my-restaurant/edit-phoneNumber`, {
-      method: "PATCH",
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-        "Content-type": "application/json"
-      },
-      body: JSON.stringify(phoneNumber)
-    })
-      .then(response => {
-        if (response.ok) {
-          return response.json();
-        } else {
-          throw new Error("Unable to update the restaurant phone number. Please try again later.");
-        }
-      })
-      .then(() => {
-        setPhoneNumber({
-          phoneNumber: ""
-        });
-        dispatch(getProfileAction());
-        navigate(0);
-      })
-      .catch(error => console.log(error));
+    switch (userRole) {
+      case "RESTAURANT":
+        fetch(`${ENV_VARIABLE.URL_RESTAURANTS}/my-restaurant/edit-phoneNumber`, {
+          method: "PATCH",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+            "Content-type": "application/json"
+          },
+          body: JSON.stringify(phoneNumber)
+        })
+          .then(response => {
+            if (response.ok) {
+              return response.json();
+            } else {
+              throw new Error("Unable to update the restaurant phone number. Please try again later.");
+            }
+          })
+          .then(() => {
+            setPhoneNumber({
+              phoneNumber: ""
+            });
+            dispatch(getProfileAction());
+            navigate(0);
+          })
+          .catch(error => console.log(error));
+        break;
+      case "RIDER":
+        fetch(`${ENV_VARIABLE.URL_RIDERS}/me/edit-phoneNumber`, {
+          method: "PATCH",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+            "Content-type": "application/json"
+          },
+          body: JSON.stringify(phoneNumber)
+        })
+          .then(response => {
+            if (response.ok) {
+              return response.json();
+            } else {
+              throw new Error("Unable to update the restaurant phone number. Please try again later.");
+            }
+          })
+          .then(() => {
+            setPhoneNumber({
+              phoneNumber: ""
+            });
+            dispatch(getProfileAction());
+            navigate(0);
+          })
+          .catch(error => console.log(error));
+        break;
+      case "USER":
+        fetch(`${ENV_VARIABLE.URL_USERS}/me/edit-phoneNumber`, {
+          method: "PATCH",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+            "Content-type": "application/json"
+          },
+          body: JSON.stringify(phoneNumber)
+        })
+          .then(response => {
+            if (response.ok) {
+              return response.json();
+            } else {
+              throw new Error("Unable to update the restaurant phone number. Please try again later.");
+            }
+          })
+          .then(() => {
+            setPhoneNumber({
+              phoneNumber: ""
+            });
+            dispatch(getProfileAction());
+            navigate(0);
+          })
+          .catch(error => console.log(error));
+        break;
+      default:
+        break;
+    }
   };
 
   const editAddress = address => {
-    fetch(`${ENV_VARIABLE.URL_RESTAURANTS}/my-restaurant/edit-address`, {
-      method: "PATCH",
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-        "Content-type": "application/json"
-      },
-      body: JSON.stringify(address)
-    })
-      .then(response => {
-        if (response.ok) {
-          return response.json();
-        } else {
-          throw new Error("Unable to update the restaurant address. Please try again later.");
-        }
-      })
-      .then(() => {
-        setAddress({
-          address: "",
-          city: "",
-          latitude: null,
-          longitude: null
-        });
-        dispatch(getProfileAction());
-        navigate(0);
-      })
-      .catch(error => console.log(error));
+    switch (userRole) {
+      case "RESTAURANT":
+        fetch(`${ENV_VARIABLE.URL_RESTAURANTS}/my-restaurant/edit-address`, {
+          method: "PATCH",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+            "Content-type": "application/json"
+          },
+          body: JSON.stringify(address)
+        })
+          .then(response => {
+            if (response.ok) {
+              return response.json();
+            } else {
+              throw new Error("Unable to update the restaurant address. Please try again later.");
+            }
+          })
+          .then(() => {
+            setAddress({
+              address: "",
+              city: "",
+              latitude: null,
+              longitude: null
+            });
+            dispatch(getProfileAction());
+            navigate(0);
+          })
+          .catch(error => console.log(error));
+        break;
+      case "RIDER":
+        fetch(`${ENV_VARIABLE.URL_RIDERS}/me/edit-address`, {
+          method: "PATCH",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+            "Content-type": "application/json"
+          },
+          body: JSON.stringify(address)
+        })
+          .then(response => {
+            if (response.ok) {
+              return response.json();
+            } else {
+              throw new Error("Unable to update the restaurant address. Please try again later.");
+            }
+          })
+          .then(() => {
+            setAddress({
+              address: "",
+              city: "",
+              latitude: null,
+              longitude: null
+            });
+            dispatch(getProfileAction());
+            navigate(0);
+          })
+          .catch(error => console.log(error));
+        break;
+      case "USER":
+        fetch(`${ENV_VARIABLE.URL_USERS}/me/edit-address`, {
+          method: "PATCH",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+            "Content-type": "application/json"
+          },
+          body: JSON.stringify(address)
+        })
+          .then(response => {
+            if (response.ok) {
+              return response.json();
+            } else {
+              throw new Error("Unable to update the restaurant address. Please try again later.");
+            }
+          })
+          .then(() => {
+            setAddress({
+              address: "",
+              city: "",
+              latitude: null,
+              longitude: null
+            });
+            dispatch(getProfileAction());
+            navigate(0);
+          })
+          .catch(error => console.log(error));
+        break;
+      default:
+        break;
+    }
   };
 
   // USE EFFECT
@@ -373,6 +606,7 @@ const ProfileComponent = () => {
       setFullName({ name: profile.name, surname: profile.surname });
       setEmail({ email: profile.email });
       setPhoneNumber({ phoneNumber: profile.phoneNumber });
+      setUserRole(profile.userRole.userRole);
     }
   }, [profile]);
 

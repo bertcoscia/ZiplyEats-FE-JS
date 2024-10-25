@@ -7,6 +7,7 @@ import SingleProductComponent from "../SingleProductComponent/SingleProductCompo
 import RestaurantProductsComponent from "./RestaurantProductsComponent";
 import { useSelector } from "react-redux";
 import CheckoutButton from "../stripe/CheckoutButton";
+import OrderDateTimePicker from "../OrderDateTimePicker";
 
 const RestaurantComponent = () => {
   // ENV VARIABLES
@@ -29,6 +30,7 @@ const RestaurantComponent = () => {
   const [productCategories, setProductCategories] = useState([]);
   const [cart, setCart] = useState([]);
   const [newOrderDTO, setNewOrderDTO] = useState(null);
+  const [deliveryDateTime, setDeliveryDateTime] = useState("");
 
   // FETCH
   const getRestaurant = async idRestaurant => {
@@ -59,7 +61,7 @@ const RestaurantComponent = () => {
       });
       if (response.ok) {
         const data = await response.json();
-        setProducts(data.content);
+        setProducts(data);
       } else {
         throw new Error("Could not get restaurant");
       }
@@ -143,6 +145,10 @@ const RestaurantComponent = () => {
     });
   };
 
+  const handleDeliveryDateTimeChange = event => {
+    setDeliveryDateTime(event.target.value);
+  };
+
   /* const handleCreateNewOrder = (cart, requestedDeliveryDateTime) => {
     const newOrder = {
       idRestaurant: `${restaurant.idUser}`,
@@ -163,9 +169,29 @@ const RestaurantComponent = () => {
     return uniqueCategories;
   };
 
+  const roundToNextQuarterHour = date => {
+    const roundedMinutes = Math.ceil(date.getMinutes() / 15) * 15;
+    date.setMinutes(roundedMinutes, 0, 0);
+    return date;
+  };
+
+  const getRoundedDateTimePlus30Minutes = () => {
+    const now = new Date();
+    now.setMinutes(now.getMinutes() + 30);
+    const roundedDate = roundToNextQuarterHour(now);
+    const year = roundedDate.getFullYear();
+    const month = String(roundedDate.getMonth() + 1).padStart(2, "0");
+    const day = String(roundedDate.getDate()).padStart(2, "0");
+    const hours = String(roundedDate.getHours()).padStart(2, "0");
+    const minutes = String(roundedDate.getMinutes()).padStart(2, "0");
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  };
+
   // USE EFFECT
   useEffect(() => {
     getRestaurant(idRestaurant.id);
+    const minDate = getRoundedDateTimePlus30Minutes();
+    setDeliveryDateTime(minDate);
   }, []);
 
   useEffect(() => {
@@ -284,16 +310,8 @@ const RestaurantComponent = () => {
                         </strong>
                       </div>
                     </div>
-                    <CheckoutButton cart={cart} restaurant={restaurant} deliveryAddress={deliveryAddress} />
-                    {/* <Button
-                      variant="accent"
-                      className="mt-3 py-0"
-                      onClick={() => {
-                        handleCreateNewOrder(cart);
-                      }}
-                    >
-                      <small>Go to checkout</small>
-                    </Button> */}
+                    <OrderDateTimePicker setDeliveryDateTime={setDeliveryDateTime} />
+                    <CheckoutButton cart={cart} restaurant={restaurant} deliveryAddress={deliveryAddress} requestedDeliveryDateTime={deliveryDateTime} />
                   </>
                 ) : (
                   <p>Your cart is empty</p>
