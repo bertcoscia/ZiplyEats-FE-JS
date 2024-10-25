@@ -341,7 +341,7 @@ const SingleProductComponent = ({ product, userRole, productCategories, getMyMen
                           <Form.Check type="checkbox" label={topping.name} name="canHaveToppings" onChange={event => handleAddTopping(event, topping)} className="single-topping__checkbox-label--small" />
                         </Form.Group>
                       </Form>
-                      <small className="text-muted fst-italic">+{topping.price}€</small>
+                      <small className="text-muted fst-italic">+{topping.price.toFixed(2)}€</small>
                     </div>
                   ))}
                 </>

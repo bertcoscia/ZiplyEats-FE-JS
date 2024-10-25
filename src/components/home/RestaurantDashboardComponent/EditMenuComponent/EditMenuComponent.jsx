@@ -39,6 +39,12 @@ const EditMenuComponent = () => {
   const [showNewCategory, setShowNewCategory] = useState(false);
   const [productCategories, setProductCategories] = useState([]);
   const [toppings, setToppings] = useState([]);
+  const [newToppingDTO, setNewToppingDTO] = useState({
+    name: "",
+    price: "",
+    productCategory: ""
+  });
+  const [showNewTopping, setShowNewTopping] = useState(false);
 
   // HANDLERS
   const handleShow = () => {
@@ -63,6 +69,14 @@ const EditMenuComponent = () => {
 
   const handleCloseNewCategory = () => {
     setShowNewCategory(false);
+  };
+
+  const handleShowNewTopping = () => {
+    setShowNewTopping(true);
+  };
+
+  const handleCloseNewTopping = () => {
+    setShowNewTopping(false);
   };
 
   const handleChange = event => {
@@ -91,6 +105,24 @@ const EditMenuComponent = () => {
     }));
   };
 
+  const handleChangeNewTopping = event => {
+    const { name, value } = event.target;
+    if (name === "price") {
+      const normalizedValue = value.replace(",", ".");
+      if (!isNaN(normalizedValue) && /^(\d+(\.\d{0,2})?)?$/.test(normalizedValue)) {
+        setNewToppingDTO(prevState => ({
+          ...prevState,
+          [name]: normalizedValue
+        }));
+      }
+    } else {
+      setNewToppingDTO(prevState => ({
+        ...prevState,
+        [name]: value
+      }));
+    }
+  };
+
   const handleCheckboxChange = () => {
     setNewProductDTO(prevState => ({
       ...prevState,
@@ -115,6 +147,12 @@ const EditMenuComponent = () => {
   const handleSubmitNewCategory = event => {
     event.preventDefault();
     addNewProductCategory(newProductCategory);
+  };
+
+  const handleSubmitNewTopping = event => {
+    event.preventDefault();
+    createNewTopping(newToppingDTO);
+    handleClose();
   };
 
   // FETCH
@@ -169,6 +207,27 @@ const EditMenuComponent = () => {
         return responseData.id;
       } else {
         throw new Error("Unable to create the new product. Please try again later.");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const createNewTopping = async newToppingDTO => {
+    try {
+      const response = await fetch(`${ENV_VARIABLE.URL_TOPPINGS}`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          "Content-type": "application/json"
+        },
+        body: JSON.stringify(newToppingDTO)
+      });
+      if (response.ok) {
+        await response.json();
+        navigate(0);
+      } else {
+        throw new Error("Could not create new topping");
       }
     } catch (error) {
       console.log(error);
@@ -253,25 +312,6 @@ const EditMenuComponent = () => {
     }
   };
 
-  /* const createNewTopping = async newToppingDTO => {
-    try {
-      const response = await fetch(`${ENV_VARIABLES.URL_TOPPINGS}`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-          "Content-type": "applciation/json"
-        },
-        body: JSON.stringify(newToppingDTO)
-      }
-      )
-      if (response.ok) {
-        
-      } else {
-        
-      }
-    }
-  } */
-
   // UTILS
   const resetSearch = () => {
     setSearch("");
@@ -311,6 +351,8 @@ const EditMenuComponent = () => {
                   Go back
                 </Button>
 
+                {/* PRODUCTS */}
+
                 <div className="edit-menu__search d-flex">
                   <Form onSubmit={event => event.preventDefault()} className="edit-menu__search-form">
                     <Form.Group>
@@ -329,7 +371,7 @@ const EditMenuComponent = () => {
                   <Modal show={show} onHide={handleClose} className="edit-menu__modal perfect-shadow">
                     <Modal.Header closeButton className="border-bottom-0"></Modal.Header>
                     <Modal.Body>
-                      <h2 className="edit-menu__modal-title fs-5 text-center">Edit your product</h2>
+                      <h2 className="edit-menu__modal-title fs-5 text-center">Add new product</h2>
                       <Form onSubmit={handleSubmit} className="edit-menu__form">
                         <Form.Group className="edit-menu__form-group mb-3">
                           <Form.Label className="edit-menu__form-label">Name</Form.Label>
@@ -419,9 +461,57 @@ const EditMenuComponent = () => {
                 )}
               </Row>
 
+              {/* TOPPINGS */}
+
               <Row className="edit-menu__topping-list d-flex justify-content-start">
-                <h3 className="pb-3">Toppings</h3>
-                {toppings.length > 0 && toppings.map((topping, index) => <SingleProductComponent key={index} product={topping} userRole={profile.userRole.userRole} productCategories={productCategories.length > 0 ? productCategories : []} />)}
+                <h3>Toppings</h3>
+                <div className="my-3">
+                  <Button variant="accent" className="edit-menu__add-product-button text-decoration-none align-self-center" onClick={handleShowNewTopping}>
+                    New topping
+                  </Button>
+
+                  <Modal show={showNewTopping} onHide={handleCloseNewTopping} className="edit-menu__modal perfect-shadow">
+                    <Modal.Header closeButton className="border-bottom-0"></Modal.Header>
+                    <Modal.Body>
+                      <h2 className="edit-menu__modal-title fs-5 text-center">Add new topping</h2>
+                      <Form onSubmit={handleSubmitNewTopping} className="edit-menu__form">
+                        <Form.Group className="edit-menu__form-group mb-3">
+                          <Form.Label className="edit-menu__form-label">Name</Form.Label>
+                          <Form.Control type="text" placeholder="Enter product name" value={newToppingDTO.name} name="name" onChange={handleChangeNewTopping} required className="edit-menu__form-input" />
+                        </Form.Group>
+                        <Form.Group className="edit-menu__form-group mb-3">
+                          <Form.Label className="edit-menu__form-label">Price</Form.Label>
+                          <Form.Control type="text" placeholder="Enter product price" value={newToppingDTO.price} name="price" onChange={handleChangeNewTopping} className="edit-menu__form-input" />
+                        </Form.Group>
+                        {productCategories && (
+                          <Form.Group className="edit-menu__form-group mb-3">
+                            <Form.Label className="edit-menu__form-label">Product category</Form.Label>
+                            <Form.Select name="productCategory" value={newToppingDTO.productCategory} onChange={handleChangeNewTopping}>
+                              <option>Choose a category</option>
+                              {productCategories.map((category, index) => (
+                                <option key={index} value={category.productCategory}>
+                                  {category.productCategory}
+                                </option>
+                              ))}
+                            </Form.Select>
+                          </Form.Group>
+                        )}
+                        <Button type="submit" className="d-none">
+                          Submit
+                        </Button>
+                      </Form>
+                    </Modal.Body>
+                    <Modal.Footer className="border-top-0 d-flex justify-content-center">
+                      <Button type="button" onClick={handleSubmitNewTopping} className="edit-menu__modal-save-button rounded-pill px-5 border-0">
+                        Save
+                      </Button>
+                    </Modal.Footer>
+                  </Modal>
+                </div>
+                {toppings.length > 0 &&
+                  toppings
+                    .sort((a, b) => a.name.localeCompare(b.name))
+                    .map((topping, index) => <SingleProductComponent key={index} product={topping} userRole={profile.userRole.userRole} productCategories={productCategories.length > 0 ? productCategories : []} />)}{" "}
               </Row>
             </Container>
           )}
